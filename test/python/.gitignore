@@ -1,0 +1,6 @@
+/python.c
+/python.bin
+/*.diff
+/*.out
+/Makefile.in
+/Makefile

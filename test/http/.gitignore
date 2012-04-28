@@ -1,0 +1,6 @@
+/http.c
+/http.bin
+/*.out
+/*.diff
+/Makefile
+/Makefile.in

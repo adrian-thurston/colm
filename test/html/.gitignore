@@ -1,0 +1,6 @@
+/html.c
+/html.bin
+/*.diff
+/*.out
+/Makefile
+/Makefile.in
