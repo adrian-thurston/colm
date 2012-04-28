@@ -1,0 +1,6 @@
+/xml.c
+/xml.bin
+/*.diff
+/*.out
+/Makefile
+/Makefile.in

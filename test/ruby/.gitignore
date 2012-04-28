@@ -1,0 +1,6 @@
+/*.diff
+/*.out
+/ruby.c
+/ruby.bin
+/Makefile
+/Makefile.in
