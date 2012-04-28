@@ -1,0 +1,5 @@
+/Makefile
+/*.diff
+/*.c
+/*.bin
+/*.out

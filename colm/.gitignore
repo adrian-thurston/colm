@@ -1,0 +1,15 @@
+/Makefile.in
+/Makefile
+/.*.d
+/colm
+/lmparse.h
+/lmparse.cpp
+/lmscan.cpp
+/config.h
+/version.h
+/tags
+/.deps
+/libcolmd.a
+/libcolmp.a
+/.libs
+/stamp-h1
