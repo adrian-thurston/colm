@@ -2039,7 +2039,7 @@ void strCollectAppend( StrCollect *collect, const char *data, long len )
 {
 	long newLen = collect->length + len;
 	if ( newLen > collect->allocated ) {
-		collect->allocated *= newLen * 2;
+		collect->allocated = newLen * 2;
 		collect->data = (char*) realloc( collect->data, collect->allocated );
 	}
 	memcpy( collect->data + collect->length, data, len );
