@@ -1,6 +1,3 @@
-SUBDIRS = . host-ruby host-asm host-julia host-ocaml host-c \
-	host-d host-csharp host-go host-java host-rust host-crack host-js
-
 COLM_BIN    = ../colm/colm
 COLM_WRAP   = ../colm/colm-wrap
 COLM_LA     = ../colm/libcolm.la
@@ -12,12 +9,7 @@ RAGEL       = @RAGEL@
 # libfsm contains only the FSM construction code and the backend code
 # generators. It is useful for building code generators in programs not
 # connected to the ragel language.
-#
-# libragel contains the parse tree and other parsing support code. Everything
-# except the reducers, which are specific to the frontends.
-lib_LTLIBRARIES = libfsm.la libragel.la
-
-bin_PROGRAMS = ragel
+lib_LTLIBRARIES = libfsm.la
 
 pkginclude_HEADERS = \
 	action.h fsmgraph.h ragel.h common.h \
@@ -25,7 +17,9 @@ pkginclude_HEADERS = \
 
 # nodist_pkginclude_HEADERS = config.h
 
-data_DATA = ragel.lm
+data_DATA = ril.lm rlhc-main.lm \
+	rlhc-c.lm rlhc-csharp.lm rlhc-go.lm rlhc-js.lm rlhc-ruby.lm \
+	rlhc-crack.lm rlhc-d.lm rlhc-java.lm rlhc-julia.lm rlhc-ocaml.lm rlhc-rust.lm
 
 #
 # libfsm: state machine construction and direct code generation.
@@ -57,21 +51,8 @@ nodist_libfsm_la_SOURCES = \
 
 libfsm_la_LDFLAGS = -no-undefined
 
-#
-# libragel: ragel program minus host-specific code
-#
-libragel_la_CPPFLAGS = -I$(top_srcdir)/aapl -I$(top_srcdir)/colm/include -DBINDIR='"@bindir@"'
-
-dist_libragel_la_SOURCES = \
-	parsedata.h parsetree.h inputdata.h pcheck.h reducer.h rlscan.h load.h \
-	parsetree.cc longest.cc parsedata.cc inputdata.cc load.cc reducer.cc
-
-libragel_la_LDFLAGS = -no-undefined
-libragel_la_LIBADD = libfsm.la $(COLM_LA)
-
 if LINKER_NO_UNDEFINED
 libfsm_la_LDFLAGS += -Wl,--no-undefined
-libragel_la_LDFLAGS += -Wl,--no-undefined
 endif
 
 #
@@ -85,30 +66,6 @@ dist_ragel_SOURCES = \
 nodist_ragel_SOURCES = \
 	parse.c rlreduce.cc
 
-ragel_LDADD = libragel.la libfsm.la $(COLM_LA)
-ragel_DEPENDENCIES = libragel.la libfsm.la $(COLM_LIBDEP)
-
-BUILT_SOURCES = \
-	version.h \
-	parse.c rlreduce.cc \
-	include/ragel
-
-include/ragel:
-	mkdir -p include
-	ln -s .. include/ragel
-
-if WITH_RAGEL_KELBT
-nodist_ragel_SOURCES += \
-	rlscan.cc rlparse.cc rlparse.h 
-
-BUILT_SOURCES += \
-	rlscan.cc rlparse.cc rlparse.h 
-endif
-
-version.h: Makefile
-	echo '#define RAGEL_VERSION "@RAGEL_VERSION@"' > version.h
-	echo '#define RAGEL_PUBDATE "@RAGEL_PUBDATE@"' >> version.h
-
 EXTRA_DIST = \
 	$(RAGEL_LM) \
 	rlscan.rl \
@@ -119,39 +76,8 @@ EXTRA_DIST = \
 
 CLEANFILES = parse.c commit.cc rlhc.c
 
-if WITH_RAGEL_KELBT
-CLEANFILES += rlscan.cc rlparse.cc rlparse.h 
-endif
-
 RAGEL_LM = \
 	rlparse.lm \
 	ragel.lm \
 	rlreduce.lm
 
-parse.pack: $(RAGEL_LM) $(COLM_BINDEP)
-	$(COLM_WRAP) -c -b rlparseC -o $@ -p parse.c -m rlreduce.cc $<
-
-rlreduce.cc: parse.pack
-	$(COLM_WRAP) -o $@ $<
-
-parse.c: parse.pack
-	$(COLM_WRAP) -o $@ $<
-
-if WITH_RAGEL_KELBT
-
-# This dependency comes from the import of the parser defines into the scanner.
-rlscan.cc: rlparse.h
-inputdata.cc: rlparse.h
-
-ragel-rlscan.$(OBJEXT): rlscan.cc
-
-rlscan.cc: rlscan.rl
-	$(RAGEL) -G2 -I$(builddir) -o $@ $<
-
-rlparse.h: rlparse.kh
-	$(KELBT) -o $@ $<
-
-rlparse.cc: rlparse.kl rlparse.kh
-	$(KELBT) -o $@ $<
-
-endif

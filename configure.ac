@@ -1,5 +1,5 @@
 dnl 
-dnl Copyright 2006-2018 Adrian Thurston <thurston@colm.net>
+dnl Copyright 2006-2020 Adrian Thurston <thurston@colm.net>
 dnl
 
 dnl Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,7 +20,7 @@ dnl LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM
 dnl OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 dnl SOFTWARE.
   
-AC_INIT(colm-suite, 1)
+AC_INIT(colm, 0.14)
 
 RAGEL_VERSION="7.0"
 RAGEL_PUBDATE="January 2020"
