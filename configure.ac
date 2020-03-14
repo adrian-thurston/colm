@@ -421,28 +421,14 @@ AC_OUTPUT([
 	aapl/Makefile
 	colm/Makefile
 	ragel/Makefile
-	ragel/host-ruby/Makefile
-	ragel/host-asm/Makefile
-	ragel/host-julia/Makefile
-	ragel/host-ocaml/Makefile
-	ragel/host-c/Makefile
-	ragel/host-d/Makefile
-	ragel/host-csharp/Makefile
-	ragel/host-go/Makefile
-	ragel/host-java/Makefile
-	ragel/host-rust/Makefile
-	ragel/host-crack/Makefile
-	ragel/host-js/Makefile
 	test/Makefile
 	test/aapl.d/Makefile
 	test/colm.d/Makefile
-	test/ragel.d/Makefile
 	test/rlhc.d/Makefile
 	test/rlparse.d/Makefile
 	test/trans.d/Makefile
 	doc/Makefile
 	doc/colm/Makefile
-	doc/ragel/Makefile
 ])
 
 echo "configuration of colm complete"

@@ -55,17 +55,6 @@ if LINKER_NO_UNDEFINED
 libfsm_la_LDFLAGS += -Wl,--no-undefined
 endif
 
-#
-# ragel program.
-#
-ragel_CPPFLAGS = -I$(top_srcdir)/aapl -I$(top_srcdir)/colm/include
-
-dist_ragel_SOURCES = \
-	main.cc
-
-nodist_ragel_SOURCES = \
-	parse.c rlreduce.cc
-
 EXTRA_DIST = \
 	$(RAGEL_LM) \
 	rlscan.rl \
