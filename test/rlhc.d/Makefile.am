@@ -1,4 +1,4 @@
-COLM_BIN = ../../colm/colm
+COLM_BIN = ../../src/colm
 
 RLHC_DEP = \
 	rlhc-host.lm \

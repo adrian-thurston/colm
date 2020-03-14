@@ -195,9 +195,9 @@ AC_ARG_WITH(subject,
 	[
 		SUBJ_AAPL_CPPFLAGS='-I$(abs_top_builddir)/aapl'
 
-		SUBJ_COLM_BIN='$(abs_top_builddir)/colm/colm'
-		SUBJ_COLM_CPPFLAGS='-I$(abs_top_builddir)/colm/include'
-		SUBJ_COLM_LDFLAGS='-L$(abs_top_builddir)/colm/.libs -Wl,-rpath,${abs_top_builddir}/colm/.libs'
+		SUBJ_COLM_BIN='$(abs_top_builddir)/src/colm'
+		SUBJ_COLM_CPPFLAGS='-I$(abs_top_builddir)/src/include'
+		SUBJ_COLM_LDFLAGS='-L$(abs_top_builddir)/src/.libs -Wl,-rpath,${abs_top_builddir}/src/.libs'
 
 		SUBJ_RAGEL_BIN='$(abs_top_builddir)/ragel/ragel'
 		SUBJ_RAGEL_CPPFLAGS='-I$(abs_top_builddir)/ragel/include -I$(abs_top_builddir)/aapl'
@@ -415,12 +415,12 @@ dnl Wrap up.
 dnl
 
 AC_SUBST(SED_SUBST)
-AC_CONFIG_HEADERS([src/config.h colm/defs.h])
+AC_CONFIG_HEADERS([src/config.h src/defs.h])
 AC_OUTPUT([
 	Makefile
 	aapl/Makefile
 	libfsm/Makefile
-	colm/Makefile
+	src/Makefile
 	cgil/Makefile
 	test/Makefile
 	test/aapl.d/Makefile

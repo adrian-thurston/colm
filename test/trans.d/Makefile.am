@@ -1,7 +1,7 @@
-COLM_BIN = ../../colm/colm
+COLM_BIN = ../../src/colm
 
-COLM_xCPPFLAGS = -I../../colm/include
-COLM_xLDFLAGS = -L../../colm
+COLM_xCPPFLAGS = -I../../src/include
+COLM_xLDFLAGS = -L../../src
 
 noinst_PROGRAMS = trans
 
