@@ -1,25 +1,22 @@
-COLM_BIN    = ../colm/colm
-COLM_WRAP   = ../colm/colm-wrap
-COLM_LA     = ../colm/libcolm.la
-COLM_LIBDEP = $(COLM_LA)
-COLM_BINDEP = $(COLM_BIN) $(COLM_WRAP)
-KELBT       = @KELBT@
-RAGEL       = @RAGEL@
-
 # libfsm contains only the FSM construction code and the backend code
-# generators. It is useful for building code generators in programs not
-# connected to the ragel language.
+# generators for C, asm and cgil (Code Gen Intermediate Language) . It is
+# useful for building state machine code generators in programs not connected
+# to the ragel language.
 lib_LTLIBRARIES = libfsm.la
 
 pkginclude_HEADERS = \
-	action.h fsmgraph.h ragel.h common.h \
+	action.h fsmgraph.h common.h \
 	gendata.h redfsm.h dot.h
 
 # nodist_pkginclude_HEADERS = config.h
 
-data_DATA = ril.lm rlhc-main.lm \
+data_DATA = $(CGIL_FILES)
+
+CGIL_FILES = ril.lm rlhc-main.lm \
 	rlhc-c.lm rlhc-csharp.lm rlhc-go.lm rlhc-js.lm rlhc-ruby.lm \
 	rlhc-crack.lm rlhc-d.lm rlhc-java.lm rlhc-julia.lm rlhc-ocaml.lm rlhc-rust.lm
+
+EXTRA_DIST = $(CGIL_FILES)
 
 #
 # libfsm: state machine construction and direct code generation.
@@ -54,19 +51,4 @@ libfsm_la_LDFLAGS = -no-undefined
 if LINKER_NO_UNDEFINED
 libfsm_la_LDFLAGS += -Wl,--no-undefined
 endif
-
-EXTRA_DIST = \
-	$(RAGEL_LM) \
-	rlscan.rl \
-	rlparse.kh \
-	rlparse.kl \
-	ril.lm  \
-	rlhc-main.lm
-
-CLEANFILES = parse.c commit.cc rlhc.c
-
-RAGEL_LM = \
-	rlparse.lm \
-	ragel.lm \
-	rlreduce.lm
 
