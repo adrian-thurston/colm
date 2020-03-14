@@ -421,6 +421,7 @@ AC_OUTPUT([
 	aapl/Makefile
 	colm/Makefile
 	ragel/Makefile
+	cgil/Makefile
 	test/Makefile
 	test/aapl.d/Makefile
 	test/colm.d/Makefile
