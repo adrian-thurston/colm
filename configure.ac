@@ -419,8 +419,8 @@ AC_CONFIG_HEADERS([src/config.h colm/defs.h])
 AC_OUTPUT([
 	Makefile
 	aapl/Makefile
+	libfsm/Makefile
 	colm/Makefile
-	ragel/Makefile
 	cgil/Makefile
 	test/Makefile
 	test/aapl.d/Makefile
