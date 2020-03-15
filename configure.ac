@@ -21,9 +21,7 @@ dnl OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN TH
 dnl SOFTWARE.
   
 AC_INIT(colm, 0.14)
-
-RAGEL_VERSION="7.0"
-RAGEL_PUBDATE="January 2020"
+PUBDATE="January 2020"
 
 COLM_VERSION="0.14"
 COLM_PUBDATE="January 2020"
@@ -38,29 +36,13 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_SUBST(PUBDATE)
 AC_SUBST(COLM_VERSION)
 AC_SUBST(COLM_PUBDATE)
-AC_SUBST(RAGEL_VERSION)
-AC_SUBST(RAGEL_PUBDATE)
+
 AC_CHECK_SIZEOF([int])
-AC_CHECK_SIZEOF([long])
 AC_CHECK_SIZEOF([void *])
 AC_CHECK_SIZEOF([long])
 AC_CHECK_SIZEOF([unsigned long])
 AC_CHECK_SIZEOF([unsigned long long])
 AC_CHECK_HEADERS([sys/mman.h sys/wait.h unistd.h])
-
-AC_CHECK_SIZEOF([long])
-
-dnl Generic dependency specification.
-AC_ARG_WITH(deps,
-	[AC_HELP_STRING([--with-deps], [generic dependency location])],
-	[DEPS="$withval"],
-	[DEPS="/opt/colm"]
-)
-
-dnl Set to true if build system should generate parsers from ragel, kelbt, and
-dnl gperf sources. Set to false if generated files are included and not to be
-dnl built (production).
-dnl AC_SUBST(BUILD_PARSERS,true)
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -113,23 +95,23 @@ AC_ARG_ENABLE(manual,
 )
 
 dnl Checks to carry out if we are building the manual.
-if test "x$build_manual" = "xyes"; then
-	AC_CHECK_PROG(FIG2DEV, fig2dev, fig2dev)
-	if test -z "$FIG2DEV"; then
-		echo
-		echo "error: fig2dev is required to build the manual (maybe use --disable-manual)"
-		echo
-		exit 1
-	fi
-
-	AC_CHECK_PROG(PDFLATEX, pdflatex, pdflatex)
-	if test -z "$PDFLATEX"; then
-		echo
-		echo "error: pdflatex is required to build the manual (maybe use --disable-manual)"
-		echo
-		exit 1
-	fi
-fi
+dnl if test "x$build_manual" = "xyes"; then
+dnl	AC_CHECK_PROG(FIG2DEV, fig2dev, fig2dev)
+dnl	if test -z "$FIG2DEV"; then
+dnl		echo
+dnl		echo "error: fig2dev is required to build the manual (maybe use --disable-manual)"
+dnl		echo
+dnl		exit 1
+dnl	fi
+dnl
+dnl	AC_CHECK_PROG(PDFLATEX, pdflatex, pdflatex)
+dnl	if test -z "$PDFLATEX"; then
+dnl		echo
+dnl		echo "error: pdflatex is required to build the manual (maybe use --disable-manual)"
+dnl		echo
+dnl		exit 1
+dnl	fi
+dnl fi
 
 dnl Set to true if the manual should be built.
 AM_CONDITIONAL(BUILD_MANUAL, [test "x$build_manual" = "xyes"])
@@ -272,11 +254,11 @@ dnl
 
 if test "x$JAVAC_BIN" != x; then
 	echo 'class conftest { public static void main( String[] args ) { } }' > conftest.java
-	echo -n "checking if javac is able to compile programs ... "
+	AC_MSG_CHECKING([checking if javac is able to compile programs ... ])
 	if sh -c "$JAVAC_BIN conftest.java" >>config.log 2>&1; then
-		echo "yes"
+		AC_MSG_RESULT([yes])
 	else
-		echo "no"
+		AC_MSG_RESULT([no])
 		JAVAC_BIN=""
 	fi
 	rm -f conftest.java conftest.class
@@ -296,11 +278,11 @@ dnl
 
 if test "x$JULIA_BIN" != x; then
 	echo 'println( "can run julia programs" );' > conftest.jl
-	echo -n "checking if julia is able to run programs ... "
+	AC_MSG_CHECKING([checking if julia is able to run programs ... ])
 	if sh -c "$JULIA_BIN conftest.jl" >>config.log 2>&1; then
-		echo "yes"
+		AC_MSG_RESULT([yes])
 	else
-		echo "no"
+		AC_MSG_RESULT([no])
 		JULIA_BIN=""
 	fi
 	rm -f conftest.jl
@@ -308,7 +290,7 @@ fi
 
 dnl We can run julia, now make sure we have 1.0
 if test "x$JULIA_BIN" != x; then
-	echo -n "checking if julia is version 1.0 or later ... "
+	AC_MSG_CHECKING([checking if julia is version 1.0 or later ... ])
 
 	dnl We assume the form "julia version X.X.X"
 	dnl   1. everything before the version number.
@@ -318,10 +300,10 @@ if test "x$JULIA_BIN" != x; then
 	dnl in [] so autotools do not interpret anything in it.
 	JULIA1="`$JULIA_BIN -v | sed ['s/[A-Za-z ]\+//g; s/\.[0-9\.]*//; /^[1-9][0-9]*/!d;']`"
 	if test "x$JULIA1" != x; then
-		echo "yes"
+		AC_MSG_RESULT([yes]) 
 	else
+		AC_MSG_RESULT([no]) 
 		JULIA_BIN=""
-		echo "no"
 	fi
 fi
 
@@ -353,11 +335,11 @@ main:
 	ret
 EOF
 
-echo -n "checking if ragel ASM tests will build ... "
+AC_MSG_CHECKING([checking if ragel ASM tests will build ... ])
 if sh -c "$ASM_BIN -o conftest.bin conftest.s" >>config.log 2>&1; then
-	echo "yes"
+	AC_MSG_RESULT([yes])
 else
-	echo "no"
+	AC_MSG_RESULT([no])
 	ASM_BIN=""
 fi
 rm -f conftest.s
