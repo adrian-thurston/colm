@@ -4,9 +4,9 @@
 # to the ragel language.
 lib_LTLIBRARIES = libfsm.la
 
-pkginclude_HEADERS = \
+libfsminclude_HEADERS = \
 	action.h fsmgraph.h common.h \
-	gendata.h redfsm.h dot.h
+	gendata.h redfsm.h dot.h asm.h ragel.h
 
 # nodist_pkginclude_HEADERS = config.h
 

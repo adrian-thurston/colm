@@ -50,7 +50,6 @@ AC_PROG_CXX
 AC_CHECK_TOOL(AR, ar)
 AC_PROG_RANLIB
 AC_PROG_LIBTOOL
-
 SED_SUBST=["\
 	-e 's|@CXX@|${CXX}|g' \
 	-e 's|@CC@|${CC}|g' \
@@ -58,6 +57,20 @@ SED_SUBST=["\
 
 dnl Set test on c++ compiler.
 AC_LANG_CPLUSPLUS
+
+dnl
+dnl libfsmincludedir
+dnl
+libfsmincludedir='${includedir}/libfsm/'
+AC_SUBST(libfsmincludedir)
+SED_SUBST="$SED_SUBST -e 's|[@]libfsmincludedir[@]|$libfsmincludedir|g'"
+
+dnl
+dnl aaplincludedir
+dnl
+aaplincludedir='${includedir}/aapl/'
+AC_SUBST(aaplincludedir)
+SED_SUBST="$SED_SUBST -e 's|[@]aaplincludedir[@]|$aaplincludedir|g'"
 
 dnl Check for definition of MAKE.
 AC_PROG_MAKE_SET

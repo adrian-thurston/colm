@@ -1,5 +1,3 @@
-aaplincludedir = $(includedir)/aapl
-
 aaplinclude_HEADERS = \
 	avlbasic.h avlimel.h avlmap.h bstcommon.h compare.h insertsort.h \
 	sbstset.h avlcommon.h avlimelkey.h avlmel.h bstmap.h dlcommon.h \
