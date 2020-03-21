@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 
-set -x
+set -xe
 
 eval `grep VERSION= config.status`
 DIST=colm-$VERSION.tar.gz
