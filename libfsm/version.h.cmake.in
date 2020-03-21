@@ -1,9 +1,0 @@
-/* version.h Generated from version.h.cmake.in by cmake */
-
-#ifndef _RAGEL_VERSION_H
-#define _RAGEL_VERSION_H
-
-#cmakedefine RAGEL_VERSION "@RAGEL_VERSION@"
-#cmakedefine RAGEL_PUBDATE "@RAGEL_PUBDATE@"
-
-#endif /* _RAGEL_VERSION_H */

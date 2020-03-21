@@ -16,7 +16,7 @@ libfsminclude_HEADERS = \
 libfsm_la_CPPFLAGS = -I$(top_srcdir)/aapl
 
 dist_libfsm_la_SOURCES = \
-	buffer.h codegen.h \
+	parsedata.h parsetree.h inputdata.h codegen.h \
 	actloop.h actexp.h \
 	tables.h \
 	binary.h bingoto.h binbreak.h binvar.h \
@@ -34,9 +34,6 @@ dist_libfsm_la_SOURCES = \
 	switch.cc switchgoto.cc switchbreak.cc switchvar.cc \
 	goto.cc gotoloop.cc gotoexp.cc ipgoto.cc \
 	dot.cc asm.cc
-
-nodist_libfsm_la_SOURCES = \
-	version.h
 
 libfsm_la_LDFLAGS = -no-undefined
 

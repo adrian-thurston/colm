@@ -1,25 +1,18 @@
 #!/bin/bash
 #
 
-# Make the dist, build from the dist it, install, then run the test suite
-# against what's been installed.
+set -x
 
-set -ex
+eval `grep VERSION= config.status`
+DIST=colm-$VERSION.tar.gz
 
-VERSION=`sed -n '/^[ \t]*AC_INIT\>/{ s/.*, *//; s/ *).*//; p }' configure.ac`
-
-rm -Rf colm-suite-${VERSION}.tar.{gz,bz2} colm-suite-${VERSION}
-
+trap "rm -f $DIST" EXIT
 make dist
-tar -zxvf colm-suite-${VERSION}.tar.gz
 
-cd colm-suite-${VERSION}
+WORKDIR=`mktemp -d /tmp/colm.XXXXXX`
+#trap "rm -Rf $DIST $WORKDIR" EXIT
+tar -C $WORKDIR -xzvf $DIST
 
-./configure --prefix=/tmp/colm-suite \
-	--with-crack=/home/thurston/pkgs/crack --enable-manual --enable-debug
-
-make
-
-cd test
-
-./runtests
+cd $WORKDIR/${DIST%.tar.gz}
+./configure && make -j8
+cd test && ./runtests

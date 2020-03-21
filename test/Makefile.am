@@ -11,3 +11,7 @@ subject.mk: subject.mk.in Makefile
 
 subject.sh: subject.sh.in Makefile
 	@$(top_srcdir)/sedsubst $< $@ -w,+x $(SED_SUBST)
+
+dist: dist.sh
+	@$(top_srcdir)/sedsubst $< $@ -w,+x $(SED_SUBST)
+

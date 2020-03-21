@@ -25,7 +25,6 @@
 #include "fsmgraph.h"
 #include "gendata.h"
 #include "inputdata.h"
-#include "version.h"
 
 /*
  * Code generators.
