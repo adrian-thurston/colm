@@ -22,6 +22,7 @@
 
 #include "fsmgraph.h"
 #include "parsedata.h"
+#include "action.h"
 
 #include <string.h>
 #include <assert.h>

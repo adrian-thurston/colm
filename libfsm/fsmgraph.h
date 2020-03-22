@@ -61,7 +61,6 @@ struct StateAp;
 struct FsmAp;
 struct Action;
 struct LongestMatchPart;
-struct LengthDef;
 struct CondSpace;
 struct FsmCtx;
 struct InlineBlock;

@@ -29,6 +29,9 @@ struct NameInst;
 struct NameRef;
 struct LongestMatch;
 struct InlineList;
+struct LongestMatchPart;
+struct Action;
+struct CondSpace;
 
 /*
  * Inline code tree

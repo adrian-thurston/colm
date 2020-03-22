@@ -25,95 +25,148 @@
 
 #include <iostream>
 #include <limits.h>
-#include <sstream>
-#include <vector>
-#include <set>
 
+#include "avlmap.h"
+#include "bstmap.h"
+#include "dlist.h"
+#include "fsmgraph.h"
+#include "compare.h"
+#include "common.h"
+
+#include "ragel.h"
 #include "avlmap.h"
 #include "bstmap.h"
 #include "vector.h"
 #include "dlist.h"
 #include "fsmgraph.h"
-#include "compare.h"
-#include "vector.h"
-#include "common.h"
-#include "parsetree.h"
-#include "action.h"
 
-
-/* Forwards. */
-using std::ostream;
-
-struct VarDef;
+struct NameInst;
 struct Join;
-struct Expression;
-struct Term;
-struct FactorWithAug;
-struct FactorWithLabel;
-struct FactorWithRep;
-struct FactorWithNeg;
-struct Factor;
-struct Literal;
-struct Range;
-struct RegExpr;
-struct ReItem;
-struct ReOrBlock;
-struct ReOrItem;
+struct ParseData;
+
+/* Tree nodes. */
+
+struct NfaUnion;
+struct MachineDef;
 struct LongestMatch;
-struct CodeGenData;
-struct InputData;
-struct InputItem;
+struct LongestMatchPart;
+struct LmPartList;
+struct Range;
+struct LengthDef;
+struct Action;
+struct InlineList;
 
-typedef DList<LongestMatch> LmList;
+/* Reference to a named state. */
+struct NameRef : public Vector<std::string> {};
+typedef Vector<NameRef*> NameRefList;
+typedef Vector<NameInst*> NameTargList;
 
-/* This is used for tracking the include files/machine pairs. */
-struct IncludeHistoryItem
+/*
+ * LongestMatch
+ *
+ * Wherever possible the item match will execute on the character. If not
+ * possible the item match will execute on a lookahead character and either
+ * hold the current char (if one away) or backup.
+ *
+ * How to handle the problem of backing up over a buffer break?
+ * 
+ * Don't want to use pending out transitions for embedding item match because
+ * the role of item match action is different: it may sometimes match on the
+ * final transition, or may match on a lookahead character.
+ *
+ * Don't want to invent a new operator just for this. So just trail action
+ * after machine, this means we can only use literal actions.
+ *
+ * The item action may 
+ *
+ * What states of the machine will be final. The item actions that wrap around
+ * on the last character will go straight to the start state.
+ *
+ * Some transitions will be lookahead transitions, they will hold the current
+ * character. Crossing them with regular transitions must be restricted
+ * because it does not make sense. The transition cannot simultaneously hold
+ * and consume the current character.
+ */
+struct LongestMatchPart
 {
-	IncludeHistoryItem( const char *fileName, const char *sectionName )
-		: fileName(fileName), sectionName(sectionName) {}
+	LongestMatchPart( Join *join, Action *action, 
+			const InputLoc &semiLoc, int longestMatchId )
+	: 
+		join(join), action(action), semiLoc(semiLoc), 
+		longestMatchId(longestMatchId), inLmSelect(false) { }
 
-	std::string fileName;
-	std::string sectionName;
-};
-
-typedef std::vector<IncludeHistoryItem> IncludeHistory;
-
-/* Graph dictionary. */
-struct GraphDictEl 
-:
-	public AvlTreeEl<GraphDictEl>,
-	public DListEl<GraphDictEl>
-{
-	GraphDictEl( std::string k ) 
-		: key(k), value(0), isInstance(false) { }
-	GraphDictEl( std::string k, VarDef *value ) 
-		: key(k), value(value), isInstance(false) { }
+	InputLoc getLoc();
 	
-	~GraphDictEl()
-	{
-		delete value;
-	}
+	Join *join;
+	Action *action;
+	InputLoc semiLoc;
 
-	std::string getKey() { return key; }
+	Action *setActId;
+	Action *actOnLast;
+	Action *actOnNext;
+	Action *actLagBehind;
+	Action *actNfaOnLast;
+	Action *actNfaOnNext;
+	Action *actNfaOnEof;
+	int longestMatchId;
+	bool inLmSelect;
+	LongestMatch *longestMatch;
 
-	std::string key;
-	VarDef *value;
-	bool isInstance;
-
-	/* Location info of graph definition. Points to variable name of assignment. */
-	InputLoc loc;
+	LongestMatchPart *prev, *next;
 };
 
-typedef AvlTree<GraphDictEl, std::string, CmpString> GraphDict;
-typedef DList<GraphDictEl> GraphList;
+/* Declare a new type so that ptreetypes.h need not include dlist.h. */
+struct LmPartList
+	: DList<LongestMatchPart> {};
+
+struct LongestMatch
+{
+	/* Construct with a list of joins */
+	LongestMatch( const InputLoc &loc, LmPartList *longestMatchList )
+	: 
+		loc(loc),
+		longestMatchList(longestMatchList),
+		lmSwitchHandlesError(false),
+		nfaConstruction(false)
+	{ }
+
+	InputLoc loc;
+	LmPartList *longestMatchList;
+	std::string name;
+	Action *lmActSelect;
+	bool lmSwitchHandlesError;
+	bool nfaConstruction;
+
+	LongestMatch *next, *prev;
+
+	/* Tree traversal. */
+	FsmRes walkClassic( ParseData *pd );
+	FsmRes walk( ParseData *pd );
+
+	FsmRes mergeNfaStates( ParseData *pd, FsmAp *fsm );
+	bool onlyOneNfa( ParseData *pd, FsmAp *fsm, StateAp *st, NfaTrans *in );
+	bool matchCanFail( ParseData *pd, FsmAp *fsm, StateAp *st );
+	void eliminateNfaActions( ParseData *pd, FsmAp *fsm );
+	void advanceNfaActions( ParseData *pd, FsmAp *fsm );
+	FsmRes buildBaseNfa( ParseData *pd );
+	FsmRes walkNfa( ParseData *pd );
+
+	void makeNameTree( ParseData *pd );
+	void resolveNameRefs( ParseData *pd );
+	void transferScannerLeavingActions( FsmAp *graph );
+	void runLongestMatch( ParseData *pd, FsmAp *graph );
+	Action *newLmAction( ParseData *pd, const InputLoc &loc, const char *name, 
+			InlineList *inlineList );
+	void makeActions( ParseData *pd );
+	void findName( ParseData *pd );
+	void restart( FsmAp *graph, TransAp *trans );
+	void restart( FsmAp *graph, CondAp *cond );
+};
+
 
 /* Priority name dictionary. */
 typedef AvlMapEl<std::string, int> PriorDictEl;
 typedef AvlMap<std::string, int, CmpString> PriorDict;
-
-/* Local error name dictionary. */
-typedef AvlMapEl<std::string, int> LocalErrDictEl;
-typedef AvlMap<std::string, int, CmpString> LocalErrDict;
 
 struct NameMapVal
 {
@@ -124,7 +177,6 @@ struct NameMapVal
 typedef AvlMapEl<std::string, NameMapVal*> NameMapEl;
 typedef AvlMap<std::string, NameMapVal*, CmpString> NameMap;
 typedef Vector<NameInst*> NameVect;
-typedef BstSet<NameInst*> NameSet;
 
 /* Node in the tree of instantiated names. */
 struct NameInst
@@ -182,248 +234,10 @@ struct NameFrame
 	NameInst *prevLocalScope;
 };
 
-struct LengthDef
-{
-	LengthDef( char *name )
-		: name(name) {}
-
-	char *name;
-	LengthDef *prev, *next;
-};
-
-typedef DList<LengthDef> LengthDefList;
-
 extern const int ORD_PUSH;
 extern const int ORD_RESTORE;
 extern const int ORD_COND;
 extern const int ORD_COND2;
 extern const int ORD_TEST;
-
-/* Class to collect information about the machine during the 
- * parse of input. */
-struct ParseData
-{
-	/* Create a new parse data object. This is done at the beginning of every
-	 * fsm specification. */
-	ParseData( InputData *id, std::string sectionName,
-			int machineId, const InputLoc &sectionLoc, const HostLang *hostLang,
-			MinimizeLevel minimizeLevel, MinimizeOpt minimizeOpt );
-	~ParseData();
-
-	/*
-	 * Setting up the graph dict.
-	 */
-
-	/* Initialize a graph dict with the basic fsms. */
-	void initGraphDict();
-	void createBuiltin( const char *name, BuiltinMachine builtin );
-
-	/* Make a name id in the current name instantiation scope if it is not
-	 * already there. */
-	NameInst *addNameInst( const InputLoc &loc, std::string data, bool isLabel );
-	void makeRootNames();
-	void makeNameTree( GraphDictEl *gdNode );
-	void makeExportsNameTree();
-	void fillNameIndex( NameInst *from );
-
-	/* Increments the usage count on entry names. Names that are no longer
-	 * needed will have their entry points unset. */
-	void unsetObsoleteEntries( FsmAp *graph );
-
-	/* Resove name references in action code and epsilon transitions. */
-	NameSet resolvePart( NameInst *refFrom, const std::string &data, bool recLabelsOnly );
-	void resolveFrom( NameSet &result, NameInst *refFrom, 
-			NameRef *nameRef, int namePos );
-	NameInst *resolveStateRef( NameRef *nameRef, InputLoc &loc, Action *action );
-	void resolveNameRefs( InlineList *inlineList, Action *action );
-	void resolveActionNameRefs();
-
-	/* Set the alphabet type. If type types are not valid returns false. */
-	bool setAlphType( const InputLoc &loc, const HostLang *hostLang,
-			const char *s1 );
-	bool setAlphType( const InputLoc &loc, const HostLang *hostLang,
-			const char *s1, const char *s2 );
-
-	/* Override one of the variables ragel uses. */
-	bool setVariable( const char *var, InlineList *inlineList );
-
-	/* Dumping the name instantiation tree. */
-	void printNameInst( std::ostream &out, NameInst *nameInst, int level );
-	void printNameTree( std::ostream &out );
-
-	void analysisResult( long code, long id, const char *scode );
-
-	void reportBreadthResults( BreadthResult *breadth );
-	BreadthResult *checkBreadth( FsmAp *fsm );
-	void reportAnalysisResult( FsmRes &res );
-
-	/* Make the graph from a graph dict node. Does minimization. */
-	FsmRes makeInstance( GraphDictEl *gdNode );
-	FsmRes makeSpecific( GraphDictEl *gdNode );
-	FsmRes makeAll();
-
-	void makeExports();
-
-	FsmRes prepareMachineGen( GraphDictEl *graphDictEl, const HostLang *hostLang );
-	void generateXML( ostream &out );
-	void generateReduced( const char *inputFileName, CodeStyle codeStyle,
-			std::ostream &out, const HostLang *hostLang );
-
-	std::string sectionName;
-	FsmAp *sectionGraph;
-
-	void initKeyOps( const HostLang *hostLang );
-
-	void errorStateLabels( const NameSet &resolved );
-
-	/*
-	 * Data collected during the parse.
-	 */
-
-	/* Dictionary of graphs. Both instances and non-instances go here. */
-	GraphDict graphDict;
-
-	/* The list of instances. */
-	GraphList instanceList;
-
-	/* Dictionary of actions. Lets actions be defined and then referenced. */
-	ActionDict actionDict;
-
-	/* Dictionary of named priorities. */
-	PriorDict priorDict;
-
-	/* Dictionary of named local errors. */
-	LocalErrDict localErrDict;
-
-	/* Various next identifiers. */
-	int nextLocalErrKey, nextNameId;
-	
-	/* The default priority number key for a machine. This is active during
-	 * the parse of the rhs of a machine assignment. */
-	int curDefPriorKey;
-
-	int curDefLocalErrKey;
-
-	/* Alphabet type. */
-	HostType *alphType;
-	HostType *userAlphType;
-	bool alphTypeSet;
-	InputLoc alphTypeLoc;
-
-	/* The alphabet range. */
-	char *lowerNum, *upperNum;
-	Key lowKey, highKey;
-	InputLoc rangeLowLoc, rangeHighLoc;
-
-	InputData *id;
-
-	/* The name of the file the fsm is from, and the spec name. */
-	int machineId;
-	InputLoc sectionLoc;
-
-	/* Root of the name tree. One root is for the instantiated machines. The
-	 * other root is for exported definitions. */
-	NameInst *rootName;
-	NameInst *exportsRootName;
-	
-	/* Name tree walking. */
-	NameInst *curNameInst;
-	int curNameChild;
-
-	/* The place where resolved epsilon transitions go. These cannot go into
-	 * the parse tree because a single epsilon op can resolve more than once
-	 * to different nameInsts if the machine it's in is used more than once. */
-	NameVect epsilonResolvedLinks;
-	int nextEpsilonResolvedLink;
-
-	/* Root of the name tree used for doing local name searches. */
-	NameInst *localNameScope;
-
-	void setLmInRetLoc( InlineList *inlineList );
-	void initLongestMatchData();
-	void longestMatchInitTweaks( FsmAp *graph );
-	void initNameWalk();
-	void initExportsNameWalk();
-	NameInst *nextNameScope() { return curNameInst->childVect[curNameChild]; }
-	NameFrame enterNameScope( bool isLocal, int numScopes );
-	void popNameScope( const NameFrame &frame );
-	void resetNameScope( const NameFrame &frame );
-
-	void nfaTermCheckKleeneZero();
-	void nfaTermCheckMinZero();
-	void nfaTermCheckPlusZero();
-	void nfaTermCheckRepZero();
-	void nfaTermCheckZeroReps();
-
-	void clear();
-
-	/* Counter for assigning ids to longest match items. */
-	int nextLongestMatchId;
-
-	int nextRepId;
-
-	/* List of all longest match parse tree items. */
-	LmList lmList;
-
-	Action *newLmCommonAction( const char *name, InlineList *inlineList );
-
-	Action *initTokStart;
-	int initTokStartOrd;
-
-	Action *setTokStart;
-	int setTokStartOrd;
-
-	Action *initActId;
-	int initActIdOrd;
-
-	Action *setTokEnd;
-	int setTokEndOrd;
-
-	LengthDefList lengthDefList;
-
-	CodeGenData *cgd;
-
-	struct Cut
-	{
-		Cut( std::string name, int entryId )
-			: name(name), entryId(entryId) {}
-
-		std::string name;
-		int entryId;
-	};
-
-	/* Track the cuts we set in the fsm graph. We perform cost analysis on the
-	 * built fsm graph for each of these entry points. */
-	Vector<Cut> cuts;
-
-	ParseData *prev, *next;
-
-	FsmCtx *fsmCtx;
-
-	/* Make a list of places to look for an included file. */
-	bool duplicateInclude( const char *inclFileName, const char *inclSectionName );
-
-	IncludeHistory includeHistory;
-
-	std::set<std::string> actionParams;
-};
-
-Key makeFsmKeyHex( char *str, const InputLoc &loc, ParseData *pd );
-Key makeFsmKeyDec( char *str, const InputLoc &loc, ParseData *pd );
-Key makeFsmKeyNum( char *str, const InputLoc &loc, ParseData *pd );
-Key makeFsmKeyChar( char c, ParseData *pd );
-void makeFsmKeyArray( Key *result, char *data, int len, ParseData *pd );
-void makeFsmUniqueKeyArray( KeySet &result, const char *data, int len, 
-		bool caseInsensitive, ParseData *pd );
-FsmAp *makeBuiltin( BuiltinMachine builtin, ParseData *pd );
-FsmAp *dotFsm( ParseData *pd );
-FsmAp *dotStarFsm( ParseData *pd );
-
-Key *prepareHexString( ParseData *pd, const InputLoc &loc,
-		const char *data, long length, long &resLen );
-char *prepareLitString( InputData *id, const InputLoc &loc, const char *data, long length, 
-		long &resLen, bool &caseInsensitive );
-const char *checkLitOptions( InputData *id, const InputLoc &loc,
-		const char *data, int length, bool &caseInsensitive );
 
 #endif

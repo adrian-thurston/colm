@@ -20,10 +20,10 @@
  * SOFTWARE.
  */
 
-
 #include "ragel.h"
 #include "fsmgraph.h"
 #include "parsedata.h"
+#include "action.h"
 
 /* Error reporting format. */
 ErrorFormat errorFormat = ErrorFormatGNU;
@@ -123,7 +123,6 @@ void FsmCtx::analyzeAction( Action *action, InlineList *inlineList )
 			analyzeAction( action, item->children );
 	}
 }
-
 
 /* Check actions for bad uses of fsm directives. We don't go inside longest
  * match items in actions created by ragel, since we just want the user
