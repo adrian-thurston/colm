@@ -21,9 +21,7 @@
  */
 
 #include "flatvar.h"
-
 #include "parsedata.h"
-#include "inputdata.h"
 
 void FlatVar::LOCATE_TRANS()
 {

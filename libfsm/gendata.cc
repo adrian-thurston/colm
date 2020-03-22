@@ -24,7 +24,6 @@
 #include "ragel.h"
 #include "parsedata.h"
 #include "fsmgraph.h"
-#include "inputdata.h"
 
 #include <string.h>
 #include <iostream>

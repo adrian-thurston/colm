@@ -29,6 +29,7 @@
 #include "common.h"
 #include "gendata.h"
 #include "vector.h"
+#include "idbase.h"
 
 using std::string;
 using std::ostream;
@@ -165,7 +166,7 @@ public:
 	virtual void statsSummary();
 
 protected:
-	friend TableArray;
+	friend struct TableArray;
 	typedef Vector<TableArray*> ArrayVector;
 	ArrayVector arrayVector;
 

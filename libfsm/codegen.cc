@@ -24,7 +24,6 @@
 #include "ragel.h"
 #include "redfsm.h"
 #include "gendata.h"
-#include "inputdata.h"
 #include "parsedata.h"
 #include <sstream>
 #include <string>

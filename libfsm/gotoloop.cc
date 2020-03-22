@@ -26,7 +26,6 @@
 #include "bstmap.h"
 #include "gendata.h"
 #include "parsedata.h"
-#include "inputdata.h"
 
 std::ostream &GotoLoop::ACTION_SWITCH()
 {

@@ -16,7 +16,7 @@ libfsminclude_HEADERS = \
 libfsm_la_CPPFLAGS = -I$(top_srcdir)/aapl
 
 dist_libfsm_la_SOURCES = \
-	parsedata.h parsetree.h inputdata.h codegen.h \
+	parsedata.h parsetree.h codegen.h \
 	actloop.h actexp.h \
 	tables.h \
 	binary.h bingoto.h binbreak.h binvar.h \

@@ -23,7 +23,6 @@
 #include "ragel.h"
 #include "dot.h"
 #include "gendata.h"
-#include "inputdata.h"
 #include "parsedata.h"
 
 using std::istream;
@@ -391,9 +390,3 @@ void GraphvizDotGen::write( )
 		"}\n";
 }
 
-void InputData::writeDot( ostream &out )
-{
-	ParseData *pd = dotGenPd;
-	GraphvizDotGen dotGen( this, pd->fsmCtx, pd->sectionGraph, pd->sectionName, pd->machineId, out );
-	dotGen.write();
-}

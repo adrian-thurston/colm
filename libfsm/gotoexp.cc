@@ -26,7 +26,6 @@
 #include "gendata.h"
 #include "bstmap.h"
 #include "parsedata.h"
-#include "inputdata.h"
 
 std::ostream &GotoExp::EXEC_FUNCS()
 {

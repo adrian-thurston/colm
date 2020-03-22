@@ -22,7 +22,6 @@
 
 #include "switchvar.h"
 #include "parsedata.h"
-#include "inputdata.h"
 
 void SwitchVar::LOCATE_COND()
 {

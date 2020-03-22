@@ -30,7 +30,6 @@
 #include "bstmap.h"
 #include "gendata.h"
 #include "parsedata.h"
-#include "inputdata.h"
 #include <sstream>
 
 using std::ostream;

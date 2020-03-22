@@ -24,7 +24,6 @@
 #include "parsedata.h"
 #include "fsmgraph.h"
 #include "gendata.h"
-#include "inputdata.h"
 
 /*
  * Code generators.

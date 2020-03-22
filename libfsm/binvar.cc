@@ -22,8 +22,6 @@
 
 #include "binvar.h"
 #include "parsedata.h"
-#include "inputdata.h"
-
 
 void BinVar::LOCATE_TRANS()
 {
