@@ -485,7 +485,7 @@ void compileOutput( const char *argv0, const bool inSource, char *srcLocation )
 				" -I%s/../aapl"
 				" -I%s/include"
 				" -L%s"
-				" -Wl,-rpath,%s",
+				" %s/libcolm.a",
 				binaryFn, intermedFn, srcLocation,
 				srcLocation, location, location );
 	}
@@ -510,7 +510,9 @@ void compileOutput( const char *argv0, const bool inSource, char *srcLocation )
 		strcat( command, " -L" );
 		strcat( command, *lp );
 	}
-	strcat( command, " -lcolm" );
+
+	if ( !inSource )
+		strcat( command, " -lcolm" );
 
 	if( !compileOutputCommand( command ) && run )
 		runOutputProgram();

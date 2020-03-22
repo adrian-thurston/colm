@@ -35,4 +35,4 @@ jobs:
       run: cd unpack/colm-* && make
 
     - name: test the dist
-      run: cd unpack/colm--*/test && ./runtests
+      run: cd unpack/colm-*/test && ./runtests
