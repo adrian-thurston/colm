@@ -55,7 +55,7 @@ bool ActionTable::hasAction( Action *action )
 }
 
 /* Insert an action into an action table. */
-void LmActionTable::setAction( int ordering, LongestMatchPart *action )
+void LmActionTable::setAction( int ordering, FsmLongestMatchPart *action )
 {
 	/* Multi-insert in case specific instances of an action appear in a
 	 * transition more than once. */
@@ -314,7 +314,7 @@ void FsmAp::leaveFsmAction( int ordering, Action *action )
 }
 
 /* Add functions to the longest match action table for constructing scanners. */
-void FsmAp::longMatchAction( int ordering, LongestMatchPart *lmPart )
+void FsmAp::longMatchAction( int ordering, FsmLongestMatchPart *lmPart )
 {
 	/* Walk all final states. */
 	for ( StateSet::Iter state = finStateSet; state.lte(); state++ ) {
@@ -1125,7 +1125,7 @@ int FsmAp::compareStateData( const StateAp *state1, const StateAp *state2 )
 	if ( cmpRes != 0 )
 		return cmpRes;
 	
-	return CmpTable<LongestMatchPart*>::compare(
+	return CmpTable<FsmLongestMatchPart*>::compare(
 			state1->lmNfaParts, state2->lmNfaParts );
 }
 

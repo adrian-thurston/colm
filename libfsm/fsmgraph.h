@@ -60,7 +60,7 @@ struct TransAp;
 struct StateAp;
 struct FsmAp;
 struct Action;
-struct LongestMatchPart;
+struct FsmLongestMatchPart;
 struct CondSpace;
 struct FsmCtx;
 struct InlineBlock;
@@ -279,13 +279,13 @@ typedef SBstSet< Action*, CmpOrd<Action*> > ActionSet;
 typedef CmpSTable< Action*, CmpOrd<Action*> > CmpActionSet;
 
 /* Transistion Action Element. */
-typedef SBstMapEl< int, LongestMatchPart* > LmActionTableEl;
+typedef SBstMapEl< int, FsmLongestMatchPart* > LmActionTableEl;
 
 /* Transition Action Table.  */
 struct LmActionTable 
-	: public SBstMap< int, LongestMatchPart*, CmpOrd<int> >
+	: public SBstMap< int, FsmLongestMatchPart*, CmpOrd<int> >
 {
-	void setAction( int ordering, LongestMatchPart *action );
+	void setAction( int ordering, FsmLongestMatchPart *action );
 	void setActions( const LmActionTable &other );
 };
 
@@ -950,7 +950,7 @@ typedef Vector<EptVectEl> EptVect;
 typedef BstSet<int> EntryIdSet;
 
 /* Set of longest match items that may be active in a given state. */
-typedef BstSet<LongestMatchPart*> LmItemSet;
+typedef BstSet<FsmLongestMatchPart*> LmItemSet;
 
 /* A Conditions which is to be 
  * transfered on pending out transitions. */
@@ -1961,7 +1961,7 @@ struct FsmAp
 	void allTransAction( int ordering, Action *action );
 	void finishFsmAction( int ordering, Action *action );
 	void leaveFsmAction( int ordering, Action *action );
-	void longMatchAction( int ordering, LongestMatchPart *lmPart );
+	void longMatchAction( int ordering, FsmLongestMatchPart *lmPart );
 
 	/* Set conditions. */
 	CondSpace *addCondSpace( const CondSet &condSet );
@@ -2536,5 +2536,159 @@ template< class Trans > int FsmAp::compareCondBitElimPtr( Trans *trans1, Trans *
 	}
 	return 0;
 }
+
+struct NameInst;
+
+/* Tree nodes. */
+
+struct NfaUnion;
+struct MachineDef;
+struct FsmLongestMatch;
+struct FsmLongestMatchPart;
+struct FsmLmPartList;
+struct Range;
+struct LengthDef;
+struct Action;
+struct InlineList;
+
+/* Reference to a named state. */
+struct NameRef : public Vector<std::string> {};
+typedef Vector<NameRef*> NameRefList;
+typedef Vector<NameInst*> NameTargList;
+
+/*
+ * FsmLongestMatch
+ *
+ * Wherever possible the item match will execute on the character. If not
+ * possible the item match will execute on a lookahead character and either
+ * hold the current char (if one away) or backup.
+ *
+ * How to handle the problem of backing up over a buffer break?
+ * 
+ * Don't want to use pending out transitions for embedding item match because
+ * the role of item match action is different: it may sometimes match on the
+ * final transition, or may match on a lookahead character.
+ *
+ * Don't want to invent a new operator just for this. So just trail action
+ * after machine, this means we can only use literal actions.
+ *
+ * The item action may 
+ *
+ * What states of the machine will be final. The item actions that wrap around
+ * on the last character will go straight to the start state.
+ *
+ * Some transitions will be lookahead transitions, they will hold the current
+ * character. Crossing them with regular transitions must be restricted
+ * because it does not make sense. The transition cannot simultaneously hold
+ * and consume the current character.
+ */
+struct FsmLongestMatchPart
+{
+	FsmLongestMatchPart( Action *action, int longestMatchId )
+	: 
+		action(action),
+		longestMatchId(longestMatchId),
+		inLmSelect(false)
+	{ }
+
+	Action *action;
+	Action *setActId;
+	Action *actOnLast;
+	Action *actOnNext;
+	Action *actLagBehind;
+	Action *actNfaOnLast;
+	Action *actNfaOnNext;
+	Action *actNfaOnEof;
+	int longestMatchId;
+	bool inLmSelect;
+	FsmLongestMatch *longestMatch;
+
+	FsmLongestMatchPart *prev, *next;
+};
+
+/* Declare a new type so that ptreetypes.h need not include dlist.h. */
+struct FsmLmPartList
+	: DList<FsmLongestMatchPart> {};
+
+struct FsmLongestMatch
+{
+	/* Construct with a list of joins */
+	FsmLongestMatch( FsmLmPartList *longestMatchList )
+	: 
+		longestMatchList(longestMatchList),
+		lmSwitchHandlesError(false)
+	{
+	}
+
+	FsmLmPartList *longestMatchList;
+	bool lmSwitchHandlesError;
+
+	void restart( FsmAp *graph, TransAp *trans );
+	void restart( FsmAp *graph, CondAp *cond );
+};
+
+struct NameMapVal
+{
+	Vector<NameInst*> vals;
+};
+
+/* Tree of instantiated names. */
+typedef AvlMapEl<std::string, NameMapVal*> NameMapEl;
+typedef AvlMap<std::string, NameMapVal*, CmpString> NameMap;
+typedef Vector<NameInst*> NameVect;
+
+/* Node in the tree of instantiated names. */
+struct NameInst
+{
+	NameInst( const InputLoc &loc, NameInst *parent, std::string name, int id, bool isLabel ) : 
+		loc(loc), parent(parent), name(name), id(id), isLabel(isLabel),
+		isLongestMatch(false), numRefs(0), numUses(0), start(0), final(0) {}
+
+	~NameInst();
+
+	InputLoc loc;
+
+	/* Keep parent pointers in the name tree to retrieve 
+	 * fully qulified names. */
+	NameInst *parent;
+
+	std::string name;
+	int id;
+	bool isLabel;
+	bool isLongestMatch;
+
+	int numRefs;
+	int numUses;
+
+	/* Names underneath us, excludes anonymous names. */
+	NameMap children;
+
+	/* All names underneath us in order of appearance. */
+	NameVect childVect;
+
+	/* Join scopes need an implicit "final" target. */
+	NameInst *start, *final;
+
+	/* During a fsm generation walk, lists the names that are referenced by
+	 * epsilon operations in the current scope. After the link is made by the
+	 * epsilon reference and the join operation is complete, the label can
+	 * have its refcount decremented. Once there are no more references the
+	 * entry point can be removed from the fsm returned. */
+	NameVect referencedNames;
+
+	/* Pointers for the name search queue. */
+	NameInst *prev, *next;
+
+	/* Check if this name inst or any name inst below is referenced. */
+	bool anyRefsRec();
+};
+
+typedef DList<NameInst> NameInstList;
+
+extern const int ORD_PUSH;
+extern const int ORD_RESTORE;
+extern const int ORD_COND;
+extern const int ORD_COND2;
+extern const int ORD_TEST;
 
 #endif

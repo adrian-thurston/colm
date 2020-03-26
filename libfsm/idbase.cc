@@ -103,8 +103,8 @@ void FsmCtx::analyzeAction( Action *action, InlineList *inlineList )
 
 		/* Need to recurse into longest match items. */
 		if ( item->type == InlineItem::LmSwitch ) {
-			LongestMatch *lm = item->longestMatch;
-			for ( LmPartList::Iter lmi = *lm->longestMatchList; lmi.lte(); lmi++ ) {
+			FsmLongestMatch *lm = item->longestMatch;
+			for ( FsmLmPartList::Iter lmi = *lm->longestMatchList; lmi.lte(); lmi++ ) {
 				if ( lmi->action != 0 )
 					analyzeAction( action, lmi->action->inlineList );
 			}
@@ -114,7 +114,7 @@ void FsmCtx::analyzeAction( Action *action, InlineList *inlineList )
 				item->type == InlineItem::LmOnNext ||
 				item->type == InlineItem::LmOnLagBehind )
 		{
-			LongestMatchPart *lmi = item->longestMatchPart;
+			FsmLongestMatchPart *lmi = item->longestMatchPart;
 			if ( lmi->action != 0 )
 				analyzeAction( action, lmi->action->inlineList );
 		}

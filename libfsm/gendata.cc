@@ -225,7 +225,7 @@ void Reducer::makeLmSwitch( GenInlineList *outList, InlineItem *item )
 {
 	GenInlineItem *lmSwitch = new GenInlineItem( InputLoc(), GenInlineItem::LmSwitch );
 	GenInlineList *lmList = lmSwitch->children = new GenInlineList;
-	LongestMatch *longestMatch = item->longestMatch;
+	FsmLongestMatch *longestMatch = item->longestMatch;
 
 	/* We can't put the <exec> here because we may need to handle the error
 	 * case and in that case p should not be changed. Instead use a default
@@ -255,7 +255,7 @@ void Reducer::makeLmSwitch( GenInlineList *outList, InlineItem *item )
 	}
 	
 	bool needDefault = false;
-	for ( LmPartList::Iter lmi = *longestMatch->longestMatchList; lmi.lte(); lmi++ ) {
+	for ( FsmLmPartList::Iter lmi = *longestMatch->longestMatchList; lmi.lte(); lmi++ ) {
 		if ( lmi->inLmSelect ) {
 			if ( lmi->action == 0 )
 				needDefault = true;

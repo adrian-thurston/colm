@@ -50,7 +50,7 @@ struct NameInst;
 struct GenInlineItem;
 struct GenInlineList;
 struct RedAction;
-struct LongestMatch;
+struct FsmLongestMatch;
 struct LongestMatchPart;
 
 string itoa( int i );

@@ -27,9 +27,9 @@
 
 struct NameInst;
 struct NameRef;
-struct LongestMatch;
+struct FsmLongestMatch;
 struct InlineList;
-struct LongestMatchPart;
+struct FsmLongestMatchPart;
 struct Action;
 struct CondSpace;
 
@@ -53,8 +53,8 @@ struct InlineItem
 	InlineItem( const InputLoc &loc, NameRef *nameRef, Type type ) : 
 		loc(loc), nameRef(nameRef), children(0), type(type) { }
 
-	InlineItem( const InputLoc &loc, LongestMatch *longestMatch, 
-		LongestMatchPart *longestMatchPart, Type type ) : loc(loc),
+	InlineItem( const InputLoc &loc, FsmLongestMatch *longestMatch, 
+		FsmLongestMatchPart *longestMatchPart, Type type ) : loc(loc),
 		nameRef(0), children(0), longestMatch(longestMatch),
 		longestMatchPart(longestMatchPart), type(type) { } 
 
@@ -86,8 +86,8 @@ struct InlineItem
 	NameRef *nameRef;
 	NameInst *nameTarg;
 	InlineList *children;
-	LongestMatch *longestMatch;
-	LongestMatchPart *longestMatchPart;
+	FsmLongestMatch *longestMatch;
+	FsmLongestMatchPart *longestMatchPart;
 	long substPos;
 	Action *wrappedAction;
 	CondSpace *condSpace;
