@@ -1682,6 +1682,36 @@ void Compiler::makeRuntimeData()
 	runtimeData->global_size = globalObjectDef->size();
 
 	/*
+	 * Exports.
+	 */
+	count = 0;
+	for ( FieldList::Iter of = globalObjectDef->fieldList; of.lte(); of++ ) {
+		ObjectField *field = of->value;
+		if ( field->isExport ) {
+			count += 1;
+		}
+	}
+
+	runtimeData->num_exports = count;
+	if ( count == 0 ) {
+		runtimeData->export_info = 0;
+	}
+	else {
+		runtimeData->export_info = new export_info[count];
+
+		long i = 0;
+		for ( FieldList::Iter of = globalObjectDef->fieldList; of.lte(); of++ ) {
+			ObjectField *field = of->value;
+			if ( field->isExport ) {
+				runtimeData->export_info[i].name = strdup( field->name );
+				runtimeData->export_info[i].global_id = field->offset;
+				i += 1;
+			}
+		}
+	}
+
+
+	/*
 	 * Boundary between terms and non-terms.
 	 */
 	runtimeData->first_non_term_id = firstNonTermId;

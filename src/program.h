@@ -37,6 +37,12 @@ struct stack_block
 	struct stack_block *next;
 };
 
+struct export_info
+{
+	const char *name;
+	int global_id;
+};
+
 struct colm_sections
 {
 	struct lang_el_info *lel_info;
@@ -69,6 +75,9 @@ struct colm_sections
 
 	struct generic_info *generic_info;
 	long num_generics;
+
+	struct export_info *export_info;
+	long num_exports;
 
 	long argv_generic_id;
 	long stds_generic_id;

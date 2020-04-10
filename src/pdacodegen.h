@@ -83,6 +83,7 @@ struct PdaCodeGen
 	String litlen() { return PARSER() + "litlen"; }
 	String literals() { return PARSER() + "literals"; }
 	String fsmTables() { return PARSER() + "fsmTables"; }
+	String exportInfo() { return PARSER() + "exportInfo"; }
 
 	/* 
 	 * Graphviz Generation

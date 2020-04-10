@@ -454,6 +454,24 @@ void PdaCodeGen::writeRuntimeData( colm_sections *runtimeData, struct pda_tables
 		"\n";
 
 	out <<
+		"static struct export_info " << exportInfo() << "[] = {\n";
+
+	for ( long i = 0; i < runtimeData->num_exports; i++ ) {
+		out << "	{ \"" << runtimeData->export_info[i].name << "\", " <<
+				runtimeData->export_info[i].global_id << " },\n";
+	}
+
+	out <<
+		"};\n";
+
+	for ( long i = 0; i < runtimeData->num_exports; i++ ) {
+		out << "const int colm_export_" << runtimeData->export_info[i].name << " = " <<
+				runtimeData->export_info[i].global_id << ";\n";
+	}
+	out <<
+		"\n";
+
+	out <<
 		"struct colm_sections " << objectName << " = \n"
 		"{\n"
 		"	" << lelInfo() << ",\n"
@@ -486,6 +504,10 @@ void PdaCodeGen::writeRuntimeData( colm_sections *runtimeData, struct pda_tables
 		"\n"
 		"	" << genericInfo() << ",\n"
 		"	" << runtimeData->num_generics << ",\n"
+		"\n"
+		"	" << exportInfo() << ",\n"
+		"	" << runtimeData->num_exports << ",\n"
+		"\n"
 		"	" << runtimeData->argv_generic_id << ",\n"
 		"	" << runtimeData->stds_generic_id << ",\n"
 		"\n"
