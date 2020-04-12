@@ -113,8 +113,8 @@ struct bindings
 	: public Vector<parse_tree_t*>
 {};
 
-struct DefListEl { Production *prev, *next; };
-struct LelDefListEl { Production *prev, *next; };
+struct ProdListEl { Production *prev, *next; };
+struct LelProdListEl { Production *prev, *next; };
 typedef Vector< LangEl* > LangElVect;
 typedef Vector< ProdEl* > FactorVect;
 
@@ -146,7 +146,7 @@ typedef DList<PredDecl> PredDeclList;
 /* Graph dictionary. */
 struct Production 
 :
-	public DefListEl, public LelDefListEl
+	public ProdListEl, public LelProdListEl
 {
 	Production()
 	: 
@@ -227,15 +227,15 @@ struct CmpDefById
 typedef BstMap< int, Production*, CmpOrd<int> > DotItemIndex;
 typedef BstMapEl< int, Production*> DotItemIndexEl;
 
-struct DefList
+struct ProdList
 :
-	public DListMel<Production, DefListEl>
+	public DListMel<Production, ProdListEl>
 {};
 
 /* A vector of production vectors. Each non terminal can have many productions. */
-struct LelDefList
+struct LelProdList
 :
-	public DListMel<Production, LelDefListEl> 
+	public DListMel<Production, LelProdListEl> 
 {};
 
 /* A set of machines made during a closure round. */
@@ -296,7 +296,7 @@ struct LangEl : public DListEl<LangEl>
 	LangEl *repeatOf;
 
 	/* Productions from the language element if it is a non-terminal. */
-	LelDefList defList;
+	LelProdList prodList;
 
 	TokenDef *tokenDef;
 	Production *rootDef;
@@ -885,7 +885,7 @@ struct Compiler
 
 	LelList langEls;
 	StructElList structEls;
-	DefList prodList;
+	ProdList prodList;
 
 	/* Dumping. */
 	DotItemIndex dotItemIndex;

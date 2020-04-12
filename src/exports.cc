@@ -111,14 +111,14 @@ void Compiler::generateExports()
 		}
 
 		bool prodNames = false;
-		for ( LelDefList::Iter prod = lel->defList; prod.lte(); prod++ ) {
+		for ( LelProdList::Iter prod = lel->prodList; prod.lte(); prod++ ) {
 			if ( prod->_name.length() > 0 )
 				prodNames = true;
 		}
 
 		if ( prodNames ) {
 			out << "	enum prod_name {\n";
-			for ( LelDefList::Iter prod = lel->defList; prod.lte(); prod++ ) {
+			for ( LelProdList::Iter prod = lel->prodList; prod.lte(); prod++ ) {
 				if ( prod->_name.length() > 0 )
 					out << "\t\t" << prod->_name << " = " << prod->prodNum << ",\n";
 			}

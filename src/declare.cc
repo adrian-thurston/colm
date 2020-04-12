@@ -484,12 +484,12 @@ void Namespace::declare( Compiler *pd )
 			 * the original language element's productions when we enounter
 			 * [...]. Afterwards move the newly combined productions
 			 * to the nonterminal-definition and proceed with the declaration. */
-			LelDefList combined;
-			while ( n->defList->length() > 0 ) {
-				Production *prod = n->defList->detachFirst();
+			LelProdList combined;
+			while ( n->prodList->length() > 0 ) {
+				Production *prod = n->prodList->detachFirst();
 				if ( prod->dotDotDot ) {
 					prod->prodNum = combined.length();
-					combined.append( langEl->defList );
+					combined.append( langEl->prodList );
 				}
 				else {
 					combined.append( prod );
@@ -497,7 +497,7 @@ void Namespace::declare( Compiler *pd )
 			}
 
 			/* Move bak to non-term def and proceed with rest of declaration. */
-			n->defList->transfer( combined );
+			n->prodList->transfer( combined );
 		}
 
 		LangEl *langEl = declareLangEl( pd, this, n->name, LangEl::NonTerm );
@@ -506,9 +506,9 @@ void Namespace::declare( Compiler *pd )
 		langEl->objectDef = n->objectDef;
 		langEl->reduceFirst = n->reduceFirst;
 		langEl->contextIn = n->contextIn;
-		langEl->defList.transfer( *n->defList );
+		langEl->prodList.transfer( *n->prodList );
 
-		for ( LelDefList::Iter d = langEl->defList; d.lte(); d++ ) {
+		for ( LelProdList::Iter d = langEl->prodList; d.lte(); d++ ) {
 			d->prodName = langEl;
 
 			if ( d->redBlock != 0 ) {
@@ -659,7 +659,7 @@ void Compiler::declareByteCode()
 	for ( FunctionList::Iter f = functionList; f.lte(); f++ )
 		declareFunction( f );
 
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 		if ( prod->redBlock != 0 )
 			declareReductionCode( prod );
 	}

@@ -3159,7 +3159,7 @@ void Compiler::placeAllFrameObjects()
 		placeFrameFields( f->localFrame );
 
 	/* Reduction code. */
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 		if ( prod->redBlock != 0 )
 			placeFrameFields( prod->redBlock->localFrame );
 	}
@@ -3346,7 +3346,7 @@ void Compiler::compileByteCode()
 	}
 
 	/* Compile the reduction code. */
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 		makeProdCopies( prod );
 		if ( prod->redBlock != 0 )
 			compileReductionCode( prod );

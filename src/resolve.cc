@@ -774,7 +774,7 @@ void Compiler::resolveParseTree()
 		resolveInHost( f );
 
 	/* Compile the reduction code. */
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 		if ( prod->redBlock != 0 )
 			resolveReductionCode( prod );
 	}
@@ -822,7 +822,7 @@ void Compiler::resolveParseTree()
 void Compiler::resolveProductionEls()
 {
 	/* NOTE: as we process this list it may be growing! */
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 		/* First resolve. */
 		for ( ProdElList::Iter prodEl = *prod->prodElList; prodEl.lte(); prodEl++ )
 			resolveProdEl( prodEl );
@@ -910,7 +910,7 @@ void Compiler::resolveReductionActions()
 
 Production *Compiler::findProductionByLabel( LangEl *langEl, String label )
 {
-	for ( LelDefList::Iter ldi = langEl->defList; ldi.lte(); ldi++ ) {
+	for ( LelProdList::Iter ldi = langEl->prodList; ldi.lte(); ldi++ ) {
 		if ( ldi->_name != 0 && ( strcmp( ldi->_name, label ) == 0 ) )
 			return ldi;
 	}

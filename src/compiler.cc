@@ -791,9 +791,9 @@ LangEl *Compiler::makeRepeatProd( const InputLoc &loc, Namespace *nspace,
 
 	Production *newDef1 = Production::cons( InputLoc(),
 			prodName, prodElList1, String(), false, 0,
-			prodList.length(), prodName->defList.length() );
+			prodList.length(), prodName->prodList.length() );
 
-	prodName->defList.append( newDef1 );
+	prodName->prodList.append( newDef1 );
 	prodList.append( newDef1 );
 
 	/* Build the second production of the repeat. */
@@ -801,9 +801,9 @@ LangEl *Compiler::makeRepeatProd( const InputLoc &loc, Namespace *nspace,
 
 	Production *newDef2 = Production::cons( InputLoc(),
 			prodName, prodElList2, String(), false, 0,
-			prodList.length(), prodName->defList.length() );
+			prodList.length(), prodName->prodList.length() );
 
-	prodName->defList.append( newDef2 );
+	prodName->prodList.append( newDef2 );
 	prodList.append( newDef2 );
 
 	return prodName;
@@ -836,9 +836,9 @@ LangEl *Compiler::makeListProd( const InputLoc &loc, Namespace *nspace,
 
 	Production *newDef1 = Production::cons( loc,
 			prodName, prodElList1, String(), false, 0,
-			prodList.length(), prodName->defList.length() );
+			prodList.length(), prodName->prodList.length() );
 
-	prodName->defList.append( newDef1 );
+	prodName->prodList.append( newDef1 );
 	prodList.append( newDef1 );
 
 	/* Build the second production of the list. */
@@ -850,9 +850,9 @@ LangEl *Compiler::makeListProd( const InputLoc &loc, Namespace *nspace,
 
 	Production *newDef2 = Production::cons( loc,
 			prodName, prodElList2, String(), false, 0,
-			prodList.length(), prodName->defList.length() );
+			prodList.length(), prodName->prodList.length() );
 
-	prodName->defList.append( newDef2 );
+	prodName->prodList.append( newDef2 );
 	prodList.append( newDef2 );
 
 	return prodName;
@@ -873,9 +873,9 @@ LangEl *Compiler::makeOptProd( const InputLoc &loc, Namespace *nspace,
 
 	Production *newDef1 = Production::cons( loc,
 			prodName, prodElList1, String(), false, 0,
-			prodList.length(), prodName->defList.length() );
+			prodList.length(), prodName->prodList.length() );
 
-	prodName->defList.append( newDef1 );
+	prodName->prodList.append( newDef1 );
 	prodList.append( newDef1 );
 
 	/* Build the second production of the repeat. */
@@ -883,9 +883,9 @@ LangEl *Compiler::makeOptProd( const InputLoc &loc, Namespace *nspace,
 
 	Production *newDef2 = Production::cons( loc,
 			prodName, prodElList2, String(), false, 0,
-			prodList.length(), prodName->defList.length() );
+			prodList.length(), prodName->prodList.length() );
 
-	prodName->defList.append( newDef2 );
+	prodName->prodList.append( newDef2 );
 	prodList.append( newDef2 );
 
 	return prodName;

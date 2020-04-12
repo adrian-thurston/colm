@@ -492,19 +492,19 @@ struct TokenInstance
 	TokenInstance *dupOf;
 };
 
-struct LelDefList;
+struct LelProdList;
 
 struct NtDef
 {
 	static NtDef *cons( const String &name, Namespace *nspace,
-		LelDefList *defList, ObjectDef *objectDef,
+		LelProdList *prodList, ObjectDef *objectDef,
 		StructDef *contextIn, bool reduceFirst )
 	{ 
 		NtDef *nt = new NtDef;
 
 		nt->name = name;
 		nt->nspace = nspace;
-		nt->defList = defList;
+		nt->prodList = prodList;
 		nt->objectDef = objectDef;
 		nt->contextIn = contextIn;
 		nt->reduceFirst = reduceFirst;
@@ -520,7 +520,7 @@ struct NtDef
 
 		nt->name = name;
 		nt->nspace = nspace;
-		nt->defList = 0;
+		nt->prodList = 0;
 		nt->objectDef = 0;
 		nt->contextIn = contextIn;
 		nt->reduceFirst = reduceFirst;
@@ -531,7 +531,7 @@ struct NtDef
 
 	String name;
 	Namespace *nspace;
-	LelDefList *defList;
+	LelProdList *prodList;
 	ObjectDef *objectDef;
 	StructDef *contextIn;
 	bool reduceFirst;

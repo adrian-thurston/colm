@@ -114,7 +114,7 @@ struct BaseParser
 			ParameterList *paramList, const String &name );
 	LangStmt *globalDef( ObjectField *objField, LangExpr *expr,
 			LangStmt::Type assignType );
-	void cflDef( NtDef *ntDef, ObjectDef *objectDef, LelDefList *defList );
+	void cflDef( NtDef *ntDef, ObjectDef *objectDef, LelProdList *defList );
 	ReOrBlock *lexRegularExprData( ReOrBlock *reOrBlock, ReOrItem *reOrItem );
 
 	int lexFactorRepNum( const InputLoc &loc, const String &data );
@@ -151,7 +151,7 @@ struct BaseParser
 	Production *production( const InputLoc &loc, ProdElList *prodElList,
 			String name, bool commit, CodeBlock *codeBlock, LangEl *predOf );
 	void objVarDef( ObjectDef *objectDef, ObjectField *objField );
-	LelDefList *prodAppend( LelDefList *defList, Production *definition );
+	LelProdList *prodAppend( LelProdList *defList, Production *definition );
 
 	LangExpr *construct( const InputLoc &loc, ObjectField *objField,
 			ConsItemList *list, TypeRef *typeRef, FieldInitVect *fieldInitVect );

@@ -73,7 +73,7 @@ void LoadInit::walkProdElList( String defName, ProdElList *list, prod_el_list &p
 	}
 }
 
-void LoadInit::walkProdList( String defName, LelDefList *outProdList, prod_list &prodList )
+void LoadInit::walkProdList( String defName, LelProdList *outProdList, prod_list &prodList )
 {
 	if ( prodList.ProdList() != 0 ) {
 		prod_list RightProdList = prodList.ProdList();
@@ -269,13 +269,13 @@ void LoadInit::walkDefinition( item &define )
 
 	String name = define.DefId().text().c_str();
 
-	LelDefList *defList = new LelDefList;
-	walkProdList( name, defList, ProdList );
+	LelProdList *prodList = new LelProdList;
+	walkProdList( name, prodList, ProdList );
 
 	NtDef *ntDef = NtDef::cons( name, curNspace(), curStruct(), false );
 	ObjectDef *objectDef = ObjectDef::cons( ObjectDef::UserType, name,
 			pd->nextObjectId++ ); 
-	cflDef( ntDef, objectDef, defList );
+	cflDef( ntDef, objectDef, prodList );
 }
 
 void LoadInit::consParseStmt( StmtList *stmtList )

@@ -127,7 +127,7 @@ void Compiler::lr0InvokeClosure( PdaGraph *pdaGraph, PdaState *state )
 
 		/* Make graphs for all of the productions that the non
 		 * terminal goes to that are not already in the state's dotSet. */
-		for ( LelDefList::Iter prod = langEl->defList; prod.lte(); prod++ ) {
+		for ( LelProdList::Iter prod = langEl->prodList; prod.lte(); prod++ ) {
 			/* Bring in the start state of the production. */
 			lr0BringInItem( pdaGraph, state, prod->fsm->startState, toClose, prod );
 		}
@@ -364,7 +364,7 @@ void Compiler::linkExpansions( PdaGraph *pdaGraph )
 			LangEl *langEl = langElIndex[key];
 			if ( langEl != 0 && langEl->type == LangEl::NonTerm ) {
 				/* For each production that the non terminal expand to ... */
-				for ( LelDefList::Iter prod = langEl->defList; prod.lte(); prod++ ) {
+				for ( LelProdList::Iter prod = langEl->prodList; prod.lte(); prod++ ) {
 					/* Follow the production and add to the trans's expand to set. */
 					PdaState *followRes = pdaGraph->followFsm( state, prod->fsm );
 

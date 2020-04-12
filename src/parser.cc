@@ -38,15 +38,15 @@ void BaseParser::listElDef( String name )
 	ObjectDef *objectDef = ObjectDef::cons( ObjectDef::UserType,
 			name, pd->nextObjectId++ );
 
-	LelDefList *defList = new LelDefList;
+	LelProdList *prodList = new LelProdList;
 
 	Production *prod = BaseParser::production( InputLoc(),
 			new ProdElList, String(), false, 0, 0 );
 
-	prodAppend( defList, prod );
+	prodAppend( prodList, prod );
 
 	NtDef *ntDef = NtDef::cons( name, curNspace(), curStruct(), false );
-	BaseParser::cflDef( ntDef, objectDef, defList );
+	BaseParser::cflDef( ntDef, objectDef, prodList );
 
 	/*
 	 * List element with the same name as containing context.
@@ -71,14 +71,14 @@ void BaseParser::mapElDef( String name, TypeRef *keyType )
 	ObjectDef *objectDef = ObjectDef::cons( ObjectDef::UserType,
 			name, pd->nextObjectId++ );
 
-	LelDefList *defList = new LelDefList;
+	LelProdList *prodList = new LelProdList;
 
 	Production *prod = BaseParser::production( InputLoc(),
 			new ProdElList, String(), false, 0, 0 );
-	prodAppend( defList, prod );
+	prodAppend( prodList, prod );
 
 	NtDef *ntDef = NtDef::cons( name, curNspace(), curStruct(), false );
-	BaseParser::cflDef( ntDef, objectDef, defList );
+	BaseParser::cflDef( ntDef, objectDef, prodList );
 
 	/*
 	 * Same name as containing context.
@@ -563,17 +563,17 @@ LangStmt *BaseParser::exportStmt( ObjectField *objField,
 }
 
 
-void BaseParser::cflDef( NtDef *ntDef, ObjectDef *objectDef, LelDefList *defList )
+void BaseParser::cflDef( NtDef *ntDef, ObjectDef *objectDef, LelProdList *prodList )
 {
 	Namespace *nspace = curNspace();
 
 	ntDef->objectDef = objectDef;
-	ntDef->defList = defList;
+	ntDef->prodList = prodList;
 
 	nspace->ntDefList.append( ntDef );
 
 	/* Declare the captures in the object. */
-	for ( LelDefList::Iter prod = *defList; prod.lte(); prod++ ) {
+	for ( LelProdList::Iter prod = *prodList; prod.lte(); prod++ ) {
 		if ( prod->prodElList != 0 ) {
 			for ( ProdElList::Iter pel = *prod->prodElList; pel.lte(); pel++ ) {
 				/* If there is a capture, create the field. */
@@ -937,11 +937,11 @@ void BaseParser::objVarDef( ObjectDef *objectDef, ObjectField *objField )
 	objectDef->rootScope->insertField( objField->name, objField );
 }
 
-LelDefList *BaseParser::prodAppend( LelDefList *defList, Production *definition )
+LelProdList *BaseParser::prodAppend( LelProdList *prodList, Production *definition )
 {
-	definition->prodNum = defList->length();
-	defList->append( definition );
-	return defList;
+	definition->prodNum = prodList->length();
+	prodList->append( definition );
+	return prodList;
 }
 
 LangExpr *BaseParser::construct( const InputLoc &loc, ObjectField *objField,

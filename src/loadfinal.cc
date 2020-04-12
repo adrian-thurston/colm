@@ -1092,7 +1092,7 @@ struct LoadColm
 	}
 
 	void walkProdudction( const String &defName,
-			LelDefList *lelDefList, prod Prod, bool inRedef )
+			LelProdList *lelDefList, prod Prod, bool inRedef )
 	{
 		if ( Prod.prodName() == prod::DotDotDot ) {
 			if ( !inRedef ) {
@@ -1122,7 +1122,7 @@ struct LoadColm
 		}
 	}
 
-	void walkProdList( const String &name, LelDefList *lelDefList,
+	void walkProdList( const String &name, LelProdList *lelDefList,
 			prod_list ProdList, bool inRedef )
 	{
 		if ( ProdList.prodName() == prod_list::List ) 
@@ -1333,15 +1333,15 @@ struct LoadColm
 		ObjectDef *objectDef = walkVarDefList( cflDef.VarDefList() );
 		objectDef->name = name;
 
-		LelDefList *defList = new LelDefList;
-		walkProdList( name, defList, cflDef.prod_list(), false );
+		LelProdList *prodList = new LelProdList;
+		walkProdList( name, prodList, cflDef.prod_list(), false );
 
 		bool reduceFirst = cflDef.opt_reduce_first().REDUCEFIRST() != 0;
 
 		NtDef *ntDef = NtDef::cons( name, curNspace(),
 				curStruct(), reduceFirst );
 
-		BaseParser::cflDef( ntDef, objectDef, defList );
+		BaseParser::cflDef( ntDef, objectDef, prodList );
 	}
 
 	void walkCflRedef( cfl_redef cflRedef )
@@ -1350,8 +1350,8 @@ struct LoadColm
 		ObjectDef *objectDef = walkVarDefList( cflRedef.VarDefList() );
 		objectDef->name = name;
 
-		LelDefList *defList = new LelDefList;
-		walkProdList( name, defList, cflRedef.prod_list(), true );
+		LelProdList *prodList = new LelProdList;
+		walkProdList( name, prodList, cflRedef.prod_list(), true );
 
 		bool reduceFirst = cflRedef.opt_reduce_first().REDUCEFIRST() != 0;
 
@@ -1359,7 +1359,7 @@ struct LoadColm
 				curStruct(), reduceFirst );
 
 		ntDef->isRedef = true;
-		BaseParser::cflDef( ntDef, objectDef, defList );
+		BaseParser::cflDef( ntDef, objectDef, prodList );
 	}
 
 	CallArgVect *walkCallArgSeq( call_arg_seq callArgSeq )

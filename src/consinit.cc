@@ -441,53 +441,53 @@ Production *ConsInit::production( ProdEl *prodEl1, ProdEl *prodEl2,
 void ConsInit::definition( const String &name, Production *prod1, Production *prod2,
 		Production *prod3, Production *prod4 )
 {
-	LelDefList *defList = new LelDefList;
-	prodAppend( defList, prod1 );
-	prodAppend( defList, prod2 );
-	prodAppend( defList, prod3 );
-	prodAppend( defList, prod4 );
+	LelProdList *prodList = new LelProdList;
+	prodAppend( prodList, prod1 );
+	prodAppend( prodList, prod2 );
+	prodAppend( prodList, prod3 );
+	prodAppend( prodList, prod4 );
 
 	NtDef *ntDef = NtDef::cons( name, curNspace(), curStruct(), false );
 	ObjectDef *objectDef = ObjectDef::cons( ObjectDef::UserType,
 			name, pd->nextObjectId++ ); 
-	cflDef( ntDef, objectDef, defList );
+	cflDef( ntDef, objectDef, prodList );
 }
 
 void ConsInit::definition( const String &name, Production *prod1,
 		Production *prod2, Production *prod3 )
 {
-	LelDefList *defList = new LelDefList;
-	prodAppend( defList, prod1 );
-	prodAppend( defList, prod2 );
-	prodAppend( defList, prod3 );
+	LelProdList *prodList = new LelProdList;
+	prodAppend( prodList, prod1 );
+	prodAppend( prodList, prod2 );
+	prodAppend( prodList, prod3 );
 
 	NtDef *ntDef = NtDef::cons( name, curNspace(), curStruct(), false );
 	ObjectDef *objectDef = ObjectDef::cons( ObjectDef::UserType,
 			name, pd->nextObjectId++ ); 
-	cflDef( ntDef, objectDef, defList );
+	cflDef( ntDef, objectDef, prodList );
 }
 
 void ConsInit::definition( const String &name, Production *prod1, Production *prod2 )
 {
-	LelDefList *defList = new LelDefList;
-	prodAppend( defList, prod1 );
-	prodAppend( defList, prod2 );
+	LelProdList *prodList = new LelProdList;
+	prodAppend( prodList, prod1 );
+	prodAppend( prodList, prod2 );
 
 	NtDef *ntDef = NtDef::cons( name, curNspace(), curStruct(), false );
 	ObjectDef *objectDef = ObjectDef::cons( ObjectDef::UserType,
 			name, pd->nextObjectId++ ); 
-	cflDef( ntDef, objectDef, defList );
+	cflDef( ntDef, objectDef, prodList );
 }
 
 void ConsInit::definition( const String &name, Production *prod )
 {
-	LelDefList *defList = new LelDefList;
-	prodAppend( defList, prod );
+	LelProdList *prodList = new LelProdList;
+	prodAppend( prodList, prod );
 
 	NtDef *ntDef = NtDef::cons( name, curNspace(), curStruct(), false );
 	ObjectDef *objectDef = ObjectDef::cons( ObjectDef::UserType,
 			name, pd->nextObjectId++ ); 
-	cflDef( ntDef, objectDef, defList );
+	cflDef( ntDef, objectDef, prodList );
 }
 
 void ConsInit::lexFactor()

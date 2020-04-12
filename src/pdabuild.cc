@@ -172,7 +172,7 @@ void Compiler::makeDefinitionNames()
 {
 	for ( LelList::Iter lel = langEls; lel.lte(); lel++ ) {
 		int prodNum = 1;
-		for ( LelDefList::Iter def = lel->defList; def.lte(); def++ ) {
+		for ( LelProdList::Iter def = lel->prodList; def.lte(); def++ ) {
 			def->data.setAs( lel->name.length() + 32, "%s-%i", 
 					lel->name.data, prodNum++ );
 		}
@@ -303,14 +303,14 @@ void Compiler::makeProdFsms()
 	int dsiLow = 0, indexPos = 0;
 
 	/* Build FSMs for all production language elements. */
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ )
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ )
 		prod->fsm = prod->prodElList->walk( this, prod );
 
 	makeNonTermFirstSets();
 	makeFirstSets();
 
 	/* Build FSMs for all production language elements. */
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 		if ( addUniqueEmptyProductions ) {
 			/* This must be re-implemented. */
 			assert( false );
@@ -366,7 +366,7 @@ void Compiler::makeProdFsms()
 
 	/* Make the final state specific prod id to prod id mapping. */
 	prodIdIndex = new Production*[prodList.length()];
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ )
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ )
 		prodIdIndex[prod->prodId] = prod;
 }
 
@@ -398,7 +398,7 @@ void Compiler::findFollow( AlphSet &result, PdaState *overTab,
 		LangEl *langEl = langElIndex[pastTrans->key];
 		if ( langEl != 0 && langEl->type == LangEl::NonTerm ) {
 			bool hasEpsilon = false;
-			for ( LelDefList::Iter def = langEl->defList; def.lte(); def++ ) {
+			for ( LelProdList::Iter def = langEl->prodList; def.lte(); def++ ) {
 				result.insert( def->firstSet );
 
 				if ( def->firstSet.find( -1 ) )
@@ -589,18 +589,18 @@ void Compiler::pdaOrderProd( LangEl *rootEl, PdaState *tabState,
 				/* Use a shortest match ordering for the contents of this
 				 * nonterminal. Does follows for all productions first, then
 				 * goes down the productions. */
-				for ( LelDefList::Iter expDef = langEl->defList; expDef.lte(); expDef++ ) {
+				for ( LelProdList::Iter expDef = langEl->prodList; expDef.lte(); expDef++ ) {
 					pdaOrderFollow( rootEl, tabState, tabTrans, srcTrans->value, 
 							parentDef, expDef, time );
 				}
-				for ( LelDefList::Iter expDef = langEl->defList; expDef.lte(); expDef++ )
+				for ( LelProdList::Iter expDef = langEl->prodList; expDef.lte(); expDef++ )
 					pdaOrderProd( rootEl, tabState, expDef->fsm->startState, expDef, time );
 				
 			}
 			else {
 				/* The default action ordering. For each prod, goes down the
 				 * prod then sets the follow before going to the next prod. */
-				for ( LelDefList::Iter expDef = langEl->defList; expDef.lte(); expDef++ ) {
+				for ( LelProdList::Iter expDef = langEl->prodList; expDef.lte(); expDef++ ) {
 					pdaOrderProd( rootEl, tabState, expDef->fsm->startState, expDef, time );
 
 					pdaOrderFollow( rootEl, tabState, tabTrans, srcTrans->value, 
@@ -1034,7 +1034,7 @@ void Compiler::analyzeMachine( PdaGraph *pdaGraph, LangElSet &parserEls )
 
 	/* Compute the max prod length. */
 	pdaGraph->maxProdLen = 0;
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 		if ( (unsigned)prod->fsmLength > pdaGraph->maxProdLen )
 			pdaGraph->maxProdLen = prod->fsmLength;
 	}
@@ -1082,9 +1082,9 @@ void Compiler::wrapNonTerminals()
 		ProdElList *prodElList = makeProdElList( lel );
 		lel->rootDef = Production::cons( InputLoc(), rootLangEl, 
 				prodElList, String(), false, 0,
-				prodList.length(), rootLangEl->defList.length() );
+				prodList.length(), rootLangEl->prodList.length() );
 		prodList.append( lel->rootDef );
-		rootLangEl->defList.append( lel->rootDef );
+		rootLangEl->prodList.append( lel->rootDef );
 
 		/* First resolve. */
 		for ( ProdElList::Iter prodEl = *prodElList; prodEl.lte(); prodEl++ )
@@ -1103,7 +1103,7 @@ bool Compiler::makeNonTermFirstSetProd( Production *prod, PdaState *state )
 
 			bool hasEpsilon = false;
 			LangEl *lel = langElIndex[trans->key];
-			for ( LelDefList::Iter ldef = lel->defList; ldef.lte(); ldef++ ) {
+			for ( LelProdList::Iter ldef = lel->prodList; ldef.lte(); ldef++ ) {
 				for ( ProdIdSet::Iter pid = ldef->nonTermFirstSet; 
 						pid.lte(); pid++ )
 				{
@@ -1139,7 +1139,7 @@ void Compiler::makeNonTermFirstSets()
 	bool modified = true;
 	while ( modified ) {
 		modified = false;
-		for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+		for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 			if ( prod->fsm->startState->isFinState() ) {
 				long *inserted = prod->nonTermFirstSet.insert( -1 );
 				if ( inserted != 0 )
@@ -1152,7 +1152,7 @@ void Compiler::makeNonTermFirstSets()
 		}
 	}
 
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 		if ( prod->nonTermFirstSet.find( prod->prodName->id ) )
 			prod->isLeftRec = true;
 	}
@@ -1160,7 +1160,7 @@ void Compiler::makeNonTermFirstSets()
 
 void Compiler::printNonTermFirstSets()
 {
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 		cerr << prod->data << ": ";
 		for ( ProdIdSet::Iter pid = prod->nonTermFirstSet; pid.lte(); pid++ )
 		{
@@ -1201,7 +1201,7 @@ bool Compiler::makeFirstSetProd( Production *prod, PdaState *state )
 
 			bool hasEpsilon = false;
 			LangEl *lel = langElIndex[trans->key];
-			for ( LelDefList::Iter ldef = lel->defList; ldef.lte(); ldef++ ) {
+			for ( LelProdList::Iter ldef = lel->prodList; ldef.lte(); ldef++ ) {
 				for ( ProdIdSet::Iter pid = ldef->firstSet; 
 						pid.lte(); pid++ )
 				{
@@ -1237,7 +1237,7 @@ void Compiler::makeFirstSets()
 	bool modified = true;
 	while ( modified ) {
 		modified = false;
-		for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+		for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 			if ( prod->fsm->startState->isFinState() ) {
 				long *inserted = prod->firstSet.insert( -1 );
 				if ( inserted != 0 )
@@ -1253,7 +1253,7 @@ void Compiler::makeFirstSets()
 
 void Compiler::printFirstSets()
 {
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 		cerr << prod->data << ": ";
 		for ( ProdIdSet::Iter pid = prod->firstSet; pid.lte(); pid++ )
 		{
@@ -1274,7 +1274,7 @@ void Compiler::printFirstSets()
 void Compiler::insertUniqueEmptyProductions()
 {
 	int limit = prodList.length();
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 		if ( prod->prodId == limit )
 			break;
 
@@ -1283,8 +1283,8 @@ void Compiler::insertUniqueEmptyProductions()
 		sprintf(name, "U%li", prodList.length());
 		LangEl *prodName = addLangEl( this, rootNamespace, name, LangEl::NonTerm );
 		Production *newDef = Production::cons( InputLoc(), prodName, 
-				0, String(), false, 0, prodList.length(), prodName->defList.length() );
-		prodName->defList.append( newDef );
+				0, String(), false, 0, prodList.length(), prodName->prodList.length() );
+		prodName->prodList.append( newDef );
 		prodList.append( newDef );
 
 		prod->uniqueEmptyLeader = prodName;
@@ -1380,7 +1380,7 @@ void Compiler::makeRuntimeData()
 	runtimeData->num_prods = count;
 
 	count = 0;
-	for ( DefList::Iter prod = prodList; prod.lte(); prod++ ) {
+	for ( ProdList::Iter prod = prodList; prod.lte(); prod++ ) {
 		runtimeData->prod_info[count].lhs_id = prod->prodName->id;
 		runtimeData->prod_info[count].prod_num = prod->prodNum;
 		runtimeData->prod_info[count].length = prod->fsmLength;
@@ -2004,7 +2004,7 @@ struct CmpSpan
 
 PdaGraph *Compiler::makePdaGraph( LangElSet &parserEls )
 {
-	//for ( DefList::Iter prod = prodList; prod.lte(); prod++ )
+	//for ( ProdList::Iter prod = prodList; prod.lte(); prod++ )
 	//	cerr << prod->prodId << " " << prod->data << endl;
 
 	PdaGraph *pdaGraph = new PdaGraph();
