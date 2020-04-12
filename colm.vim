@@ -73,7 +73,7 @@ syntax match varCapture "[a-zA-Z_][a-zA-Z_0-9]*:"
 syntax match qual "[a-zA-Z_][a-zA-Z_0-9]*::" 
 
 syntax region defTypes matchgroup=defKeywords
-	\ start="\<rl\>" start="\<def\>" start="\<token\>" start="\<ignore\>"
+	\ start="\<rl\>" start="\<def\>" start="\<redef\>" start="\<token\>" start="\<ignore\>"
 	\ matchgroup=Function end="[a-zA-Z_][a-zA-Z0-9_]*" end="/"me=e-1 end="`"me=e-1
 
 syntax region redTypes matchgroup=redBlock
@@ -121,7 +121,7 @@ syntax keyword redKeyword throw try catch operator typeid contained
 syntax keyword redKeyword and bitor xor compl bitand and_eq or_eq xor_eq not not_eq contained
 syntax keyword redKeyword static_cast dynamic_cast contained
 
-syntax sync match colmSyncPat grouphere NONE "([{}]|\<reduction\>|\<token\>|\<ignore\>|\<def\>)"
+syntax sync match colmSyncPat grouphere NONE "([{}]|\<reduction\>|\<token\>|\<ignore\>|\<def\>|\<redef\>|{|})"
 
 
 "

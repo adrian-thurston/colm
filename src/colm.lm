@@ -1,6 +1,7 @@
 # Main region.
 lex
 	token DEF / 'def' /
+	token REDEF / 'redef' /
 	token LEX / 'lex' /
 	token END / 'end' /
 	token TOKEN / 'token' /
@@ -108,13 +109,13 @@ lex
 	token STAR /'*'/
 	token QUESTION /'?'/
 	token EQUALS /'='/
-	token EQEQ /'=='/
-	token NEQ /'!='/
+	token EQ_EQ /'=='/
+	token BANG_EQ /'!='/
 	token COMMA /','/
 	token LT /'<'/
 	token GT /'>'/
-	token LTEQ /'<='/
-	token GTEQ /'>='/
+	token LT_EQ /'<='/
+	token GT_EQ /'>='/
 	token BANG /'!'/
 	token DOLLAR /'$'/
 	token CARET /'^'/
@@ -122,8 +123,9 @@ lex
 	token PERCENT /'%'/
 	token PLUS /'+'/
 	token MINUS /'-'/
-	token AMPAMP /'&&'/
-	token BARBAR /'||'/
+	token AMP_AMP /'&&'/
+	token BAR_BAR /'||'/
+	token DOT_DOT_DOT /'...'/
 
 	ignore / ( '\n' | '\t' | ' ' )+ /
 	ignore / '#' . ( ^'\n' )* . '\n' /
@@ -214,7 +216,8 @@ def root_item
 |	[token_def] :Token commit
 |	[ic_def] :IgnoreCollector commit
 |	[ignore_def] :Ignore commit
-|	[cfl_def] :Cfl commit
+|	[cfl_def] :CflDef commit
+|	[cfl_redef] :CflRedef commit
 |	[region_def] :Region commit
 |	[struct_def] :Struct commit
 |	[namespace_def] :Namespace commit
@@ -441,6 +444,12 @@ def cfl_def
 		opt_reduce_first
 		prod_list]
 
+def cfl_redef
+	[REDEF id 
+		VarDefList: var_def<* 
+		opt_reduce_first
+		prod_list]
+
 def region_def
 	[LEX RootItemList: root_item<* END]
 
@@ -501,7 +510,8 @@ def prod
 	[SQOPEN prod_el_list SQCLOSE 
 		opt_prod_name
 		opt_commit
-		opt_reduce]
+		opt_reduce] :Prod
+|	[SQOPEN DOT_DOT_DOT SQCLOSE] :DotDotDot
 
 def opt_reduce
 	[COPEN lang_stmt_list CCLOSE] :Reduce
@@ -601,17 +611,17 @@ def expr_stmt
 	[code_expr]
 
 def code_expr
-	[code_expr AMPAMP code_relational] :AmpAmp
-|	[code_expr BARBAR code_relational] :BarBar
+	[code_expr AMP_AMP code_relational] :AmpAmp
+|	[code_expr BAR_BAR code_relational] :BarBar
 |	[code_relational] :Base
 
 def code_relational
-	[code_relational EQEQ code_additive] :EqEq
-|	[code_relational NEQ code_additive] :Neq
+	[code_relational EQ_EQ code_additive] :EqEq
+|	[code_relational BANG_EQ code_additive] :Neq
 |	[code_relational LT code_additive] :Lt
 |	[code_relational GT code_additive] :Gt
-|	[code_relational LTEQ code_additive] :LtEq
-|	[code_relational GTEQ code_additive] :GtEq
+|	[code_relational LT_EQ code_additive] :LtEq
+|	[code_relational GT_EQ code_additive] :GtEq
 |	[code_additive] :Base
 
 def code_additive

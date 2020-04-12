@@ -211,7 +211,7 @@ struct LoadColm
 			LangExpr *relational = walkCodeRelational( codeExpr.code_relational() );
 			LangExpr *left = walkCodeExpr( codeExpr._code_expr() );
 
-			InputLoc loc = codeExpr.AMPAMP().loc();
+			InputLoc loc = codeExpr.AMP_AMP().loc();
 			expr = LangExpr::cons( loc, left, OP_LogicalAnd, relational );
 			break;
 		}
@@ -219,7 +219,7 @@ struct LoadColm
 			LangExpr *relational = walkCodeRelational( codeExpr.code_relational() );
 			LangExpr *left = walkCodeExpr( codeExpr._code_expr() );
 
-			InputLoc loc = codeExpr.BARBAR().loc();
+			InputLoc loc = codeExpr.BAR_BAR().loc();
 			expr = LangExpr::cons( loc, left, OP_LogicalOr, relational );
 			break;
 		}
@@ -1091,30 +1091,44 @@ struct LoadColm
 		return block;
 	}
 
-	void walkProdudction( const String &defName, LelDefList *lelDefList, prod Prod )
+	void walkProdudction( const String &defName,
+			LelDefList *lelDefList, prod Prod, bool inRedef )
 	{
-		ProdElList *list = new ProdElList;
+		if ( Prod.prodName() == prod::DotDotDot ) {
+			if ( !inRedef ) {
+				error( Prod.SQOPEN().loc() ) << "the [...] production to reference a "
+					"redef's original productions cannot be used outside of a redef" << endp;
+			}
+			else {
+				Production *dotDotDot = Production::cons( Prod.SQOPEN().loc() );
+				prodAppend( lelDefList, dotDotDot );
+			}
+		}
+		else {
+			ProdElList *list = new ProdElList;
 
-		walkProdElList( defName, list, Prod.prod_el_list() );
+			walkProdElList( defName, list, Prod.prod_el_list() );
 
-		String name;
-		if ( Prod.opt_prod_name().prodName() == opt_prod_name::Name )
-			name = Prod.opt_prod_name().id().data();
+			String name;
+			if ( Prod.opt_prod_name().prodName() == opt_prod_name::Name )
+				name = Prod.opt_prod_name().id().data();
 
-		CodeBlock *codeBlock = walkOptReduce( Prod.opt_reduce() );
-		bool commit = Prod.opt_commit().prodName() == opt_commit::Commit;
+			CodeBlock *codeBlock = walkOptReduce( Prod.opt_reduce() );
+			bool commit = Prod.opt_commit().prodName() == opt_commit::Commit;
 
-		Production *prod = BaseParser::production( Prod.SQOPEN().loc(),
-				list, name, commit, codeBlock, 0 );
-		prodAppend( lelDefList, prod );
+			Production *prod = BaseParser::production( Prod.SQOPEN().loc(),
+					list, name, commit, codeBlock, 0 );
+			prodAppend( lelDefList, prod );
+		}
 	}
 
-	void walkProdList( const String &name, LelDefList *lelDefList, prod_list ProdList )
+	void walkProdList( const String &name, LelDefList *lelDefList,
+			prod_list ProdList, bool inRedef )
 	{
 		if ( ProdList.prodName() == prod_list::List ) 
-			walkProdList( name, lelDefList, ProdList._prod_list() );
+			walkProdList( name, lelDefList, ProdList._prod_list(), inRedef );
 
-		walkProdudction( name, lelDefList, ProdList.prod() );
+		walkProdudction( name, lelDefList, ProdList.prod(), inRedef );
 	}
 
 	ReOrItem *walkRegOrChar( reg_or_char regOrChar )
@@ -1320,13 +1334,31 @@ struct LoadColm
 		objectDef->name = name;
 
 		LelDefList *defList = new LelDefList;
-		walkProdList( name, defList, cflDef.prod_list() );
+		walkProdList( name, defList, cflDef.prod_list(), false );
 
 		bool reduceFirst = cflDef.opt_reduce_first().REDUCEFIRST() != 0;
 
 		NtDef *ntDef = NtDef::cons( name, curNspace(),
 				curStruct(), reduceFirst );
 
+		BaseParser::cflDef( ntDef, objectDef, defList );
+	}
+
+	void walkCflRedef( cfl_redef cflRedef )
+	{
+		String name = cflRedef.id().data();
+		ObjectDef *objectDef = walkVarDefList( cflRedef.VarDefList() );
+		objectDef->name = name;
+
+		LelDefList *defList = new LelDefList;
+		walkProdList( name, defList, cflRedef.prod_list(), true );
+
+		bool reduceFirst = cflRedef.opt_reduce_first().REDUCEFIRST() != 0;
+
+		NtDef *ntDef = NtDef::cons( name, curNspace(),
+				curStruct(), reduceFirst );
+
+		ntDef->isRedef = true;
 		BaseParser::cflDef( ntDef, objectDef, defList );
 	}
 
@@ -2748,8 +2780,11 @@ struct LoadColm
 		case root_item::Literal:
 			walkLiteralDef( rootItem.literal_def() );
 			break;
-		case root_item::Cfl:
+		case root_item::CflDef:
 			walkCflDef( rootItem.cfl_def() );
+			break;
+		case root_item::CflRedef:
+			walkCflRedef( rootItem.cfl_redef() );
 			break;
 		case root_item::Region:
 			walkLexRegion( rootItem.region_def() );

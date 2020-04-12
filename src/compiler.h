@@ -152,7 +152,7 @@ struct Production
 	: 
 		prodName(0), prodElList(0), prodCommit(false), redBlock(0),
 		prodId(0), prodNum(0), fsm(0), fsmLength(0), uniqueEmptyLeader(0),
-		isLeftRec(false), localFrame(0), lhsField(0), predOf(0)
+		isLeftRec(false), localFrame(0), lhsField(0), predOf(0), dotDotDot(false)
 	{}
 
 	static Production* cons( const InputLoc &loc, LangEl *prodName, ProdElList *prodElList, 
@@ -167,6 +167,14 @@ struct Production
 		p->redBlock = redBlock;
 		p->prodId = prodId;
 		p->prodNum = prodNum;
+		return p;
+	}
+
+	static Production *cons( const InputLoc &loc )
+	{
+		Production *p = new Production;
+		p->loc = loc;
+		p->dotDotDot = true;
 		return p;
 	}
 
@@ -198,6 +206,7 @@ struct Production
 	LangEl *predOf;
 
 	UnsignedCharVect copy;
+	bool dotDotDot;
 };
 
 struct CmpDefById

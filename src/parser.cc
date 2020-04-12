@@ -574,22 +574,24 @@ void BaseParser::cflDef( NtDef *ntDef, ObjectDef *objectDef, LelDefList *defList
 
 	/* Declare the captures in the object. */
 	for ( LelDefList::Iter prod = *defList; prod.lte(); prod++ ) {
-		for ( ProdElList::Iter pel = *prod->prodElList; pel.lte(); pel++ ) {
-			/* If there is a capture, create the field. */
-			if ( pel->captureField != 0 ) {
-				/* Might already exist. */
-				ObjectField *newOf = objectDef->rootScope->checkRedecl(
-						pel->captureField->name );
-				if ( newOf != 0 ) {
-					/* FIXME: check the types are the same. */
-				}
-				else {
-					newOf = pel->captureField;
-					newOf->typeRef = pel->typeRef;
-					objectDef->rootScope->insertField( newOf->name, newOf );
-				}
+		if ( prod->prodElList != 0 ) {
+			for ( ProdElList::Iter pel = *prod->prodElList; pel.lte(); pel++ ) {
+				/* If there is a capture, create the field. */
+				if ( pel->captureField != 0 ) {
+					/* Might already exist. */
+					ObjectField *newOf = objectDef->rootScope->checkRedecl(
+							pel->captureField->name );
+					if ( newOf != 0 ) {
+						/* FIXME: check the types are the same. */
+					}
+					else {
+						newOf = pel->captureField;
+						newOf->typeRef = pel->typeRef;
+						objectDef->rootScope->insertField( newOf->name, newOf );
+					}
 
-				newOf->rhsVal.append( RhsVal( pel ) );
+					newOf->rhsVal.append( RhsVal( pel ) );
+				}
 			}
 		}
 	}

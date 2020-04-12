@@ -508,6 +508,7 @@ struct NtDef
 		nt->objectDef = objectDef;
 		nt->contextIn = contextIn;
 		nt->reduceFirst = reduceFirst;
+		nt->isRedef = false;
 
 		return nt;
 	}
@@ -523,6 +524,7 @@ struct NtDef
 		nt->objectDef = 0;
 		nt->contextIn = contextIn;
 		nt->reduceFirst = reduceFirst;
+		nt->isRedef = false;
 
 		return nt;
 	}
@@ -533,6 +535,7 @@ struct NtDef
 	ObjectDef *objectDef;
 	StructDef *contextIn;
 	bool reduceFirst;
+	bool isRedef;
 
 	NtDef *prev, *next;
 };

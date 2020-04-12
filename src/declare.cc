@@ -471,8 +471,36 @@ void Namespace::declare( Compiler *pd )
 
 	for ( NtDefList::Iter n = ntDefList; n.lte(); n++ ) {
 		/* Get the language element. */
+		if ( n->isRedef ) {
+			TypeMapEl *inDict = this->typeMap.find( n->name );
+			if ( inDict == 0 ) {
+				error() << "redef not found '" << n->name << endp;
+			}
+
+			LangEl *langEl = inDict->value;
+			this->typeMap.remove( n->name );
+
+			/* Traverse the list of productions, moving to combined and taking
+			 * the original language element's productions when we enounter
+			 * [...]. Afterwards move the newly combined productions
+			 * to the nonterminal-definition and proceed with the declaration. */
+			LelDefList combined;
+			while ( n->defList->length() > 0 ) {
+				Production *prod = n->defList->detachFirst();
+				if ( prod->dotDotDot ) {
+					prod->prodNum = combined.length();
+					combined.append( langEl->defList );
+				}
+				else {
+					combined.append( prod );
+				}
+			}
+
+			/* Move bak to non-term def and proceed with rest of declaration. */
+			n->defList->transfer( combined );
+		}
+
 		LangEl *langEl = declareLangEl( pd, this, n->name, LangEl::NonTerm );
-		//$$->langEl = langEl;
 
 		/* Get the language element. */
 		langEl->objectDef = n->objectDef;
