@@ -53,6 +53,7 @@ AC_PROG_LIBTOOL
 SED_SUBST=["\
 	-e 's|@CXX@|${CXX}|g' \
 	-e 's|@CC@|${CC}|g' \
+	-e 's|@prefix@|${prefix}|g' \
 "]
 
 dnl Set test on c++ compiler.
