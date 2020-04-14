@@ -61,10 +61,14 @@ if [ "${INPUT%.pack}" != "$INPUT" ]; then
 	EXIT_STATUS=$?
 else
 	CMD=${CMD:=colm}
-	if [ "`basename $0`" != "$0" ] && [ -x "`dirname $0`/$CMD" ]; then
-		COLM="`dirname $0`/$CMD"
+	if [ "`basename $CMD`" != "$CMD" ]; then
+		COLM=$CMD
 	else
-		COLM=@prefix@/bin/$CMD
+		if [ "`basename $0`" != "$0" ] && [ -x "`dirname $0`/$CMD" ]; then
+			COLM="`dirname $0`/$CMD"
+		else
+			COLM=@prefix@/bin/$CMD
+		fi
 	fi
 
 	$COLM $ARGS "$INPUT"
