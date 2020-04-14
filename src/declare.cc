@@ -253,8 +253,8 @@ void Compiler::declareReVars()
 LangEl *declareLangEl( Compiler *pd, Namespace *nspace,
 		const String &data, LangEl::Type type )
 {
-	/* If the id is already in the dict, it will be placed in last found. If
-	 * it is not there then it will be inserted and last found will be set to it. */
+	/* If the id is already in the dict, it will be placed in last found. If it
+	 * is not there then it will be inserted and last found will be set to it. */
 	TypeMapEl *inDict = nspace->typeMap.find( data );
 	if ( inDict != 0 )
 		error() << "language element '" << data << "' already defined as something else" << endp;
@@ -488,10 +488,14 @@ void Namespace::declare( Compiler *pd )
 			while ( n->prodList->length() > 0 ) {
 				Production *prod = n->prodList->detachFirst();
 				if ( prod->dotDotDot ) {
-					prod->prodNum = combined.length();
-					combined.append( langEl->prodList );
+					while ( langEl->prodList.length() ) {
+						Production *prod = langEl->prodList.detachFirst();
+						prod->prodNum = combined.length();
+						combined.append( prod );
+					}
 				}
 				else {
+					prod->prodNum = combined.length();
 					combined.append( prod );
 				}
 			}
@@ -523,7 +527,7 @@ void Namespace::declare( Compiler *pd )
 	for ( TypeAliasList::Iter ta = typeAliasList; ta.lte(); ta++ )
 		declareTypeAlias( pd, this, ta->name, ta->typeRef );
 
-	/* Go into child aliases. */
+	/* Go into child namespaces. */
 	for ( NamespaceVect::Iter c = childNamespaces; c.lte(); c++ )
 		(*c)->declare( pd );
 }

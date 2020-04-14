@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include <iostream>
+#include <iomanip>
 
 #include "compiler.h"
 #include "pdacodegen.h"
@@ -165,7 +166,7 @@ void PdaCodeGen::writeRuntimeData( colm_sections *runtimeData, struct pda_tables
 	out << "static struct lang_el_info " << lelInfo() << "[] = {\n";
 	for ( int i = 0; i < runtimeData->num_lang_els; i++ ) {
 		struct lang_el_info *el = &runtimeData->lel_info[i];
-		out << "\t{";
+		out << "/* " << std::setw(4) << i << " */ {";
 		
 		/* Name. */
 		out << " \"";

@@ -1455,6 +1455,7 @@ void Compiler::makeRuntimeData()
 	for ( int i = 0; i < nextLelId; i++ ) {
 		LangEl *lel = langElIndex[i];
 		if ( lel != 0 ) {
+			assert( lel->id == i );
 			runtimeData->lel_info[i].name = lel->fullLit;
 			runtimeData->lel_info[i].xml_tag = lel->xmlTag;
 			runtimeData->lel_info[i].repeat = lel->isRepeat;
