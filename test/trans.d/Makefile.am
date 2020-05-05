@@ -377,3 +377,6 @@ CASES =  \
 	case/zlen1.rl \
 	case/zlen1_ruby.rl \
 	case/zlen1_rust.rl
+
+clean-local:
+	rm -Rf working

@@ -4910,3 +4910,6 @@ CASES = \
 	case/zlen1_rust.rs-U-T0--var-backend.in \
 	case/zlen1_rust.rs-U-T1--var-backend.exp \
 	case/zlen1_rust.rs-U-T1--var-backend.in
+
+clean-local:
+	rm -Rf working

@@ -100,3 +100,6 @@ gentests: gentests.sh Makefile
 #	rm -Rf .deps *.tst *.o
 #
 #-include $(DEPS)
+
+clean-local:
+	rm -Rf working

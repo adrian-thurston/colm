@@ -180,3 +180,6 @@ EXTRA_DIST = \
 gentests: gentests.sh Makefile
 	@$(top_srcdir)/sedsubst $< $@ -w,+x $(SED_SUBST)
 
+clean-local:
+	rm -Rf working
+

@@ -40,3 +40,5 @@ if.h: parse.c
 if.cc: parse.c
 commit.cc: parse.c
 
+clean-local:
+	rm -Rf working
