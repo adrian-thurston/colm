@@ -175,7 +175,12 @@ EXTRA_DIST = \
 	streamseq1b.in \
 	streamseq1c.in \
 	travs2.in \
-	include1a.lmi
+	include1a.lmi \
+	redef1.lm \
+	redef2.lm \
+	redef3.lm \
+	redef4.lm \
+	redef5.lm
 
 gentests: gentests.sh Makefile
 	@$(top_srcdir)/sedsubst $< $@ -w,+x $(SED_SUBST)

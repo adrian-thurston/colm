@@ -1,0 +1,30 @@
+lex
+	token ident /[a-z]+/
+	ignore /[ \t\n]+/
+end
+
+def main
+	[ident]
+
+redef main
+	[ident ident]
+|	[...]
+
+parse Main: main[stdin]
+
+if Main
+	print [Main]
+else
+	print "parse error
+##### IN #####
+a
+##### EXP #####
+a
+##### IN #####
+a b
+##### EXP #####
+a b
+##### IN #####
+a b c
+##### EXP #####
+parse error

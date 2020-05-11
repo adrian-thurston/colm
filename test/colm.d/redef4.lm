@@ -1,0 +1,24 @@
+lex
+	token ident /[a-z]+/
+	ignore /[ \t\n]+/
+end
+
+token alt_ident /[a-z]+/
+
+def main
+	[ident]
+
+redef main
+	[...]
+|	[alt_ident]
+
+parse Main: main[stdin]
+if Main {
+	AI: alt_ident = alt_ident in Main
+	if AI
+		print "found [^AI]
+}
+
+##### IN #####
+a
+##### EXP #####
