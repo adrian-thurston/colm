@@ -397,9 +397,32 @@ struct LoadColm
 
 		CodeBlock *translate = walkOptTranslate( TokenDef.opt_translate() );
 
-		defineToken( TokenDef.id().loc(), name, join, objectDef,
+		defineToken( TokenDef.id().loc(), false, name, join, objectDef,
 				translate, false, niLeft, niRight );
 	}
+
+	void walkTokenRedef( token_redef TokenRedef )
+	{
+		String name = TokenRedef.id().data();
+
+		bool niLeft = walkNoIgnoreLeft( TokenRedef.no_ignore_left() );
+		bool niRight = walkNoIgnoreRight( TokenRedef.no_ignore_right() );
+
+		ObjectDef *objectDef = walkVarDefList( TokenRedef.VarDefList() );
+		objectDef->name = name;
+
+		LexJoin *join = 0;
+		if ( TokenRedef.opt_lex_expr().lex_expr() != 0 ) {
+			LexExpression *expr = walkLexExpr( TokenRedef.opt_lex_expr().lex_expr() );
+			join = LexJoin::cons( expr );
+		}
+
+		CodeBlock *translate = walkOptTranslate( TokenRedef.opt_translate() );
+
+		defineToken( TokenRedef.id().loc(), true, name, join, objectDef,
+				translate, false, niLeft, niRight );
+	}
+
 
 	void walkIgnoreCollector( ic_def IgnoreCollector )
 	{
@@ -452,7 +475,7 @@ struct LoadColm
 			join = LexJoin::cons( expr );
 		}
 
-		defineToken( IgnoreDef.IGNORE().loc(), name, join, objectDef,
+		defineToken( IgnoreDef.IGNORE().loc(), false, name, join, objectDef,
 				0, true, false, false );
 	}
 
@@ -2770,6 +2793,9 @@ struct LoadColm
 			break;
 		case root_item::Token:
 			walkTokenDef( rootItem.token_def() );
+			break;
+		case root_item::TokenRedef:
+			walkTokenRedef( rootItem.token_redef() );
 			break;
 		case root_item::IgnoreCollector:
 			walkIgnoreCollector( rootItem.ic_def() );

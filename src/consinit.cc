@@ -229,7 +229,7 @@ void ConsInit::wsIgnore()
 	LexExpression *expr = LexExpression::cons( term );
 	LexJoin *join = LexJoin::cons( expr );
 
-	defineToken( internal, String(), join, objectDef, 0, true, false, false );
+	defineToken( internal, false, String(), join, objectDef, 0, true, false, false );
 }
 
 void ConsInit::commentIgnore()
@@ -249,7 +249,7 @@ void ConsInit::commentIgnore()
 
 	LexJoin *join = LexJoin::cons( expr );
 
-	defineToken( internal, String(), join, objectDef, 0, true, false, false );
+	defineToken( internal, false, String(), join, objectDef, 0, true, false, false );
 }
 
 void ConsInit::idToken()
@@ -275,7 +275,7 @@ void ConsInit::idToken()
 	LexExpression *expr = LexExpression::cons( concat );
 	LexJoin *join = LexJoin::cons( expr );
 
-	defineToken( internal, hello, join, objectDef, 0, false, false, false );
+	defineToken( internal, false, hello, join, objectDef, 0, false, false, false );
 }
 
 void ConsInit::literalToken()
@@ -308,7 +308,7 @@ void ConsInit::literalToken()
 	LexExpression *expr = LexExpression::cons( concat );
 	LexJoin *join = LexJoin::cons( expr );
 
-	defineToken( internal, hello, join, objectDef, 0, false, false, false );
+	defineToken( internal, false, hello, join, objectDef, 0, false, false, false );
 }
 
 void ConsInit::keyword( const String &name, const String &lit )
@@ -317,7 +317,7 @@ void ConsInit::keyword( const String &name, const String &lit )
 	LexTerm *term = litTerm( lit );
 	LexExpression *expr = LexExpression::cons( term );
 	LexJoin *join = LexJoin::cons( expr );
-	defineToken( internal, name, join, objectDef, 0, false, false, false );
+	defineToken( internal, false, name, join, objectDef, 0, false, false, false );
 }
 
 void ConsInit::keyword( const String &kw )

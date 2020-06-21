@@ -92,8 +92,8 @@ struct BaseParser
 
 	Reduction *createReduction( const InputLoc loc, const String &name );
 
-	void defineToken( const InputLoc &loc, String name, LexJoin *join,
-			ObjectDef *objectDef, CodeBlock *transBlock,
+	void defineToken( const InputLoc &loc, bool isRedef, String name,
+			LexJoin *join, ObjectDef *objectDef, CodeBlock *transBlock,
 			bool ignore, bool noPreIgnore, bool noPostIgnore );
 
 	void zeroDef( const InputLoc &loc, const String &name );

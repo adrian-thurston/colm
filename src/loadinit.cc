@@ -237,7 +237,7 @@ void LoadInit::walkTokenList( token_list &tokenList )
 		bool leftNi = walkNoIgnore( tokenDef.LeftNi() );
 		bool rightNi = walkNoIgnore( tokenDef.RightNi() );
 
-		defineToken( internal, name, join, objectDef, 0, false, leftNi, rightNi );
+		defineToken( internal, false, name, join, objectDef, 0, false, leftNi, rightNi );
 	}
 
 	if ( tokenList.IgnoreDef() != 0 ) {
@@ -249,7 +249,7 @@ void LoadInit::walkTokenList( token_list &tokenList )
 		LexExpression *expr = walkLexExpr( LexExpr );
 		LexJoin *join = LexJoin::cons( expr );
 
-		defineToken( internal, String(), join, objectDef, 0, true, false, false );
+		defineToken( internal, false, String(), join, objectDef, 0, true, false, false );
 	}
 }
 

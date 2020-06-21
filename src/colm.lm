@@ -214,6 +214,7 @@ def root_item
 	[rl_def] :Rl commit
 |	[literal_def] :Literal commit
 |	[token_def] :Token commit
+|	[token_redef] :TokenRedef commit
 |	[ic_def] :IgnoreCollector commit
 |	[ignore_def] :Ignore commit
 |	[cfl_def] :CflDef commit
@@ -462,6 +463,13 @@ def opt_lex_expr
 
 def token_def
 	[TOKEN id VarDefList: var_def<*
+		no_ignore_left
+		LEX_FSLASH opt_lex_expr LEX_FSLASH
+		no_ignore_right
+		opt_translate]
+
+def token_redef
+	[REDEF TOKEN id VarDefList: var_def<*
 		no_ignore_left
 		LEX_FSLASH opt_lex_expr LEX_FSLASH
 		no_ignore_right

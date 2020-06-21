@@ -297,8 +297,8 @@ LexJoin *BaseParser::literalJoin( const InputLoc &loc, const String &data )
 	return join;
 }
 
-void BaseParser::defineToken( const InputLoc &loc, String name, LexJoin *join,
-		ObjectDef *objectDef, CodeBlock *transBlock, bool ignore,
+void BaseParser::defineToken( const InputLoc &loc, bool isRedef, String name,
+		LexJoin *join, ObjectDef *objectDef, CodeBlock *transBlock, bool ignore,
 		bool noPreIgnore, bool noPostIgnore )
 {
 	bool pushedRegion = false;
@@ -323,6 +323,8 @@ void BaseParser::defineToken( const InputLoc &loc, String name, LexJoin *join,
 
 	TokenDef *tokenDef = TokenDef::cons( name, String(), false, ignore, join, 
 			transBlock, loc, 0, nspace, regionSet, objectDef, curStruct() );
+	
+	tokenDef->isRedef = isRedef;
 
 	regionSet->tokenDefList.append( tokenDef );
 	nspace->tokenDefList.append( tokenDef );

@@ -404,6 +404,7 @@ struct TokenDef
 		t->noPostIgnore = false;
 		t->noPreIgnore = false;
 		t->isZero = false;
+		t->isRedef = false;
 
 		return t;
 	}
@@ -436,6 +437,7 @@ struct TokenDef
 	bool noPostIgnore;
 	bool noPreIgnore;
 	bool isZero;
+	bool isRedef;
 };
 
 struct TokenInstancePtr
