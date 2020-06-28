@@ -16,14 +16,14 @@ Go: bool
 Go = true
 while ( Go ) {
 	_: parser<g> = Parser
-	"  hello friend
+	<<	"  hello friend
 	Go = false
 }
 
 Go = true
 while ( Go ) {
 	_: stream = stdout
-	"  hello friend
+	<<	"  hello friend
 	Go = false
 }
 
