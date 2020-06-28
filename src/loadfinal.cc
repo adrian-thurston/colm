@@ -111,9 +111,9 @@ struct LoadColm
 				/* Checking if we are outdented. Indents and are ok. So is
 				 * outdenting back to the first. */
 				if ( loc->column < firstColumn ) {
-					warning( loc ) << type << " literal outdented beyond first at " <<
-							firstLine << ":" << firstColumn <<
-							", possible unintended concatenation" << std::endl;
+					// warning( loc ) << type << " literal outdented beyond first at " <<
+					//		firstLine << ":" << firstColumn <<
+					//		", possible unintended concatenation" << std::endl;
 				}
 
 				lastLine = loc->line;

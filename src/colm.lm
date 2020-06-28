@@ -126,6 +126,8 @@ lex
 	token AMP_AMP /'&&'/
 	token BAR_BAR /'||'/
 	token DOT_DOT_DOT /'...'/
+	token LT_LT /'<<'/
+	token LARROW /'<-'/
 
 	ignore / ( '\n' | '\t' | ' ' )+ /
 	ignore / '#' . ( ^'\n' )* . '\n' /
@@ -540,6 +542,9 @@ def case_clause_list
 # to the clauses, which is is a better commit strategy anyways. Gives more
 # regular commits.
 
+def bare_tok
+	[LT_LT] | [LARROW]
+
 def statement
 	[print_stmt] :Print commit
 |	[var_def opt_def_init] :VarDef commit
@@ -555,7 +560,7 @@ def statement
 |	[REJECT] :Reject commit
 |	[var_ref POPEN call_arg_list PCLOSE] :Call
 |	[stmt_or_factor] :StmtOrFactor
-|	[accumulate opt_eos] :BareSend
+|	[bare_tok accumulate opt_eos] :BareSend
 
 def elsif_list
 	[elsif_clause elsif_list] :Clause

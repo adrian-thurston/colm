@@ -57,19 +57,19 @@ namespace go_gen
 		for Tok: host::tok in repeat(TL) {
 			switch Tok
 			case Stmt {
-				"{
-					stmt_list( StmtList )
-				"}
+				<<	"{
+					"	[stmt_list( StmtList )]
+					"}
 			}
 			case Expr {
-				"([expr( Expr )])"
+				<<	"([expr( Expr )])"
 			}
 			case Escape {
 				Str: str = $Tok
-				"[Str.suffix( 1 )]"
+				<<	"[Str.suffix( 1 )]"
 			}
 			default {
-				[Tok]
+				<<	[Tok]
 			}
 		}
 	}
@@ -79,15 +79,15 @@ namespace go_gen
 		switch EmbeddedHost
 		case Expr
 		{
-			['(' tok_list( TL ) ')']
+			<<	['(' tok_list( TL ) ')']
 		}
 		case Stmt
 		{
-			['{' tok_list( TL ) '}\n']
+			<<	['{' tok_list( TL ) '}\n']
 		}
 		case Bare
 		{
-			[tok_list( TL )]
+			<<	[tok_list( TL )]
 		}
 	}
 
@@ -96,35 +96,35 @@ namespace go_gen
 		switch ExprFactor
 		case EmbeddedHost
 		{
-			[embedded_host(embedded_host)]
+			<<	[embedded_host(embedded_host)]
 		}
 		case Paren
 		{
-			['( ' expr(expr) ' )']
+			<<	['( ' expr(expr) ' )']
 		}
 		case ArraySub
 		{
-			[ident '[ ' expr( expr ) ' ]']
+			<<	[ident '[ ' expr( expr ) ' ]']
 		}
 		case Offset
 		{
-			"int([expr(expr )])
+			<<	"int([expr(expr )])
 		}
 		case Deref
 		{
-			[ident '[ ' expr( expr ) ' ]' ]
+			<<	[ident '[ ' expr( expr ) ' ]' ]
 		}
 		case True
 		{
-			"true"
+			<<	"true"
 		}
 		case False
 		{
-			"false"
+			<<	"false"
 		}
 		case Nil
 		{
-			"0"
+			<<	"0"
 		}
 		case Access
 		{
@@ -133,11 +133,11 @@ namespace go_gen
 		}
 		case Cast
 		{
-			[type(type) '( ' expr_factor(_expr_factor) ' )' ]
+			<<	[type(type) '( ' expr_factor(_expr_factor) ' )' ]
 		}
 		default {
 			# Catches cases not specified
-			[ExprFactor]
+			<<	[ExprFactor]
 		}
 	}
 
@@ -146,11 +146,11 @@ namespace go_gen
 		switch ExprFactor
 		case [EH: embedded_host]
 		{
-			[embedded_host(EH)]
+			<<	[embedded_host(EH)]
 		}
 		case [ident `[ TL: expr `]]
 		{
-			[ident '[' expr( TL ) ']']
+			<<	[ident '[' expr( TL ) ']']
 		}
 		case [E1: embedded_host `-> E2: lvalue]
 		{
@@ -159,7 +159,7 @@ namespace go_gen
 		}
 		default {
 			# Catches cases not specified
-			[ExprFactor]
+			<<	[ExprFactor]
 		}
 	}
 
@@ -168,15 +168,15 @@ namespace go_gen
 		switch ExprFactorOp
 		case [B: `! expr_factor_op]
 		{
-			['! ' expr_factor_op( _expr_factor_op )]
+			<<	['! ' expr_factor_op( _expr_factor_op )]
 		}
 		case [T: `~ expr_factor_op]
 		{
-			['^ ' expr_factor_op( _expr_factor_op )]
+			<<	['^ ' expr_factor_op( _expr_factor_op )]
 		}
 		case [expr_factor]
 		{
-			[expr_factor( ExprFactorOp.expr_factor )]
+			<<	[expr_factor( ExprFactorOp.expr_factor )]
 		}
 	}
 
@@ -185,11 +185,11 @@ namespace go_gen
 		switch ExprBitwise
 		case [expr_bitwise A: `& expr_factor_op]
 		{
-			[expr_bitwise( _expr_bitwise ) ' & ' expr_factor_op( expr_factor_op )]
+			<<	[expr_bitwise( _expr_bitwise ) ' & ' expr_factor_op( expr_factor_op )]
 		}
 		case [expr_factor_op]
 		{
-			[expr_factor_op( ExprBitwise.expr_factor_op )]
+			<<	[expr_factor_op( ExprBitwise.expr_factor_op )]
 		}
 	}
 
@@ -198,11 +198,11 @@ namespace go_gen
 		switch ExprMult
 		case [expr_mult T: `* expr_bitwise]
 		{
-			[expr_mult( _expr_mult ) ' * ' expr_bitwise( expr_bitwise )]
+			<<	[expr_mult( _expr_mult ) ' * ' expr_bitwise( expr_bitwise )]
 		}
 		case [expr_bitwise]
 		{
-			[expr_bitwise( expr_bitwise )]
+			<<	[expr_bitwise( expr_bitwise )]
 		}
 	}
 
@@ -211,11 +211,11 @@ namespace go_gen
 		switch ExprAdd
 		case [expr_add Op: add_op expr_mult]
 		{
-			[expr_add( _expr_add ) ' ' Op ' ' expr_mult( expr_mult )]
+			<<	[expr_add( _expr_add ) ' ' Op ' ' expr_mult( expr_mult )]
 		}
 		case [expr_mult]
 		{
-			[expr_mult( ExprAdd.expr_mult )]
+			<<	[expr_mult( ExprAdd.expr_mult )]
 		}
 	}
 
@@ -224,11 +224,11 @@ namespace go_gen
 		switch ExprShift
 		case [expr_shift Op: shift_op expr_add]
 		{
-			[expr_shift( _expr_shift ) ' ' Op ' ' expr_add( expr_add )]
+			<<	[expr_shift( _expr_shift ) ' ' Op ' ' expr_add( expr_add )]
 		}
 		case [expr_add]
 		{
-			[expr_add( expr_add )]
+			<<	[expr_add( expr_add )]
 		}
 	}
 
@@ -237,11 +237,11 @@ namespace go_gen
 		switch ExprTest
 		case [expr_test Op: test_op expr_shift]
 		{
-			[expr_test( _expr_test ) ' ' Op ' ' expr_shift( expr_shift )]
+			<<	[expr_test( _expr_test ) ' ' Op ' ' expr_shift( expr_shift )]
 		}
 		case [expr_shift]
 		{
-			[expr_shift( ExprTest.expr_shift )]
+			<<	[expr_shift( ExprTest.expr_shift )]
 		}
 	}
 
@@ -254,33 +254,33 @@ namespace go_gen
 	{
 		switch Type
 		case S8
-			['int8']
+			<<	['int8']
 		case S16
-			['int16']
+			<<	['int16']
 		case S32
-			['int32']
+			<<	['int32']
 		case S64
-			['int64']
+			<<	['int64']
 		case S128
-			['long long']
+			<<	['long long']
 		default
-			[Type]
+			<<	[Type]
 	}
 
 	void number( Number: number )
 	{
 		switch Number
 		case Unsigned
-			[uint]
+			<<	[uint]
 		default
-			[Number]
+			<<	[Number]
 	}
 
 	void num_list( NumList: num_list )
 	{
 		number( NumList.number )
 		for CommaNum: comma_num in NumList {
-			[', ' number( CommaNum.number )]
+			<<	[', ' number( CommaNum.number )]
 		}
 	}
 
@@ -299,118 +299,119 @@ namespace go_gen
 		switch Stmt
 		case [EH: embedded_host]
 		{
-			[embedded_host(EH)]
+			<<	[embedded_host(EH)]
 		}
 		case [A: static_array] {
-			"var [A.ident] = \[\] "
+			<<	"var [A.ident] = \[\] "
 				"[type(A.type)] { [num_list(A.num_list)] }
 		}
 		case [V: static_value] {
-			"var [V.ident] [type(V.type)] = [V.number]
-			"var _ = [V.ident]
+			<<	"var [V.ident] [type(V.type)] = [V.number]
+				"var _ = [V.ident]
 		}
 		case [
 				'if' O: `( IfExpr: expr C: `) IfStmt: stmt
 		] {
 			# if-statements with only the if clause can go out as an if.
-			"if [expr(IfExpr)] {
-				strip_block_stmt(IfStmt)
-			"}
+			<<	"if [expr(IfExpr)] {
+				"	[strip_block_stmt(IfStmt)]
+				"}
 		}
 		case [
 				'if' O: `( IfExpr: expr C: `) IfStmt: stmt
 				ElseIfClauseList: else_if_clause* ElseClauseOpt: else_clause?
 		] {
 			# If the if-statement has more than just an if clause it goes out as a switch.
-			"if [expr( IfExpr )] {
-				strip_block_stmt( IfStmt )
+			<<	"if [expr( IfExpr )] {
+				"	[strip_block_stmt( IfStmt )]
 
 			for ElseIfClause: else_if_clause in repeat( ElseIfClauseList ) {
 				match ElseIfClause
 					['else if (' ElseIfExpr: expr ')' ElseIfStmt: stmt]
 
-				"} else if [expr(ElseIfExpr)] {
-					strip_block_stmt(ElseIfStmt)
+				<<	"} else if [expr(ElseIfExpr)] {
+					"	[strip_block_stmt(ElseIfStmt)]
 			}
 
 			if ( match ElseClauseOpt ['else' ElseStmt: stmt] ) {
-				"} else {
-					strip_block_stmt(ElseStmt)
+				<<	"} else {
+					"	[strip_block_stmt(ElseStmt)]
 			}
 
-			"}
+			<<	"}
 		}
 		case ["while ( TRUE )" WhileStmt: stmt] {
-			"for {
-				strip_block_stmt(WhileStmt)
-			"}
+			<<	"for {
+				"	[strip_block_stmt(WhileStmt)]
+				"}
 		}
 		case ['while' '(' WhileExpr: expr ')' WhileStmt: stmt] {
-			"for [expr(WhileExpr)] {
-				strip_block_stmt(WhileStmt)
-			"}
+			<<	"for [expr(WhileExpr)] {
+				"	[strip_block_stmt(WhileStmt)]
+				"}
 		}
 		case ['switch' '(' SwitchExpr: expr ')' '{' StmtList: stmt* '}'] {
-			"switch [expr(SwitchExpr)] {
-				stmt_list(StmtList)
-			"}
+			<<	"switch [expr(SwitchExpr)] {
+				"	[stmt_list(StmtList)]
+				"}
 		}
 		case [ExprExpr: expr `;] {
-			[expr(ExprExpr) ';']
+			<<	[expr(ExprExpr) ';']
 		}
 		case [B: block] {
-			"{
-				stmt_list(B.StmtList)
-			"}
+			<<	"{
+				"	[stmt_list(B.StmtList)]
+				"}
 		}
 		case [D: declaration]
 		{
-			"var [D.ident] [type(D.type)]"
+			<<	"var [D.ident] [type(D.type)]"
 
 			if match D.opt_init ['=' Expr: expr] {
-				"  = [expr(Expr)]"
+				<<	"  = [expr(Expr)]"
 			}
-			['\n']
+
+			<<	['\n']
 		}
 		case [ES: export_stmt]
 		{
-			"#define [ES.ident] [number(ES.number)]
+			<<	"#define [ES.ident] [number(ES.number)]
 		}
 		case [fallthrough]
 		{
-			"fallthrough
+			<<	"fallthrough
 		}
 		case [Index: index_stmt]
 		{
-			"var [Index.ident] int"
+			<<	"var [Index.ident] int"
 
 			if match Index.opt_init ['=' Expr: expr] {
-				" = [expr(Expr)]"
+				<<	" = [expr(Expr)]"
 			}
 
-			['\n']
+			<<	['\n']
 		}
 		case [CB: case_block]
 		{
-			"case [expr( CB.expr )]:
-			stmt_list( CB._repeat_stmt )
+			<<	"case [expr( CB.expr )]:
+				"	[stmt_list( CB._repeat_stmt )]
 		}
 		case [DB: default_block]
 		{
-			"default:
-			stmt_list( DB._repeat_stmt )
+			<<	"default:
+				"	[stmt_list( DB._repeat_stmt )]
 		}
 		case [CL: case_label]
 		{
-			"case [expr( CL.expr )]:
+			<<	"case [expr( CL.expr )]:
 		}
 		case [AS: assign_stmt]
 		{
-			"[lvalue(AS.LValue) AS.assign_op expr(AS.expr)];
+			<<	"[lvalue(AS.LValue) AS.assign_op expr(AS.expr)];
 		}
 		default {
 			# catches unspecified cases
-			"[Stmt]
+			<<	"[Stmt]
 		}
 	}
 
