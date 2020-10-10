@@ -312,7 +312,7 @@ namespace rust_gen
 	{
 		switch Number
 		case [`u `( uint `) ]
-			send Parser "[Number.uint]u"
+			send Parser "[Number.uint]"
 		default
 			send Parser [Number]
 	}
