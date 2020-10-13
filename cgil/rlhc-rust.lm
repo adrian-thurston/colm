@@ -29,7 +29,7 @@ namespace rust_out
 
 		token string /
 				'"' ( [^"\\] | '\\' any ) * '"' |
-				"'" ( [^'\\] | '\\' any ) * "'"
+				"'" ( [^'\\] | '\\' any ) "'"
 			/
 
 		ignore
@@ -399,10 +399,22 @@ namespace rust_gen
 					"}
 			}
 		}
-		case ['while' '(' WhileExpr: expr ')' WhileStmt: stmt] {
+		case [`continue CL: ident `;] {
 			send Parser
-				"while ( [expr(WhileExpr)] )
-				"	[stmt(WhileStmt)]
+				"continue '[CL];
+		}
+		case [`break BL: ident `;] {
+			send Parser
+				"break '[BL];
+		}
+		case [BL: break_label? 'while' '(' WhileExpr: expr ')' '{' StmtList: stmt* '}' ] {
+			if match BL [bl: break_label]
+				send Parser "'[bl.ident]: "
+				
+			send Parser
+				"while ( [expr(WhileExpr)] ) {
+				"	[stmt_list(StmtList)]
+				"}
 		}
 		case [`switch `( SwitchExpr: expr `) `{ StmtList: stmt* `}] {
 			send Parser
