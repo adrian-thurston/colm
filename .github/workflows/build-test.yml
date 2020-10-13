@@ -1,9 +1,9 @@
-name: Build/Test/Dist CI
+name: build, make-dist, test
 
 on: [push]
 
 jobs:
-  build:
+  main:
 
     runs-on: self-hosted
     
@@ -19,7 +19,7 @@ jobs:
     - name: make
       run: make
 
-    - name: test
+    - name: test the checked-out source
       run: cd test && ./runtests
 
     - name: make dist
@@ -31,7 +31,7 @@ jobs:
     - name: configure the dist
       run: cd unpack/colm-* && ./configure --disable-manual
 
-    - name: make the dist
+    - name: make from the dist
       run: cd unpack/colm-* && make
 
     - name: test the dist
