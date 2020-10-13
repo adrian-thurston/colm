@@ -301,8 +301,9 @@ void TabBreak::writeExec()
 	if ( loopLabels ) {
 		out << BREAK( _again ) << ";\n}\n";
 	}
-
-	out << "\n" << EMIT_LABEL( _again );
+	else {
+		out << "\n" << EMIT_LABEL( _again );
+	}
 
 	if ( !noEnd && eof ) {
 		out << 
