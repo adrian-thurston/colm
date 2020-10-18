@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-SUBDIRS = aapl libfsm src cgil doc test
+SUBDIRS = src doc test
 
 dist_doc_DATA = colm.vim
 EXTRA_DIST = colm.vim sedsubst

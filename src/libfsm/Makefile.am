@@ -13,7 +13,7 @@ libfsminclude_HEADERS = \
 #
 # libfsm: state machine construction and direct code generation.
 #
-libfsm_la_CPPFLAGS = -I$(top_srcdir)/aapl
+libfsm_la_CPPFLAGS = -I$(top_srcdir)/src/aapl
 
 dist_libfsm_la_SOURCES = \
 	parsedata.h idbase.h codegen.h \

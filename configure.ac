@@ -189,14 +189,14 @@ AC_ARG_WITH(subject,
 		SUBJ_RAGEL_JULIA_BIN="$withval/bin/ragel-julia"
 	],
 	[
-		SUBJ_AAPL_CPPFLAGS='-I$(abs_top_builddir)/aapl'
+		SUBJ_AAPL_CPPFLAGS='-I$(abs_top_builddir)/src/aapl'
 
 		SUBJ_COLM_BIN='$(abs_top_builddir)/src/colm'
 		SUBJ_COLM_CPPFLAGS='-I$(abs_top_builddir)/src/include'
 		SUBJ_COLM_LDFLAGS='-L$(abs_top_builddir)/src/.libs -Wl,-rpath,${abs_top_builddir}/src/.libs'
 
 		SUBJ_RAGEL_BIN='$(abs_top_builddir)/ragel/ragel'
-		SUBJ_RAGEL_CPPFLAGS='-I$(abs_top_builddir)/ragel/include -I$(abs_top_builddir)/aapl'
+		SUBJ_RAGEL_CPPFLAGS='-I$(abs_top_builddir)/ragel/include -I$(abs_top_builddir)/src/aapl'
 		SUBJ_RAGEL_LDFLAGS='-L$(abs_top_builddir)/ragel/.libs -Wl,-rpath,$(abs_top_builddir)/ragel/.libs'
 		SUBJ_RAGEL_LM='$(abs_top_builddir)/ragel'
 
@@ -414,10 +414,10 @@ AC_SUBST(SED_SUBST)
 AC_CONFIG_HEADERS([src/config.h src/defs.h])
 AC_OUTPUT([
 	Makefile
-	aapl/Makefile
-	libfsm/Makefile
+	src/aapl/Makefile
+	src/libfsm/Makefile
+	src/cgil/Makefile
 	src/Makefile
-	cgil/Makefile
 	test/Makefile
 	test/aapl.d/Makefile
 	test/colm.d/Makefile

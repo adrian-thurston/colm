@@ -20,7 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-AM_CPPFLAGS = -I$(top_srcdir)/aapl
+SUBDIRS = aapl libfsm cgil
+
+AM_CPPFLAGS = -I$(top_srcdir)/src/aapl
 
 AUTOMAKE_OPTIONS = subdir-objects
 
