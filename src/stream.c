@@ -72,6 +72,7 @@ int stream_impl_pop_line( struct stream_impl_data *ss )
 	return len;
 }
 
+#ifdef DEBUG
 static void dump_contents( struct colm_program *prg, struct stream_impl_data *sid )
 {
 	struct run_buf *rb = sid->queue.head;
@@ -84,6 +85,7 @@ static void dump_contents( struct colm_program *prg, struct stream_impl_data *si
 		rb = rb->next;
 	}
 }
+#endif
 
 static bool loc_set( location_t *loc )
 {
