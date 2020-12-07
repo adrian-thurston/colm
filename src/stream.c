@@ -53,6 +53,7 @@ void stream_impl_push_line( struct stream_impl_data *ss, int ll )
 		int lines_alloc_new = ss->lines_alloc * 2;
 		int *line_len_new = malloc( sizeof(int) * lines_alloc_new );
 		memcpy( line_len_new, ss->line_len, sizeof(int) * ss->lines_alloc );
+		free( ss->line_len );
 		ss->lines_alloc = lines_alloc_new;
 		ss->line_len = line_len_new;
 	}
@@ -371,6 +372,9 @@ static void data_destructor( program_t *prg, tree_t **sp, struct stream_impl_dat
 	 * deleted). */
 	// if ( si->name != 0 )
 	//	free( si->name );
+
+	if ( si->line_len != 0 )
+		free( si->line_len );
 
 	free( si );
 }
