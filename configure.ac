@@ -406,6 +406,15 @@ AC_SUBST(EXTERNAL_COLM)
 AC_SUBST(EXTERNAL_INC)
 AC_SUBST(EXTERNAL_LIBS)
 
+dnl Check for fopencookie. If available, we will use to avoid leaking FILE structs.
+dnl The result of an fdopen cannot be closed without also closing the fd, so we
+dnl make our own FILE type.
+AC_CHECK_FUNC(fopencookie,
+	[AC_DEFINE([HAVE_FOPENCOOKIE], [1], [have fopencookie])],
+	[]
+)
+
+
 dnl
 dnl Wrap up.
 dnl

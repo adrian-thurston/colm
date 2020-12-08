@@ -20,6 +20,13 @@
  * SOFTWARE.
  */
 
+#include "config.h"
+
+#ifdef HAVE_FOPENCOOKIE
+#define _GNU_SOURCE
+#include <sys/types.h>
+#endif
+
 #include <colm/input.h>
 
 #include <stdio.h>
@@ -41,6 +48,57 @@ DEF_STREAM_FUNCS( stream_funcs_data, stream_impl_data );
 
 extern struct stream_funcs_data file_funcs;
 extern struct stream_funcs_data accum_funcs;
+
+#ifdef HAVE_FOPENCOOKIE
+
+struct colm_file_cookie
+{
+	int fd;
+};
+
+static ssize_t cfc_read(void *cookie, char *buf, size_t size)
+{
+	return read( ((struct colm_file_cookie*)cookie)->fd, buf, size );
+}
+
+static ssize_t cfc_write(void *cookie, const char *buf, size_t size)
+{
+	return write( ((struct colm_file_cookie*)cookie)->fd, buf, size );
+}
+
+static int cfc_seek(void *cookie, off_t *offset, int whence)
+{
+	return -1;
+}
+
+static int cfc_close(void *cookie)
+{
+	free(cookie);
+	return 0;
+}
+
+FILE *colm_fd_open( int fd, const char *mode )
+{
+	cookie_io_functions_t cf = {
+		cfc_read,
+		cfc_write,
+		cfc_seek,
+		cfc_close,
+	};
+
+	struct colm_file_cookie *cfc = malloc(sizeof(struct colm_file_cookie));
+	cfc->fd = fd;
+	return fopencookie( cfc, mode, cf );
+}
+
+#else
+
+FILE *colm_fd_open( int fd, const char *mode )
+{
+	return fdopen( fd, mode );
+}
+
+#endif
 
 void stream_impl_push_line( struct stream_impl_data *ss, int ll )
 {
@@ -94,9 +152,7 @@ static bool loc_set( location_t *loc )
 
 static void close_stream_file( FILE *file )
 {
-	if ( file != stdin && file != stdout && file != stderr &&
-			fileno(file) != 0 && fileno( file) != 1 && fileno(file) != 2 )
-	{
+	if ( file != stdin && file != stdout && file != stderr ) {
 		fclose( file );
 	}
 }
@@ -349,7 +405,7 @@ int data_undo_append_data( struct colm_program *prg, struct stream_impl_data *si
 
 static void data_destructor( program_t *prg, tree_t **sp, struct stream_impl_data *si )
 {
-	if ( si->file != 0 )
+	if ( si->file != 0 && !si->no_file_close )
 		close_stream_file( si->file );
 	
 	if ( si->collect != 0 ) {
@@ -394,10 +450,10 @@ static void data_flush_stream( struct colm_program *prg, struct stream_impl_data
 
 static void data_close_stream( struct colm_program *prg, struct stream_impl_data *si )
 {
-	if ( si->file != 0 ) {
+	if ( si->file != 0 && !si->no_file_close )
 		close_stream_file( si->file );
-		si->file = 0;
-	}
+
+	si->file = 0;
 }
 
 static int data_get_option( struct colm_program *prg, struct stream_impl_data *si, int option )
@@ -696,7 +752,13 @@ static struct stream_impl *colm_impl_new_fd( char *name, long fd )
 			malloc(sizeof(struct stream_impl_data));
 	si_data_init( si, name );
 	si->funcs = (struct stream_funcs*)&file_funcs;
-	si->file = fdopen( fd, ( fd == 0 ) ? "r" : "w" );
+
+	const char *mode = ( fd == 0 ) ? "r" : "w";
+	si->file = colm_fd_open( fd, mode );
+#ifndef HAVE_FOPENCOOKIE
+	if ( fd == 0 || fd == 1 || fd == 2 )
+		si->no_file_close = 1;
+#endif
 	return (struct stream_impl*)si;
 }
 

@@ -193,6 +193,12 @@ struct stream_impl_data
 	char *name;
 	FILE *file;
 
+	// There is one condition when we don't want to close the FILE struct. If
+	// there is no fopencookie available, we need to use fdopen to wrap FD 0, 1
+	// and 2. However, closing those also closes the file descriptor, and when
+	// a colm program is embedded in a bigger program, we don't want that.
+	int no_file_close;
+
 	struct colm_str_collect *collect;
 
 	int consumed;
