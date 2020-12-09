@@ -382,8 +382,8 @@ void RedFsmBuild::newAction( int anum, char *name, int line, int col, Action *ac
 {
 	redFsm->allActions[anum].actionId = anum;
 	redFsm->allActions[anum].name = name;
-	redFsm->allActions[anum].loc.line = line;
-	redFsm->allActions[anum].loc.col = col;
+	redFsm->allActions[anum].loc_line = line;
+	redFsm->allActions[anum].loc_col = col;
 	redFsm->allActions[anum].inlineList = action->inlineList;
 	redFsm->allActions[anum].objField = action->objField;
 	redFsm->allActions[anum].markType = action->markType;

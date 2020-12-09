@@ -60,7 +60,8 @@ struct ObjectField;
 struct GenAction 
 {
 	/* Data collected during parse. */
-	InputLoc loc;
+	int loc_line;
+	int loc_col;
 	char *name;
 	InlineList *inlineList;
 	int actionId;

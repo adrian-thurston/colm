@@ -41,7 +41,7 @@ string nameOrLoc( GenAction *genAction )
 		return string(genAction->name);
 	else {
 		ostringstream ret;
-		ret << genAction->loc.line << ":" << genAction->loc.col;
+		ret << genAction->loc_line << ":" << genAction->loc_col;
 		return ret.str();
 	}
 }
