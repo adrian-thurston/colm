@@ -23,6 +23,8 @@
 #ifndef _AAPL_BUBBLESORT_H
 #define _AAPL_BUBBLESORT_H
 
+#include <string.h>
+
 #ifdef AAPL_NAMESPACE
 namespace Aapl {
 #endif
@@ -77,9 +79,9 @@ template <class T, class Compare> void BubbleSort<T,Compare>::
 				char tmp[sizeof(T)];
 
 				/* Swap the two items. */
-				memcpy( tmp, data+i, sizeof(T) );
-				memcpy( data+i, data+i+1, sizeof(T) );
-				memcpy( data+i+1, tmp, sizeof(T) );
+				memcpy( tmp, (void*)(data+i), sizeof(T) );
+				memcpy( (void*)(data+i), (void*)(data+i+1), sizeof(T) );
+				memcpy( (void*)(data+i+1), tmp, sizeof(T) );
 
 				/* Note that we made a change. */
 				changed = true;

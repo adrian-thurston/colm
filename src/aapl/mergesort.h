@@ -24,6 +24,7 @@
 #define _AAPL_MERGESORT_H
 
 #include "bubblesort.h"
+#include <string.h>
 
 #ifdef AAPL_NAMESPACE
 namespace Aapl {
@@ -100,26 +101,26 @@ template< class T, class Compare> void MergeSort<T,Compare>::
 		if ( lower == endLower ) {
 			/* Possibly upper left. */
 			if ( upper != endUpper )
-				memcpy( dest, upper, (endUpper - upper) * sizeof(T) );
+				memcpy( (void*)dest, (void*)upper, (endUpper - upper) * sizeof(T) );
 			break;
 		}
 		else if ( upper == endUpper ) {
 			/* Only lower left. */
 			if ( lower != endLower )
-				memcpy( dest, lower, (endLower - lower) * sizeof(T) );
+				memcpy( (void*)dest, (void*)lower, (endLower - lower) * sizeof(T) );
 			break;
 		}
 		else {
 			/* Both upper and lower left. */
 			if ( this->compare(*lower, *upper) <= 0 )
-				memcpy( dest++, lower++, sizeof(T) );
+				memcpy( (void*)(dest++), (void*)(lower++), sizeof(T) );
 			else
-				memcpy( dest++, upper++, sizeof(T) );
+				memcpy( (void*)(dest++), (void*)(upper++), sizeof(T) );
 		}
 	}
 
 	/* Copy back from the tmpStor array. */
-	memcpy( data, tmpStor, sizeof( T ) * len );
+	memcpy( (void*)data, (void*)tmpStor, sizeof( T ) * len );
 }
 
 /**

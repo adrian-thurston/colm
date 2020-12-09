@@ -113,9 +113,9 @@ template <class T, class Compare> T *QuickSort<T,Compare>::
 	char pcPivot[sizeof(T)];
 	T *pivot = median(start, end);
 
-	memcpy( pcPivot, pivot, sizeof(T) );
+	memcpy( pcPivot, (void*)pivot, sizeof(T) );
 	if ( pivot != end )
-		memcpy( pivot, end, sizeof(T) );
+		memcpy( (void*)pivot, (void*)end, sizeof(T) );
 
 	T *first = start-1;
 	T *last = end;
@@ -130,7 +130,7 @@ template <class T, class Compare> T *QuickSort<T,Compare>::
 			if ( first == last )
 				goto done;
 			if ( this->compare( *first, *pivot ) > 0 ) {
-				memcpy(last, first, sizeof(T));
+				memcpy((void*)last, (void*)first, sizeof(T));
 				break;
 			}
 		}
@@ -141,14 +141,14 @@ template <class T, class Compare> T *QuickSort<T,Compare>::
 			if ( last == first )
 				goto done;
 			if ( this->compare( *last, *pivot ) < 0 ) {
-				memcpy(first, last, sizeof(T));
+				memcpy((void*)first, (void*)last, sizeof(T));
 				break;
 			}
 		}
 	}
 done:
 	/* Put the pivot into the middle spot for it. */
-	memcpy( first, pivot, sizeof(T) );
+	memcpy( (void*)first, (void*)pivot, sizeof(T) );
 	return first;
 }
 

@@ -656,7 +656,7 @@ template<class T, class Resize> void Vector<T, Resize>::
 		BaseTable::allocLen = newLen;
 		if ( BaseTable::data != 0 ) {
 			/* Table exists already, resize it up. */
-			BaseTable::data = (T*) realloc( BaseTable::data, sizeof(T) * newLen );
+			BaseTable::data = (T*) realloc( (void*)BaseTable::data, sizeof(T) * newLen );
 			if ( BaseTable::data == 0 )
 				throw std::bad_alloc();
 		}
@@ -687,7 +687,7 @@ template<class T, class Resize> void Vector<T, Resize>::
 		}
 		else {
 			/* Not shrinking to size zero, realloc it to the smaller size. */
-			BaseTable::data = (T*) realloc( BaseTable::data, sizeof(T) * newLen );
+			BaseTable::data = (T*) realloc( (void*)BaseTable::data, sizeof(T) * newLen );
 			if ( BaseTable::data == 0 )
 				throw std::bad_alloc();
 		}
@@ -1038,7 +1038,7 @@ template<class T, class Resize> void Vector<T, Resize>::
 	/* Shift data over if necessary. */
 	lenToSlideOver = BaseTable::tabLen - endPos;	
 	if ( len > 0 && lenToSlideOver > 0 )
-		memmove(dst, dst + len, sizeof(T)*lenToSlideOver);
+		memmove((void*)dst, (void*)(dst + len), sizeof(T)*lenToSlideOver);
 
 	/* Shrink the data if necessary. */
 	downResize( newLen );
@@ -1072,7 +1072,7 @@ template<class T, class Resize> void Vector<T, Resize>::
 
 	/* Shift over data at insert spot if needed. */
 	if ( len > 0 && pos < BaseTable::tabLen ) {
-		memmove(BaseTable::data + pos + len, BaseTable::data + pos,
+		memmove((void*)(BaseTable::data + pos + len), (void*)(BaseTable::data + pos),
 				sizeof(T)*(BaseTable::tabLen-pos));
 	}
 
@@ -1111,7 +1111,7 @@ template<class T, class Resize> void Vector<T, Resize>::
 
 	/* Shift over data at insert spot if needed. */
 	if ( len > 0 && pos < BaseTable::tabLen ) {
-		memmove(BaseTable::data + pos + len, BaseTable::data + pos,
+		memmove((void*)(BaseTable::data + pos + len), (void*)(BaseTable::data + pos),
 				sizeof(T)*(BaseTable::tabLen-pos));
 	}
 
@@ -1148,7 +1148,7 @@ template<class T, class Resize> void Vector<T, Resize>::
 
 	/* Shift over data at insert spot if needed. */
 	if ( len > 0 && pos < BaseTable::tabLen ) {
-		memmove(BaseTable::data + pos + len, BaseTable::data + pos,
+		memmove((void*)(BaseTable::data + pos + len), (void*)(BaseTable::data + pos),
 				sizeof(T)*(BaseTable::tabLen-pos));
 	}
 
@@ -1175,7 +1175,7 @@ template<class T, class Resize> void Vector<T, Resize>::
 
 	/* Shift over data at insert spot if needed. */
 	if ( len > 0 && pos < BaseTable::tabLen ) {
-		memmove(BaseTable::data + pos + len, BaseTable::data + pos,
+		memmove((void*)(BaseTable::data + pos + len), (void*)(BaseTable::data + pos),
 			sizeof(T)*(BaseTable::tabLen-pos));
 	}
 

@@ -81,9 +81,9 @@ template <class T, class Compare>
 		if ( smallest != dest ) {
 			/* Swap dest, smallest. */
 			char tmp[sizeof(T)];
-			memcpy( tmp, dest, sizeof(T) );
-			memcpy( dest, smallest, sizeof(T) );
-			memcpy( smallest, tmp, sizeof(T) );
+			memcpy( tmp, (void*)dest, sizeof(T) );
+			memcpy( (void*)dest, (void*)smallest, sizeof(T) );
+			memcpy( (void*)smallest, tmp, sizeof(T) );
 		}
 	}
 }

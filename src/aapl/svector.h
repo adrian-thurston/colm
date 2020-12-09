@@ -674,7 +674,7 @@ template <class T, class Resize> void SVector<T, Resize>::
 		head->allocLen = newLen;
 
 		/* Table exists already, resize it up. */
-		head = (STabHead*) realloc( head, sizeof(STabHead) + 
+		head = (STabHead*) realloc( (void*)head, sizeof(STabHead) + 
 				sizeof(T) * newLen );
 		if ( head == 0 )
 			throw std::bad_alloc();
@@ -765,7 +765,7 @@ template <class T, class Resize> void SVector<T, Resize>::
 				head->allocLen = newLen;
 
 				/* Not shrinking to size zero, realloc it to the smaller size. */
-				head = (STabHead*) realloc( head, sizeof(STabHead) + 
+				head = (STabHead*) realloc( (void*)head, sizeof(STabHead) + 
 						sizeof(T) * newLen );
 				if ( head == 0 )
 					throw std::bad_alloc();
@@ -1132,7 +1132,7 @@ template <class T, class Resize> void SVector<T, Resize>::
 			/* Shift data over if necessary. */
 			long lenToSlideOver = head->tabLen - endPos;	
 			if ( len > 0 && lenToSlideOver > 0 )
-				memmove(BaseTable::data + pos, dst + len, sizeof(T)*lenToSlideOver);
+				memmove((void*)(BaseTable::data + pos), (void*)(dst + len), sizeof(T)*lenToSlideOver);
 
 			/* Shrink the data if necessary. */
 			downResize( newLen );
@@ -1192,7 +1192,7 @@ template <class T, class Resize> long SVector<T, Resize>::
 
 			/* Shift over data at insert spot if needed. */
 			if ( len > 0 && pos < head->tabLen ) {
-				memmove( BaseTable::data + pos + len, BaseTable::data + pos,
+				memmove( (void*)(BaseTable::data + pos + len), (void*)(BaseTable::data + pos),
 						sizeof(T)*(head->tabLen - pos) );
 			}
 
@@ -1312,7 +1312,7 @@ template <class T, class Resize> void SVector<T, Resize>::
 
 			/* Shift over data at insert spot if needed. */
 			if ( len > 0 && pos < head->tabLen ) {
-				memmove( BaseTable::data + pos + len, BaseTable::data + pos,
+				memmove( (void*)(BaseTable::data + pos + len), (void*)(BaseTable::data + pos),
 						sizeof(T)*(head->tabLen - pos) );
 			}
 
