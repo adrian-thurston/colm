@@ -450,6 +450,7 @@ template<class T> StrTmpl<T>::StrTmpl( long lenGuess, const char *format, ... )
 	long written = vsnprintf( data, lenGuess+1, format, args );
 	if ( written > lenGuess ) {
 		setSpace( written );
+		va_start( args, format );
 		written = vsnprintf( data, written+1, format, args );
 	}
 	chop( written );
