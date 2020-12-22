@@ -201,6 +201,19 @@ IterImpl::IterImpl( Type type ) :
 		useGenericId = true;
 		break;
 
+	case WithIgnore:
+		inCreateWV = IN_TRITER_FROM_REF;
+		inCreateWC = IN_TRITER_FROM_REF;
+		inUnwind =   IN_TRITER_UNWIND;
+		inDestroy =  IN_TRITER_DESTROY;
+		inAdvance =  IN_TRITER_WIG_ADVANCE;
+
+		inGetCurR =  IN_TRITER_GET_CUR_R;
+		inGetCurWC = IN_TRITER_GET_CUR_WC;
+		inSetCurWC = IN_TRITER_SET_CUR_WC;
+		inRefFromCur = IN_TRITER_REF_FROM_CUR;
+		useSearchUT = true;
+		break;
 	case User:
 		assert(false);
 	}
@@ -331,6 +344,7 @@ long sizeOfField( UniqueType *fieldUT )
 		/* Select on the iterator type. */
 		switch ( fieldUT->iterDef->type ) {
 			case IterDef::Tree:
+			case IterDef::WithIgnore:
 			case IterDef::Child:
 			case IterDef::Repeat:
 			case IterDef::RevRepeat:
@@ -2476,6 +2490,9 @@ void LangStmt::compileForIter( Compiler *pd, CodeVect &code ) const
 			iterImpl = iterCall->langTerm->varRef->chooseTriterCall( pd,
 					searchUT, iterCall->langTerm->args );
 			break;
+		case IterDef::WithIgnore:
+			iterImpl = new IterImpl( IterImpl::WithIgnore );
+			break;
 		case IterDef::Child:
 			iterImpl = new IterImpl( IterImpl::Child );
 			break;
@@ -2760,6 +2777,7 @@ void Compiler::findLocals( ObjectDef *localFrame, CodeBlock *block )
 				LocalType type = LT_Tree;
 				switch ( ut->iterDef->type ) {
 					case IterDef::Tree:
+					case IterDef::WithIgnore:
 					case IterDef::Child:
 					case IterDef::Repeat:
 					case IterDef::RevRepeat:

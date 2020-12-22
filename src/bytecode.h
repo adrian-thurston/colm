@@ -155,6 +155,7 @@ typedef unsigned char uchar;
 
 #define IN_TRITER_FROM_REF       0x41
 #define IN_TRITER_ADVANCE        0x42
+#define IN_TRITER_WIG_ADVANCE    0x84
 #define IN_TRITER_NEXT_CHILD     0x43
 #define IN_TRITER_GET_CUR_R      0x44
 #define IN_TRITER_GET_CUR_WC     0x45

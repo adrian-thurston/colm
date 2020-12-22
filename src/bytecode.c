@@ -2155,7 +2155,19 @@ again:
 			debug( prg, REALM_BYTECODE, "IN_TRITER_ADVANCE\n" );
 
 			tree_iter_t *iter = (tree_iter_t*) vm_get_plocal(exec, field);
-			tree_t *res = tree_iter_advance( prg, &sp, iter );
+			tree_t *res = tree_iter_advance( prg, &sp, iter, false );
+			//colm_tree_upref( prg, res );
+			vm_push_tree( res );
+			break;
+		}
+		case IN_TRITER_WIG_ADVANCE: {
+			short field;
+			read_half( field );
+
+			debug( prg, REALM_BYTECODE, "IN_TRITER_WIG_ADVANCE\n" );
+
+			tree_iter_t *iter = (tree_iter_t*) vm_get_plocal(exec, field);
+			tree_t *res = tree_iter_advance( prg, &sp, iter, true );
 			//colm_tree_upref( prg, res );
 			vm_push_tree( res );
 			break;

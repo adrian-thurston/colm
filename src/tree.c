@@ -1039,6 +1039,28 @@ kid_t *tree_child( program_t *prg, const tree_t *tree )
 	return kid;
 }
 
+/* Find the first child of a tree. */
+kid_t *tree_child_maybe_ignore( program_t *prg, const tree_t *tree, int with_ignore )
+{
+	struct lang_el_info *lel_info = prg->rtd->lel_info;
+	kid_t *kid = tree->child;
+
+	if ( !with_ignore ) {
+		if ( tree->flags & AF_LEFT_IGNORE )
+			kid = kid->next;
+		if ( tree->flags & AF_RIGHT_IGNORE )
+			kid = kid->next;
+	}
+
+	/* Skip over attributes. */
+	long object_length = lel_info[tree->id].object_length;
+	long a;
+	for ( a = 0; a < object_length; a++ )
+		kid = kid->next;
+
+	return kid;
+}
+
 /* Detach at the first real child of a tree. */
 kid_t *tree_extract_child( program_t *prg, tree_t *tree )
 {

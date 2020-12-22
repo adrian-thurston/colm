@@ -354,7 +354,7 @@ void split_iter_cur( program_t *prg, tree_t ***psp, tree_iter_t *iter )
 	split_ref( prg, psp, &iter->ref );
 }
 
-void iter_find( program_t *prg, tree_t ***psp, tree_iter_t *iter, int try_first )
+void iter_find( program_t *prg, tree_t ***psp, tree_iter_t *iter, int try_first, int with_ignore )
 {
 	int any_tree = iter->search_id == prg->rtd->any_id;
 	tree_t **top = iter->stack_root;
@@ -367,7 +367,7 @@ rec_call:
 		return;
 	}
 	else {
-		child = tree_child( prg, iter->ref.kid->tree );
+		child = tree_child_maybe_ignore( prg, iter->ref.kid->tree, with_ignore );
 		if ( child != 0 ) {
 			vm_contiguous( 2 );
 			vm_push_ref( iter->ref.next );
@@ -392,7 +392,7 @@ rec_call:
 	*psp = sp;
 }
 
-tree_t *tree_iter_advance( program_t *prg, tree_t ***psp, tree_iter_t *iter )
+tree_t *tree_iter_advance( program_t *prg, tree_t ***psp, tree_iter_t *iter, int with_ignore )
 {
 	tree_t **sp = *psp;
 	assert( iter->yield_size == (vm_ssize() - iter->root_size) );
@@ -400,11 +400,11 @@ tree_t *tree_iter_advance( program_t *prg, tree_t ***psp, tree_iter_t *iter )
 	if ( iter->ref.kid == 0 ) {
 		/* kid_t is zero, start from the root. */
 		iter->ref = iter->root_ref;
-		iter_find( prg, psp, iter, true );
+		iter_find( prg, psp, iter, true, with_ignore );
 	}
 	else {
 		/* Have a previous item, continue searching from there. */
-		iter_find( prg, psp, iter, false );
+		iter_find( prg, psp, iter, false, with_ignore );
 	}
 
 	sp = *psp;
@@ -643,6 +643,3 @@ tree_t *tree_iter_prev_repeat( program_t *prg, tree_t ***psp, tree_iter_t *iter 
 
 	return (iter->ref.kid ? prg->true_val : prg->false_val );
 }
-
-
-

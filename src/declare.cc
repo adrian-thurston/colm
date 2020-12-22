@@ -693,6 +693,16 @@ void Compiler::makeDefaultIterators()
 		objMethod->iterDef = triter;
 	}
 
+	{
+		UniqueType *anyRefUT = findUniqueType( TYPE_REF, anyLangEl );
+		ObjectMethod *objMethod = initFunction( uniqueTypeAny, rootNamespace, globalObjectDef, 
+				ObjectMethod::Call, "with_ignore", IN_HALT, IN_HALT, anyRefUT, true );
+
+		IterDef *triter = findIterDef( IterDef::WithIgnore );
+		objMethod->iterDef = triter;
+	}
+
+
 	/* Child iterator. */
 	{
 		UniqueType *anyRefUT = findUniqueType( TYPE_REF, anyLangEl );

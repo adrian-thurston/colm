@@ -234,6 +234,7 @@ tree_t *tree_right_ignore( struct colm_program *prg, tree_t *tree );
 kid_t *tree_left_ignore_kid( struct colm_program *prg, tree_t *tree );
 kid_t *tree_right_ignore_kid( struct colm_program *prg, tree_t *tree );
 kid_t *tree_child( struct colm_program *prg, const tree_t *tree );
+kid_t *tree_child_maybe_ignore( struct colm_program *prg, const tree_t *tree, int with_ignore );
 kid_t *tree_attr( struct colm_program *prg, const tree_t *tree );
 kid_t *kid_list_concat( kid_t *list1, kid_t *list2 );
 kid_t *tree_extract_child( struct colm_program *prg, tree_t *tree );
@@ -292,7 +293,7 @@ tree_t *list_remove_head( struct colm_program *prg, list_t *list );
 tree_t *get_list_mem_split( struct colm_program *prg, list_t *list, word_t field );
 tree_t *get_parser_mem( parser_t *parser, word_t field );
 
-tree_t *tree_iter_advance( struct colm_program *prg, tree_t ***psp, tree_iter_t *iter );
+tree_t *tree_iter_advance( struct colm_program *prg, tree_t ***psp, tree_iter_t *iter, int with_ignore );
 tree_t *tree_iter_next_child( struct colm_program *prg, tree_t ***psp, tree_iter_t *iter );
 tree_t *tree_rev_iter_prev_child( struct colm_program *prg, tree_t ***psp, rev_tree_iter_t *iter );
 tree_t *tree_iter_next_repeat( struct colm_program *prg, tree_t ***psp, tree_iter_t *iter );
