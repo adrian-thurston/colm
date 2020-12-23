@@ -35,7 +35,7 @@ dist_libfsm_la_SOURCES = \
 	goto.cc gotoloop.cc gotoexp.cc ipgoto.cc \
 	dot.cc asm.cc
 
-libfsm_la_LDFLAGS = -no-undefined
+libfsm_la_LDFLAGS = -release $(VERSION) -no-undefined
 
 if LINKER_NO_UNDEFINED
 libfsm_la_LDFLAGS += -Wl,--no-undefined
