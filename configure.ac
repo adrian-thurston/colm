@@ -85,9 +85,13 @@ AM_CONDITIONAL([BUILD_MANUAL], [test "x$ASCIIDOC" != x && test "x$PYGMENTIZE" !=
 
 dnl Choose a default for the build_manual var. If the dist file is present in
 dnl the root then default to no, otherwise go for it.
+if test "$cross_compiling" != "yes"; then
 AC_CHECK_FILES( [$srcdir/DIST], 
 	[. $srcdir/DIST;], 
 	[build_manual=yes; ] )
+else
+AS_IF([test -a "$srcdir/DIST"], [build_manual="yes"], [])
+fi
 
 dnl
 dnl Enable arg to explicitly control the building of the manual
@@ -390,8 +394,13 @@ AC_ARG_WITH(colm,
 		EXTERNAL_COLM="$withval"
 		EXTERNAL_INC="-I$withval/include"
 		EXTERNAL_LIBS="-L$withval/lib"
+		if test "$cross_compiling" != "yes"; then
 		AC_CHECK_FILES(["$EXTERNAL_COLM/bin/colm"], [],
 			[AC_ERROR(["could not find $EXTERNAL_COLM/bin/colm"])])
+		else
+		AS_IF([test -a "$EXTERNAL_COLM/bin/colm"], [],
+			AC_ERROR(["could not find $EXTERNAL_COLM/bin/colm"]))
+		fi
 	],
 	[]
 )
