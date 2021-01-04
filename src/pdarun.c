@@ -180,8 +180,10 @@ static void send_back_ignore( program_t *prg, tree_t **sp,
 	int artificial = parse_tree->flags & PF_ARTIFICIAL;
 
 	if ( head != 0 ) {
-		if ( artificial )
+		if ( artificial ) {
+			colm_tree_upref( prg, parse_tree->shadow->tree );
 			send_back_tree( prg, is, parse_tree->shadow->tree );
+		}
 		else
 			send_back_text( prg, is, colm_alph_from_cstr( string_data( head ) ), head->length );
 	}
@@ -240,7 +242,6 @@ static void send_back( program_t *prg, tree_t **sp, struct pda_run *pda_run,
 		}
 
 		colm_tree_upref( prg, parse_tree->shadow->tree );
-
 		send_back_tree( prg, is, parse_tree->shadow->tree );
 	}
 	else {

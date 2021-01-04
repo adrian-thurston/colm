@@ -1,0 +1,38 @@
+lex
+	token id /[a-z]+/
+	ignore WS /[ \t\n]/
+
+	literal `; `! `@
+
+	token PLUS /'+'/ {
+		# input->pull( match_length )
+		input->push_ignore( make_token( typeid<WS>, input->pull(match_length) ) )
+
+		parse S: stmt "there is more;"
+		input->push( S )
+		input->push( "; " )
+	}
+end
+
+def E1 []
+def E2 []
+
+def stmt
+	[id* `;]
+
+def main
+	[E1 stmt+ `!]
+|	[E2 stmt+ `@]
+
+parse M: main [stdin]
+
+print
+	"parsed tree
+	[M]
+	"<-
+##### IN #####
+a b + c d; @
+##### EXP #####
+parsed tree
+a b ; there is more;+ c d; @
+<-

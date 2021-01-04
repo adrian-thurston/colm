@@ -540,8 +540,8 @@ static tree_t *input_undo_prepend_tree( struct colm_program *prg, struct input_i
 {
 	debug( prg, REALM_INPUT, "input_undo_prepend_tree: stream %p undo prepend tree\n", si );
 
-	assert( si->queue.head != 0 && ( si->queue.head->type == SB_TOKEN ||
-			si->queue.head->type == SB_IGNORE ) );
+	assert( si->queue.head != 0 );
+	assert( si->queue.head->type == SB_TOKEN || si->queue.head->type == SB_IGNORE );
 
 	struct seq_buf *seq_buf = input_stream_seq_pop_head( si );
 

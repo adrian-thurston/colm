@@ -200,35 +200,6 @@ static head_t *tree_to_str_postfix( program_t *prg, tree_t **sp, tree_t *tree, i
 	return ret;
 }
 
-static void input_push_text( struct colm_program *prg, struct input_impl *is,
-		struct colm_location *loc, const char *data, long length )
-{
-	is->funcs->prepend_data( prg, is, loc, colm_alph_from_cstr( data ), length );
-}
-
-static void colm_stream_push_tree( struct colm_program *prg, struct input_impl *is,
-		tree_t *tree, int ignore )
-{
-	is->funcs->prepend_tree( prg, is, tree, ignore );
-}
-
-static void colm_stream_push_stream( struct colm_program *prg, struct input_impl *is, stream_t *stream )
-{
-	is->funcs->prepend_stream( prg, is, stream );
-}
-
-static void colm_undo_stream_push( program_t *prg, tree_t **sp, struct input_impl *is, long length )
-{
-	if ( length < 0 ) {
-		/* tree_t *tree = */ is->funcs->undo_prepend_tree( prg, is );
-		// colm_tree_downref( prg, sp, tree );
-	}
-	else {
-		is->funcs->undo_prepend_data( prg, is, length );
-	}
-}
-
-
 static word_t stream_append_text( program_t *prg, tree_t **sp, input_t *dest, tree_t *input, int trim )
 {
 	long length = 0;
@@ -316,7 +287,6 @@ static tree_t *stream_pull_bc( program_t *prg, tree_t **sp, struct pda_run *pda_
 	return construct_string( prg, tokdata );
 }
 
-
 static void undo_stream_pull( struct colm_program *prg, struct input_impl *is,
 		const char *data, long length )
 {
@@ -330,6 +300,18 @@ static void undo_pull( program_t *prg, input_t *input, tree_t *str )
 	const char *data = string_data( ( (str_t*)str )->value );
 	long length = string_length( ( (str_t*)str )->value );
 	undo_stream_pull( prg, impl, data, length );
+}
+
+static void input_push_text( struct colm_program *prg, struct input_impl *is,
+		struct colm_location *loc, const char *data, long length )
+{
+	is->funcs->prepend_data( prg, is, loc, colm_alph_from_cstr( data ), length );
+}
+
+static void colm_stream_push_tree( struct colm_program *prg, struct input_impl *is,
+		tree_t *tree, int ignore )
+{
+	is->funcs->prepend_tree( prg, is, tree, ignore );
 }
 
 static long input_push( program_t *prg, tree_t **sp, struct input_impl *in, tree_t *tree, int ignore )
@@ -360,11 +342,26 @@ static long input_push( program_t *prg, tree_t **sp, struct input_impl *in, tree
 	return length;
 }
 
-static long input_push_stream( program_t *prg, tree_t **sp,
+static void input_undo_push( program_t *prg, tree_t **sp, struct input_impl *is, long length )
+{
+	if ( length < 0 ) {
+		tree_t *tree = is->funcs->undo_prepend_tree( prg, is );
+		colm_tree_downref( prg, sp, tree );
+	}
+	else {
+		is->funcs->undo_prepend_data( prg, is, length );
+	}
+}
+
+static void input_push_stream( program_t *prg, tree_t **sp,
 		struct input_impl *in, stream_t *stream )
 {
-	colm_stream_push_stream( prg, in, stream );
-	return -1;
+	in->funcs->prepend_stream( prg, in, stream );
+}
+
+static void input_undo_push_stream( program_t *prg, tree_t **sp, struct input_impl *is )
+{
+	is->funcs->undo_prepend_stream( prg, is );
 }
 
 static void set_local( execution_t *exec, long field, tree_t *tree )
@@ -2806,7 +2803,6 @@ again:
 			break;
 		}
 
-
 		case IN_INPUT_PULL_WV: {
 			debug( prg, REALM_BYTECODE, "IN_INPUT_PULL_WV\n" );
 
@@ -2874,7 +2870,7 @@ again:
 			long len = input_push( prg, sp, input_to_impl( input ), tree, true );
 			vm_push_tree( 0 );
 
-			/* Single unit. */
+			/* Single unit end. */
 			rcode_code( exec, IN_INPUT_PUSH_BKT );
 			rcode_word( exec, len );
 			rcode_unit_term( exec );
@@ -2889,7 +2885,7 @@ again:
 			debug( prg, REALM_BYTECODE, "IN_INPUT_PUSH_BKT %d\n", len );
 
 			input_t *input = vm_pop_input();
-			colm_undo_stream_push( prg, sp, input_to_impl( input ), len );
+			input_undo_push( prg, sp, input_to_impl( input ), len );
 			break;
 		}
 		case IN_INPUT_PUSH_STREAM_WV: {
@@ -2897,23 +2893,19 @@ again:
 
 			input_t *input = vm_pop_input();
 			stream_t *to_push = vm_pop_stream();
-			long len = input_push_stream( prg, sp, input_to_impl( input ), to_push );
+			input_push_stream( prg, sp, input_to_impl( input ), to_push );
 			vm_push_tree( 0 );
 
-			/* Single unit. */
-			rcode_code( exec, IN_INPUT_PUSH_BKT );
-			rcode_word( exec, len );
+			/* Single unit end. */
+			rcode_code( exec, IN_INPUT_PUSH_STREAM_BKT );
 			rcode_unit_term( exec );
 			break;
 		}
 		case IN_INPUT_PUSH_STREAM_BKT: {
-			word_t len;
-			read_word( len );
-
-			debug( prg, REALM_BYTECODE, "IN_INPUT_PUSH_STREAM_BKT %d\n", len );
+			debug( prg, REALM_BYTECODE, "IN_INPUT_PUSH_STREAM_BKT\n" );
 
 			input_t *input = vm_pop_input();
-			colm_undo_stream_push( prg, sp, input_to_impl( input ), len );
+			input_undo_push_stream( prg, sp, input_to_impl( input ) );
 			break;
 		}
 		case IN_CONS_GENERIC: {
@@ -4839,6 +4831,10 @@ again:
 			consume_word(); //( len );
 
 			debug( prg, REALM_BYTECODE, "IN_INPUT_PUSH_BKT\n" );
+			break;
+		}
+		case IN_INPUT_PUSH_STREAM_BKT: {
+			debug( prg, REALM_BYTECODE, "IN_INPUT_PUSH_STREAM_BKT\n" );
 			break;
 		}
 		case IN_LOAD_GLOBAL_BKT: {

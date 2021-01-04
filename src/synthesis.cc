@@ -1750,7 +1750,6 @@ void LangTerm::evaluateSendParser( Compiler *pd, CodeVect &code, bool strings ) 
 		parseFrag( pd, code, 0 );
 	}
 	else {
-
 		/* Assign bind ids to the variables in the replacement. */
 		for ( ConsItemList::Iter item = *parserText->list; item.lte(); item++ ) {
 			bool isStream = false;

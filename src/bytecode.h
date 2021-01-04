@@ -259,16 +259,14 @@ typedef unsigned char uchar;
 #define IN_PARSE_INIT_BKT        0xa1
 #define IN_PARSE_FRAG_BKT        0xa6
 
+#define IN_PRINT_TREE       0xa3
+
 #define IN_SEND_NOTHING     0xa0
 #define IN_SEND_TEXT_W      0x89
 #define IN_SEND_TEXT_BKT    0x8a
 
-#define IN_PRINT_TREE       0xa3
-
 #define IN_SEND_TREE_W      0xa9
 #define IN_SEND_TREE_BKT    0xaa
-
-#define IN_REPLACE_STREAM   0x88
 
 #define IN_SEND_STREAM_W    0x90
 #define IN_SEND_STREAM_BKT  0x1c
