@@ -518,7 +518,7 @@ enum LEL_ID {
 	( ( (sp-(n)) < prg->sb_beg ? (sp = vm_bs_add(prg, sp, n)) : 0 ), (sp -= (n)) )
 
 #define vm_pop_type(type) \
-	({ SW r = *sp; (sp+1) >= prg->sb_end ? (sp = vm_bs_pop(prg, sp, 1)) : (sp += 1); (type)r; })
+	({ type r = *((type*)sp); (sp+1) >= prg->sb_end ? (sp = vm_bs_pop(prg, sp, 1)) : (sp += 1); r; })
 
 #define vm_push_tree(i)   vm_push_type(tree_t*, i)
 #define vm_push_input(i)  vm_push_type(input_t*, i)
