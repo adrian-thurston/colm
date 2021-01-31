@@ -192,4 +192,3 @@ struct colm_program
 #endif
 
 #endif /* _COLM_PROGRAM_H */
-

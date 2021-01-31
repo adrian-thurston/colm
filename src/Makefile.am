@@ -74,14 +74,13 @@ colmincdir = $(includedir)/colm
 
 colminc_HEADERS = $(RUNTIME_HDR)
 
-BUILT_SOURCES = version.h include/colm
-
 if EXTERNAL_COLM
 
 #
 # Generate the parser using a single run with an external colm program.
 #
 BUILD_PARSE_3_WITH = $(EXTERNAL_COLM)/bin/colm$(EXEEXT)
+WRAP_PARSE_3_WITH = $(EXTERNAL_COLM)/bin/colm-wrap
 AM_CPPFLAGS += $(EXTERNAL_INC)
 AM_LDFLAGS = $(EXTERNAL_LIBS)
 
@@ -90,14 +89,14 @@ else
 noinst_PROGRAMS = bootstrap0 bootstrap1 bootstrap2
 
 BUILD_PARSE_3_WITH = $(builddir)/bootstrap2$(EXEEXT)
+WRAP_PARSE_3_WITH = $(builddir)/colm-wrap
 AM_CPPFLAGS += -Iinclude
 AM_LDFLAGS = -L.
 
 #
 # bootstrap0: The input program for bootstrap0 is construced using internal
 # data structure constructors. It produces a program that can parse a grammar
-# using limited features. No code is supported. 
-#
+# using limited features. No code is supported.
 bootstrap0_CXXFLAGS = $(common_CFLAGS) -DCONS_INIT
 bootstrap0_SOURCES = consinit.cc consinit.h main.cc version.h
 bootstrap0_LDADD = libprog.a libcolm.la
@@ -108,7 +107,7 @@ bootstrap0_LDADD = libprog.a libcolm.la
 # the colm syntax/semantics that is implemented in colm itself.
 #
 
-gen/bootstrap1.pack: colm-wrap bootstrap0$(EXEEXT)
+gen/bootstrap1.pack: $(builddir)/colm-wrap bootstrap0$(EXEEXT)
 	mkdir -p gen
 	$(builddir)/colm-wrap -w bootstrap0 -o $@ \
 		-c -p gen/parse1.c -e gen/if1.h -x gen/if1.cc no-input
@@ -119,20 +118,13 @@ gen/parse1.c: gen/bootstrap1.pack
 gen/if1.h: gen/bootstrap1.pack
 	$(builddir)/colm-wrap -o $@ $<
 
-gen/if1.cc: gen/bootstrap1.pack
+gen/if1.cc: gen/bootstrap1.pack $(FIRST)
 	$(builddir)/colm-wrap -o $@ $<
 
-# Listing if1.h in BUILT_SOURCES isn't sufficient because it depends on the
-# building of bootstrap0. Automake wants to put all built sources into a list
-# of files built before ANYTHING else (which includes bootstrap0). Not sure if
-# it is rejected by automake or make. But in any case, it doesn't work. Fixed
-# with the following additional dependency.
-BUILT_SOURCES += gen/parse1.c gen/if1.h gen/if1.cc
-loadinit.cc: gen/if1.h
 
 bootstrap1_CXXFLAGS = $(common_CFLAGS) -DLOAD_INIT
 bootstrap1_CFLAGS = $(common_CFLAGS)
-bootstrap1_SOURCES = loadinit.h loadinit.cc main.cc version.h
+bootstrap1_SOURCES = version.h loadinit.h loadinit.cc main.cc
 nodist_bootstrap1_SOURCES = gen/if1.h gen/if1.cc gen/parse1.c
 bootstrap1_LDADD = libprog.a libcolm.la
 
@@ -143,7 +135,7 @@ bootstrap1_LDADD = libprog.a libcolm.la
 # and thus generates the sources used in the colm binary.
 #
 
-gen/bootstrap2.pack: colm-wrap bootstrap1$(EXEEXT) colm.lm
+gen/bootstrap2.pack: $(builddir)/colm-wrap bootstrap1$(EXEEXT) colm.lm
 	mkdir -p gen
 	$(builddir)/colm-wrap -w bootstrap1 -o $@ \
 		-c -p gen/parse2.c -e gen/if2.h -x gen/if2.cc colm.lm
@@ -154,11 +146,8 @@ gen/parse2.c: gen/bootstrap2.pack
 gen/if2.h: gen/bootstrap2.pack
 	$(builddir)/colm-wrap -o $@ $<
 
-gen/if2.cc: gen/bootstrap2.pack
+gen/if2.cc: gen/bootstrap2.pack $(FIRST)
 	$(builddir)/colm-wrap -o $@ $<
-
-BUILT_SOURCES += gen/parse2.c gen/if2.h gen/if2.cc
-loadboot2.cc: gen/if2.h
 
 bootstrap2_CXXFLAGS = $(common_CFLAGS) -DLOAD_COLM
 bootstrap2_CFLAGS = $(common_CFLAGS)
@@ -168,22 +157,19 @@ bootstrap2_LDADD = libprog.a libcolm.la
 
 endif
 
-gen/bootstrap3.pack: colm-wrap $(BUILD_PARSE_3_WITH) prog.lm colm.lm 
+gen/bootstrap3.pack: $(WRAP_PARSE_3_WITH) $(BUILD_PARSE_3_WITH) prog.lm colm.lm 
 	mkdir -p gen
-	$(builddir)/colm-wrap -w $(BUILD_PARSE_3_WITH) -o $@ \
+	$(WRAP_PARSE_3_WITH) -w $(BUILD_PARSE_3_WITH) -o $@ \
 		-c -p gen/parse3.c -e gen/if3.h -x gen/if3.cc prog.lm
 
 gen/parse3.c: gen/bootstrap3.pack
-	$(builddir)/colm-wrap -o $@ $<
+	$(WRAP_PARSE_3_WITH) -o $@ $<
 
 gen/if3.h: gen/bootstrap3.pack
-	$(builddir)/colm-wrap -o $@ $<
+	$(WRAP_PARSE_3_WITH) -o $@ $<
 
-gen/if3.cc: gen/bootstrap3.pack
-	$(builddir)/colm-wrap -o $@ $<
-
-BUILT_SOURCES += gen/parse3.c gen/if3.h gen/if3.cc
-loadcolm.cc: gen/if3.h
+gen/if3.cc: gen/bootstrap3.pack $(FIRST)
+	$(WRAP_PARSE_3_WITH) -o $@ $<
 
 colm_CXXFLAGS = $(common_CFLAGS) -DLOAD_COLM
 colm_CFLAGS = $(common_CFLAGS)
@@ -202,8 +188,90 @@ version.h: Makefile
 config.h: ../src/config.h
 	cp ../src/config.h ./
 
-CLEANFILES = $(BUILT_SOURCES) gen/bootstrap1.pack gen/bootstrap2.pack gen/bootstrap3.pack
+# Listing if1.h in BUILT_SOURCES isn't sufficient because it depends on the
+# building of bootstrap0. Automake wants to put all built sources into a list
+# of files built before ANYTHING else (which includes bootstrap0). Not sure if
+# it is rejected by automake or make. But in any case, it doesn't work. Fixed
+# with the following additional dependency.
+
+CLEANFILES = \
+	version.h \
+	include/colm \
+	gen/parse1.c \
+	gen/if1.h \
+	gen/if1.cc \
+	gen/parse2.c \
+	gen/if2.h \
+	gen/if2.cc \
+	gen/parse3.c \
+	gen/if3.h \
+	gen/if3.cc \
+	gen/bootstrap1.pack \
+	gen/bootstrap2.pack \
+	gen/bootstrap3.pack
+
 EXTRA_DIST = prog.lm colm.lm loadfinal.cc colm-wrap.sh
 
 colm-wrap: colm-wrap.sh
 	@$(top_srcdir)/sedsubst $< $@ -w,+x $(SED_SUBST)
+
+
+# The BUILT_SOURCES var doesn't work so well for us because we have multiple
+# levels of dependcies involved. We have three bootstrap programs, arranged in
+# a chain, each one dependeing on the other, and two with built sources of
+# their own. So instead explicitly specify the dependencies that we need.
+FIRST = include/colm version.h
+
+bytecode.c: $(FIRST)
+closure.cc: $(FIRST)
+codegen.cc: $(FIRST)
+codevect.c: $(FIRST)
+commit.c: $(FIRST)
+compiler.cc: $(FIRST)
+consinit.cc: $(FIRST)
+ctinput.cc: $(FIRST)
+debug.c: $(FIRST)
+declare.cc: $(FIRST)
+dotgen.cc: $(FIRST)
+exports.cc: $(FIRST)
+fsmap.cc: $(FIRST)
+fsmattach.cc: $(FIRST)
+fsmbase.cc: $(FIRST)
+fsmcodegen.cc: $(FIRST)
+fsmexec.cc: $(FIRST)
+fsmgraph.cc: $(FIRST)
+fsmmin.cc: $(FIRST)
+fsmstate.cc: $(FIRST)
+input.c: $(FIRST)
+iter.c: $(FIRST)
+list.c: $(FIRST)
+lookup.cc: $(FIRST)
+main.cc: $(FIRST)
+map.c: $(FIRST)
+parser.cc: $(FIRST)
+parsetree.cc: $(FIRST)
+pcheck.cc: $(FIRST)
+pdabuild.cc: $(FIRST)
+pdacodegen.cc: $(FIRST)
+pdagraph.cc: $(FIRST)
+pdarun.c: $(FIRST)
+pool.c: $(FIRST)
+print.c: $(FIRST)
+program.c: $(FIRST)
+redbuild.cc: $(FIRST)
+redfsm.cc: $(FIRST)
+reduce.cc: $(FIRST)
+resolve.cc: $(FIRST)
+stream.c: $(FIRST)
+string.c: $(FIRST)
+struct.c: $(FIRST)
+synthesis.cc: $(FIRST)
+tree.c: $(FIRST)
+
+# We have to be explicit about these built sources. There should be a
+# one-to-one relationship on the includes here as only one source code file
+# needs to be aware of the loading.
+loadinit.cc: $(FIRST) gen/if1.h
+loadboot2.cc: $(FIRST) gen/if2.h
+loadcolm.cc: $(FIRST) gen/if3.h
+
