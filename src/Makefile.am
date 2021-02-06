@@ -118,7 +118,7 @@ gen/parse1.c: gen/bootstrap1.pack
 gen/if1.h: gen/bootstrap1.pack
 	$(builddir)/colm-wrap -o $@ $<
 
-gen/if1.cc: gen/bootstrap1.pack $(FIRST)
+gen/if1.cc: gen/bootstrap1.pack $(FIRST) gen/if1.h
 	$(builddir)/colm-wrap -o $@ $<
 
 
@@ -146,7 +146,7 @@ gen/parse2.c: gen/bootstrap2.pack
 gen/if2.h: gen/bootstrap2.pack
 	$(builddir)/colm-wrap -o $@ $<
 
-gen/if2.cc: gen/bootstrap2.pack $(FIRST)
+gen/if2.cc: gen/bootstrap2.pack $(FIRST) gen/if2.h
 	$(builddir)/colm-wrap -o $@ $<
 
 bootstrap2_CXXFLAGS = $(common_CFLAGS) -DLOAD_COLM
@@ -168,7 +168,7 @@ gen/parse3.c: gen/bootstrap3.pack
 gen/if3.h: gen/bootstrap3.pack
 	$(WRAP_PARSE_3_WITH) -o $@ $<
 
-gen/if3.cc: gen/bootstrap3.pack $(FIRST)
+gen/if3.cc: gen/bootstrap3.pack $(FIRST) gen/if3.h 
 	$(WRAP_PARSE_3_WITH) -o $@ $<
 
 colm_CXXFLAGS = $(common_CFLAGS) -DLOAD_COLM
