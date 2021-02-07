@@ -418,6 +418,12 @@ AC_CHECK_FUNC(fopencookie,
 	[]
 )
 
+mkdir -p src/include
+test -e src/include/colm || ln -s .. src/include/colm
+
+echo "#define VERSION \"$VERSION\"" > src/version.h
+echo "#define PUBDATE \"$PUBDATE\"" >> src/version.h
+
 
 dnl
 dnl Wrap up.
