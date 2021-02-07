@@ -2245,13 +2245,16 @@ struct LoadRagel
 
 	void loadNfaRoundSpec( long &depth, long &groups, ragel::nfa_round_spec Spec )
 	{
-		const char *depthText = Spec.Depth().text().c_str();
+		string depthStr = Spec.Depth().text();
+		string groupStr = Spec.Group().text();
+
+		const char *depthText = depthStr.c_str();
 		errno = 0;
 		depth = strtol( depthText, 0, 10 );
 		if ( depth == LONG_MAX && errno == ERANGE )
 			pd->id->error(Spec.Depth().loc()) << "depth " << depthText << " overflows" << endl;
 
-		const char *groupText = Spec.Group().text().c_str();
+		const char *groupText = groupStr.c_str();
 		errno = 0;
 		groups = strtol( groupText, 0, 10 );
 		if ( depth == LONG_MAX && errno == ERANGE )
