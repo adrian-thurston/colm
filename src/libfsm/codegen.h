@@ -200,6 +200,7 @@ protected:
 
 	virtual string GET_KEY();
 
+	string DATA();
 	string P();
 	string PE();
 	string vEOF();

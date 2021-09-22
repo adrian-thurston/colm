@@ -108,11 +108,11 @@ namespace go_gen
 		}
 		case Offset
 		{
-			<<	"int([expr(expr )])
+			<<	"int([expr(expr)])
 		}
 		case Deref
 		{
-			<<	[ident '[ ' expr( expr ) ' ]' ]
+			<<	[ base '[ ' expr( expr ) ' ]' ]
 		}
 		case True
 		{

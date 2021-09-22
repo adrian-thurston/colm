@@ -88,8 +88,8 @@ def expr_factor
 |	[ident] :Ident
 |	[ident `[ expr `]] :ArraySub
 |	[ident `[ expr `] `. Field: ident] :ArraySubField
-|	[`offset `( ident `, expr `)] :Offset
-|	[`deref `( ident `, expr `)]  :Deref
+|	[`offset `( base: expr `, expr `)] :Offset
+|	[`deref `( base: expr `, expr `)]  :Deref
 |	[number] :Number
 |	[`TRUE]  :True
 |	[`FALSE] :False

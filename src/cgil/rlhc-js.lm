@@ -116,18 +116,18 @@ namespace js_gen
 			send Parser
 				[ExprFactor.ident O expr( TL ) C]
 		}
-		case ['offset' '(' ident ',' expr ')']
+		case ['offset' '(' Base: expr ',' Offset: expr ')']
 		{
 			send Parser
-				[expr( ExprFactor.expr )]
+				[expr( Offset )]
 		}
-		case ['deref' '(' ident ',' expr ')']
+		case ['deref' '(' Base: expr ',' Offset: expr ')']
 		{
-			send Parser	[ExprFactor.ident]
-			if $ExprFactor.ident == 'data'
-				send Parser ['.charCodeAt(' expr( ExprFactor.expr ) ')']
+			send Parser	[Base]
+			if $Base == 'data'
+				send Parser ['.charCodeAt(' expr( Offset ) ')']
 			else
-				send Parser ['[' expr( ExprFactor.expr ) ']']
+				send Parser ['[' expr( Offset ) ']']
 		}
 		case [T: `TRUE]
 		{

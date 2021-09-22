@@ -123,23 +123,23 @@ namespace ml_gen
 			send Parser
 				[^I '_' ^F '.(' expr(E) ')']
 		}
-		case ['offset' '(' ident ',' expr ')']
+		case ['offset' '(' expr ',' Offset: expr ')']
 		{
 			send Parser
-				[expr( ExprFactor.expr )]
+				[expr( Offset )]
 		}
-		case ['deref' '(' I: ident ',' Expr: expr ')']
+		case ['deref' '(' Base: expr ',' Offset: expr ')']
 		{
-			if ( $I == 'data' )
+			if ( $Base == 'data' )
 				send Parser 'Char.code '
 
-			if ( StaticVarMap->find( $I ) ) {
+			if ( StaticVarMap->find( $Base ) ) {
 				send Parser
-					"[I].( [ expr( Expr ) ] )"
+					"[expr( Base )].( [ expr( Offset ) ] )"
 			}
 			else {
 				send Parser
-					"[I].\[[ expr( Expr ) ]\]"
+					"[expr( Base )].\[[ expr( Offset ) ]\]"
 			}
 		}
 		case [T: `TRUE]
@@ -162,7 +162,7 @@ namespace ml_gen
 			number( Number )
 		}
 		case [I: ident] {
-			if ( StaticVarMap->find( $I ) ) {
+			if ( StaticVarMap->find( $I ) || $I == 'data' ) {
 				send Parser
 					[^I]
 			}

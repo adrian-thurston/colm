@@ -109,15 +109,15 @@ namespace rust_gen
 			send Parser
 				"[I]\[([expr( E )]) as usize\]"
 		}
-		case ['offset' '(' ident ',' expr ')']
+		case ['offset' '(' E1: expr ',' E2: expr ')']
 		{
 			send Parser
-				"( [expr( ExprFactor.expr )] ) as i32"
+				"( [expr( E2 )] ) as i32"
 		}
-		case ['deref' '(' I: ident ',' E: expr ')']
+		case ['deref' '(' E1: expr ',' E2: expr ')']
 		{
 			send Parser
-				"[I]\[([expr( E )]) as usize\]
+				"[expr( E1 )]\[([expr( E2 )]) as usize\]
 		}
 		case [T: `TRUE]
 		{

@@ -413,6 +413,18 @@ string CodeGen::ACCESS()
 	return ret.str();
 }
 
+string CodeGen::DATA()
+{
+	ostringstream ret;
+	if ( red->dataExpr == 0 )
+		ret << "data";
+	else {
+		ret << OPEN_HOST_EXPR();
+		INLINE_LIST( ret, red->dataExpr, 0, false, false );
+		ret << CLOSE_HOST_EXPR();
+	}
+	return ret.str();
+}
 
 string CodeGen::P()
 { 
@@ -543,7 +555,7 @@ string CodeGen::GET_KEY()
 	}
 	else {
 		/* Expression for retrieving the key, use simple dereference. */
-		ret << "( " << DEREF( "data", P() ) << ")";
+		ret << "( " << DEREF( DATA(), P() ) << ")";
 	}
 	return ret.str();
 }

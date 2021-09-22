@@ -112,21 +112,21 @@ namespace c_gen
 		}
 		case Offset
 		{
-			<<	"[ident] + [expr( expr )]"
+			<<	"[base] + [expr( expr )]"
 		}
 		case Deref
 		{
 			<<	"(*( [expr(expr)] ))
 		}
-		case [`TRUE]
+		case True
 		{
 			<<	"1"
 		}
-		case [`FALSE]
+		case False
 		{
 			<<	"1"
 		}
-		case [N: `nil]
+		case Nil
 		{
 			<<	"0"
 		}

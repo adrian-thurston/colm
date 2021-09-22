@@ -125,15 +125,15 @@ namespace julia_gen
 			send Parser
 				"[I]\[1+([expr( E )])\]"
 		}
-		case [`offset `( ident `, expr `)]
+		case [`offset `( Base: ident `, Offset: expr `)]
 		{
 			send Parser
-				[expr( ExprFactor.expr )]
+				[expr( Offset )]
 		}
-		case [`deref `( I: ident `, E: expr `)]
+		case [`deref `( Base: expr `, Offset: expr `)]
 		{
 			send Parser
-				"[I]\[1+([ expr( E ) ])\]"
+				"[expr( Base )]\[1+([ expr( Offset ) ])\]"
 		}
 		case [`TRUE]
 		{
