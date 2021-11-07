@@ -420,11 +420,6 @@ struct CodeGenData
 	/* Show some stats after a write data. */
 	virtual void statsSummary() = 0;
 
-	/* This can also be overridden to modify the processing of write
-	 * statements. */
-	virtual void writeStatement( InputLoc &loc, int nargs,
-			std::vector<std::string> &args, bool generateDot, const HostLang *hostLang );
-
 	/********************/
 
 	virtual ~CodeGenData()
@@ -438,8 +433,6 @@ struct CodeGenData
 	}
 
 	void collectReferences();
-
-protected:
 
 	Reducer *red;
 	RedFsmAp *redFsm;
