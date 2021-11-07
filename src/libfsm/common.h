@@ -242,15 +242,9 @@ void genLineDirectiveC( std::ostream &out, bool nld, int line, const char *file 
 void genLineDirectiveAsm( std::ostream &out, bool nld, int line, const char *file );
 void genLineDirectiveTrans( std::ostream &out, bool nld, int line, const char *file );
 
-extern const HostLang hostLangC;
-extern const HostLang hostLangAsm;
-
 HostType *findAlphType( const HostLang *hostLang, const char *s1 );
 HostType *findAlphType( const HostLang *hostLang, const char *s1, const char *s2 );
 HostType *findAlphTypeInternal( const HostLang *hostLang, const char *s1 );
-
-const char *defaultOutFnC( const char *inputFileName );
-extern HostType hostTypesC[];
 
 /* An abstraction of the key operators that manages key operations such as
  * comparison and increment according the signedness of the key. */
