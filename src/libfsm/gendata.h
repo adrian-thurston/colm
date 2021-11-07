@@ -297,7 +297,6 @@ public:
 	void makeMachine();
 	void makeExports();
 	void makeGenInlineList( GenInlineList *outList, InlineList *inList );
-	bool setAlphType( const HostLang *hostLang, const char *data );
 	void analyzeMachine();
 	void make( const HostLang *hostLang, const HostType *alphType );
 

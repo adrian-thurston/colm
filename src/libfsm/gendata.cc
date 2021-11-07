@@ -864,9 +864,6 @@ void Reducer::makeMachine()
 
 void Reducer::make( const HostLang *hostLang, const HostType *alphType )
 {
-	/* Alphabet type. */
-	setAlphType( hostLang, alphType->internalName );
-	
 	/* Getkey expression. */
 	if ( fsmCtx->getKeyExpr != 0 ) {
 		getKeyExpr = new GenInlineList;
@@ -1200,15 +1197,6 @@ void Reducer::resolveTargetStates()
 				}
 			}
 #endif	
-}
-
-bool Reducer::setAlphType( const HostLang *hostLang, const char *data )
-{
-	HostType *alphType = findAlphTypeInternal( hostLang, data );
-	if ( alphType == 0 )
-		return false;
-
-	return true;
 }
 
 void Reducer::condSpaceItem( int cnum, long condActionId )
