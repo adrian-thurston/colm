@@ -26,7 +26,7 @@ libfsm_la_CPPFLAGS = -I$(top_srcdir)/src/aapl
 dist_libfsm_la_SOURCES = \
 	idbase.cc fsmstate.cc fsmbase.cc fsmattach.cc fsmmin.cc fsmgraph.cc \
 	fsmap.cc fsmcond.cc fsmnfa.cc redfsm.cc gendata.cc \
-	allocgen.cc codegen.cc \
+	codegen.cc \
 	actexp.cc binvar.cc \
 	tables.cc tabgoto.cc tabbreak.cc tabvar.cc \
 	binary.cc bingoto.cc binbreak.cc actloop.cc \
