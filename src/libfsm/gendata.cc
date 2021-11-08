@@ -1591,10 +1591,7 @@ void Reducer::analyzeMachine()
 
 void CodeGenData::genOutputLineDirective( std::ostream &out ) const
 {
-	std::streambuf *sbuf = out.rdbuf();
-	output_filter *filter = dynamic_cast<output_filter*>(sbuf);
-	if ( filter != 0 ) 
-		(*genLineDirective)( out, lineDirectives, filter->line + 1, filter->fileName );
+	(*genLineDirective)( out, lineDirectives, -1, 0 );
 }
 
 void CodeGenData::write_option_error( InputLoc &loc, std::string arg )
@@ -1617,6 +1614,19 @@ void CodeGenData::writeClear()
 
 	cleared = true;
 }
+
+class nullbuf
+:
+    public std::streambuf
+{
+public:
+    virtual std::streamsize xsputn( const char * s, std::streamsize n )
+        { return n; }
+
+    virtual int overflow( int c )
+        { return 1; }
+};
+
 
 void CodeGenData::collectReferences()
 {
