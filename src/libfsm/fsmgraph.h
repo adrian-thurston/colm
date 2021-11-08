@@ -1016,12 +1016,11 @@ struct CondData
 
 struct FsmGbl
 {
-	FsmGbl( const HostLang *hostLang )
+	FsmGbl()
 	:
 		printStatistics(false),
 		errorCount(0),
 		displayPrintables(false),
-		hostLang(hostLang),
 		stringTables(false),
 		checkPriorInteraction(0),
 		wantDupsRemoved(true),
@@ -1060,7 +1059,6 @@ struct FsmGbl
 	void abortCompile( int code );
 	bool displayPrintables;
 
-	const HostLang *hostLang;
 	bool stringTables;
 	bool checkPriorInteraction;
 	bool wantDupsRemoved;

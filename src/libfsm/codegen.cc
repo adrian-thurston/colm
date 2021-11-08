@@ -361,7 +361,7 @@ CodeGen::CodeGen( const CodeGenArgs &args )
 	new_recs( "new_recs" ),
 	alt( "_alt" ),
 	tableData( 0 ),
-	backend( args.id->hostLang->backend ),
+	backend( args.backend ),
 	stringTables( args.id->stringTables ),
 
 	nfaTargs(         "nfa_targs",           *this ),

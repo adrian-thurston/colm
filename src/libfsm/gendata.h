@@ -298,7 +298,7 @@ public:
 	void makeExports();
 	void makeGenInlineList( GenInlineList *outList, InlineList *inList );
 	void analyzeMachine();
-	void make( const HostLang *hostLang, const HostType *alphType );
+	void make();
 
 	/* 
 	 * Collecting the machine.
@@ -348,7 +348,8 @@ struct CodeGenArgs
 	CodeGenArgs( FsmGbl *id, Reducer *red, HostType *alphType,
 			int machineId, std::string sourceFileName,
 			std::string fsmName, std::ostream &out,
-			CodeStyle codeStyle )
+			CodeStyle codeStyle, GenLineDirectiveT genLineDirective,
+			RagelBackend backend )
 	:
 		id(id),
 		red(red),
@@ -359,8 +360,10 @@ struct CodeGenArgs
 		out(out),
 		codeStyle(codeStyle),
 		lineDirectives(true),
+		genLineDirective(genLineDirective),
 		forceVar(false),
-		loopLabels(false)
+		loopLabels(false),
+		backend(backend)
 	{}
 
 	FsmGbl *id;
@@ -375,6 +378,7 @@ struct CodeGenArgs
 	GenLineDirectiveT genLineDirective;
 	bool forceVar;
 	bool loopLabels;
+	RagelBackend backend;
 };
 
 struct CodeGenData
@@ -396,7 +400,7 @@ struct CodeGenData
 		lineDirectives(args.lineDirectives),
 		cleared(false),
 		referencesCollected(false),
-		genLineDirective(args.id->hostLang->genLineDirective)
+		genLineDirective(args.genLineDirective)
 	{
 	}
 
@@ -458,10 +462,6 @@ struct CodeGenData
 	void genOutputLineDirective( std::ostream &out ) const;
 	GenLineDirectiveT genLineDirective;
 };
-
-/* Selects and constructs the codegen based on the output options. */
-CodeGenData *makeCodeGen( const HostLang *hostLang, const CodeGenArgs &args );
-CodeGenData *asm_makeCodeGen( const HostLang *hostLang, const CodeGenArgs &args );
 
 typedef AvlMap<char *, CodeGenData*, CmpStr> CodeGenMap;
 typedef AvlMapEl<char *, CodeGenData*> CodeGenMapEl;

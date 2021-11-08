@@ -6,7 +6,15 @@ lib_LTLIBRARIES = libfsm.la
 
 libfsminclude_HEADERS = \
 	action.h fsmgraph.h common.h \
-	gendata.h redfsm.h dot.h asm.h ragel.h
+	gendata.h redfsm.h dot.h asm.h ragel.h \
+	binary.h bingoto.h binbreak.h binvar.h \
+	flat.h flatgoto.h flatbreak.h flatvar.h \
+	switch.h switchgoto.h switchbreak.h switchvar.h \
+	goto.h gotoloop.h gotoexp.h \
+	parsedata.h idbase.h codegen.h \
+	tables.h \
+	actloop.h actexp.h \
+	ipgoto.h
 
 # nodist_pkginclude_HEADERS = config.h
 
@@ -16,14 +24,6 @@ libfsminclude_HEADERS = \
 libfsm_la_CPPFLAGS = -I$(top_srcdir)/src/aapl
 
 dist_libfsm_la_SOURCES = \
-	parsedata.h idbase.h codegen.h \
-	actloop.h actexp.h \
-	tables.h \
-	binary.h bingoto.h binbreak.h binvar.h \
-	flat.h flatgoto.h flatbreak.h flatvar.h \
-	switch.h switchgoto.h switchbreak.h switchvar.h \
-	goto.h gotoloop.h gotoexp.h \
-	ipgoto.h asm.h \
 	idbase.cc fsmstate.cc fsmbase.cc fsmattach.cc fsmmin.cc fsmgraph.cc \
 	fsmap.cc fsmcond.cc fsmnfa.cc common.cc redfsm.cc gendata.cc \
 	allocgen.cc codegen.cc \

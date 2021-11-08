@@ -862,7 +862,7 @@ void Reducer::makeMachine()
 	resolveTargetStates();
 }
 
-void Reducer::make( const HostLang *hostLang, const HostType *alphType )
+void Reducer::make()
 {
 	/* Getkey expression. */
 	if ( fsmCtx->getKeyExpr != 0 ) {

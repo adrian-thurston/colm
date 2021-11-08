@@ -32,7 +32,6 @@ struct colm_location;
 
 struct InputData;
 struct CodeGenData;
-struct HostLang;
 struct CodeGenArgs;
 
 enum RagelBackend
@@ -220,23 +219,6 @@ struct HostType
 
 typedef void (*GenLineDirectiveT)( std::ostream &out, bool nld, int line, const char *file );
 typedef const char *(*DefaultOutFnT)( const char *inputFileName );
-typedef CodeGenData *(*MakeCodeGenT)( const HostLang *hostLang, const CodeGenArgs &args );
-
-struct HostLang
-{
-	HostType *hostTypes;
-	int numHostTypes;
-	int defaultAlphType;
-	bool explicitUnsigned;
-	bool loopLabels;
-
-	RagelBackend backend;
-	BackendFeature feature;
-
-	MakeCodeGenT makeCodeGen;
-	DefaultOutFnT defaultOutFn;
-	GenLineDirectiveT genLineDirective;
-};
 
 void genLineDirectiveC( std::ostream &out, bool nld, int line, const char *file );
 void genLineDirectiveAsm( std::ostream &out, bool nld, int line, const char *file );
@@ -259,10 +241,10 @@ struct KeyOps
 	bool explicitUnsigned;
 	Key minKey, maxKey;
 
-	void setAlphType( const HostLang *hostLang, const HostType *alphType )
+	void setAlphType( bool explicitUnsigned, const HostType *alphType )
 	{
 		isSigned = alphType->isSigned;
-		explicitUnsigned = hostLang->explicitUnsigned;
+		this->explicitUnsigned = explicitUnsigned;
 
 		if ( isSigned ) {
 			minKey = (long) alphType->sMinVal;
@@ -487,8 +469,5 @@ enum RagelFrontend
 	KelbtBased,
 	ReduceBased
 };
-
-CodeGenData *makeCodeGen( const HostLang *hostLang, const CodeGenArgs &args );
-CodeGenData *makeCodeGenAsm( const HostLang *hostLang, const CodeGenArgs &args );
 
 #endif
