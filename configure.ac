@@ -79,9 +79,6 @@ AC_ARG_ENABLE(debug,
 		AC_HELP_STRING([--enable-debug], [enable debug statements]), 
 		AC_DEFINE([DEBUG], [1], [enable debug statements]))
 
-AC_CHECK_PROG([ASCIIDOC], [asciidoc], [asciidoc])
-AC_CHECK_PROG([PYGMENTIZE], [pygmentize], [pygmentize])
-AM_CONDITIONAL([BUILD_MANUAL], [test "x$ASCIIDOC" != x && test "x$PYGMENTIZE" != x])
 
 dnl Do not build the manual by default. Most of the time the dependencies are
 dnl not available, as they can be quite big installs.
@@ -95,8 +92,13 @@ AC_ARG_ENABLE(manual,
 	[
 		if test "x$enableval" = "xyes"; then
 			build_manual=yes;
-		else
-			build_manual=no;
+
+			AC_CHECK_PROG([ASCIIDOC], [asciidoc], [asciidoc])
+			AC_CHECK_PROG([PYGMENTIZE], [pygmentize], [pygmentize])
+
+			if [test "x$ASCIIDOC" == x || test "x$PYGMENTIZE" == x]; then
+				AC_ERROR([must have both asciidoc and pygmentize to build the manual])
+			fi 
 		fi
 	],
 )
