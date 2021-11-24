@@ -1,5 +1,5 @@
 
-data_DATA = $(CGIL_FILES)
+pkgdata_DATA = $(CGIL_FILES)
 
 CGIL_FILES = ril.lm rlhc-main.lm \
 	rlhc-c.lm rlhc-csharp.lm rlhc-go.lm rlhc-js.lm rlhc-ruby.lm \
