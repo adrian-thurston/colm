@@ -45,6 +45,7 @@ AC_PROG_CXX
 AC_CHECK_TOOL(AR, ar)
 AC_PROG_RANLIB
 AC_PROG_LIBTOOL
+
 SED_SUBST=["\
 	-e 's|@CXX@|${CXX}|g' \
 	-e 's|@CC@|${CC}|g' \
@@ -420,6 +421,13 @@ test -e src/include/colm || ln -s .. src/include/colm
 echo "#define VERSION \"$VERSION\"" > src/version.h
 echo "#define PUBDATE \"$PUBDATE\"" >> src/version.h
 
+if test "x$enable_static" = "xyes"; then 
+	AC_DEFINE([LINK_STATIC], [1], [Link static lib when invoking C compile and link])
+fi
+
+if test "x$enable_shared" = "xyes"; then
+	AC_DEFINE([LINK_SHARED], [1], [Link shared lib when invoking C compile and link])
+fi
 
 dnl
 dnl Wrap up.

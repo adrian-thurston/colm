@@ -485,7 +485,14 @@ void compileOutput( const char *argv0, const bool inSource, char *srcLocation )
 				" -I%s/../aapl"
 				" -I%s/include"
 				" -L%s"
+#if defined(LINK_STATIC)
 				" %s/libcolm.a",
+#elif defined(LINK_SHARED)
+				" %s/libcolm.so",
+#else
+#				error "must enabled at least one of shared or static libs"
+#endif
+
 				binaryFn, intermedFn, srcLocation,
 				srcLocation, location, location );
 	}
