@@ -14,18 +14,18 @@ using std::cout;
 using std::endl;
 
 extern "C" {
-	colm_value_t cc_action_params_find( struct colm_program *prg, tree_t **sp, str_t *_machine, str_t *_action );
-	colm_value_t cc_action_params_insert( struct colm_program *prg, tree_t **sp, str_t *_machine, str_t *_action );
+	colm_value_t cc_action_params_find( struct colm_program *prg, tree_t **sp, colm_value_t _machine, colm_value_t _action );
+	colm_value_t cc_action_params_insert( struct colm_program *prg, tree_t **sp, colm_value_t _machine, colm_value_t _action );
 }
 
 typedef set<string> Set;
 typedef map< string, Set > Map;
 static Map machineMap;
 
-value_t cc_action_params_find( struct colm_program *prg, tree_t **sp, str_t *_machine, str_t *_action )
+value_t cc_action_params_find( struct colm_program *prg, tree_t **sp, value_t _machine, value_t _action )
 {
-	string machine( _machine->value->data, _machine->value->length );
-	string action( _action->value->data, _action->value->length );
+	string machine( ( (str_t *) _machine )->value->data, ( (str_t *) _machine )->value->length );
+	string action( ( (str_t *) _action )->value->data, ( (str_t *) _action )->value->length );
 
 	// cout << "cc_action_params_find " << machine << " " << action << " ";
 
@@ -42,10 +42,10 @@ value_t cc_action_params_find( struct colm_program *prg, tree_t **sp, str_t *_ma
 	return (value_t) res;
 }
 
-value_t cc_action_params_insert( struct colm_program *prg, tree_t **sp, str_t *_machine, str_t *_action )
+value_t cc_action_params_insert( struct colm_program *prg, tree_t **sp, value_t _machine, value_t _action )
 {
-	string machine( _machine->value->data, _machine->value->length );
-	string action( _action->value->data, _action->value->length );
+	string machine( ( (str_t *) _machine )->value->data, ( (str_t *) _machine )->value->length );
+	string action( ( (str_t *) _action )->value->data, ( (str_t *) _action )->value->length );
 
 	// cout << "cc_action_params_insert " << machine << " " << action << endl;
 
