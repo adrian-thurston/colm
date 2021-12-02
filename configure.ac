@@ -421,13 +421,6 @@ test -e src/include/colm || ln -s .. src/include/colm
 echo "#define VERSION \"$VERSION\"" > src/version.h
 echo "#define PUBDATE \"$PUBDATE\"" >> src/version.h
 
-if test "x$enable_static" = "xyes"; then 
-	AC_DEFINE([LINK_STATIC], [1], [Link static lib when invoking C compile and link])
-fi
-
-if test "x$enable_shared" = "xyes"; then
-	AC_DEFINE([LINK_SHARED], [1], [Link shared lib when invoking C compile and link])
-fi
 
 dnl
 dnl Wrap up.

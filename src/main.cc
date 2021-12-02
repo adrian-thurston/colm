@@ -78,6 +78,7 @@ const char *binaryFn = 0;
 const char *exportHeaderFn = 0;
 const char *exportCodeFn = 0;
 const char *commitCodeFn = 0;
+const char *buildDir = 0;
 const char *objectName = "colm_object";
 bool exportCode = false;
 bool hostAdapters = true;
@@ -441,60 +442,31 @@ void runOutputProgram()
 	/* We shall never return here! */
 }
 
-void compileOutput( const char *argv0, const bool inSource, char *srcLocation )
+void compileOutput()
 {
-	/* Find the location of the colm program that is executing. */
-	char *location = strdup( argv0 );
-	char *last;
 	int length = 1024 + strlen( intermedFn ) + strlen( binaryFn );
-	if ( inSource ) {
-		last = strrchr( location, '/' );
-		assert( last != 0 );
-		last[0] = 0;
-		length += 3 * strlen( location );
-	}
-	else {
-		last = location + strlen( location ) - 1;
-		while ( true ) {
-			if ( last == location ) {
-				last[0] = '.';
-				last[1] = 0;
-				break;
-			}
-			if ( *last == '/' ) {
-				last[0] = 0;
-				break;
-			}
-			last -= 1;
-		}
-	}
 	for ( ArgsVector::Iter af = additionalCodeFiles; af.lte(); af++ )
 		length += strlen( *af ) + 2;
 	for ( ArgsVector::Iter ip = includePaths; ip.lte(); ip++ )
 		length += strlen( *ip ) + 3;
 	for ( ArgsVector::Iter lp = libraryPaths; lp.lte(); lp++ )
 		length += strlen( *lp ) + 3;
+	if ( buildDir != 0 )
+		length += strlen( buildDir ) * 3;
 #define COMPILE_COMMAND_STRING "gcc -Wall -Wwrite-strings" \
 		" -g" \
 		" -o %s" \
 		" %s"
 	char *command = new char[length];
-	if ( inSource ) {
+	if ( buildDir != 0 ) {
 		sprintf( command,
+				"%s/libtool --tag=CC --mode=link "
 				COMPILE_COMMAND_STRING
-				" -I%s/../aapl"
-				" -I%s/include"
-				" -L%s"
-#if defined(LINK_STATIC)
-				" %s/libcolm.a",
-#elif defined(LINK_SHARED)
-				" %s/libcolm.so",
-#else
-#				error "must enabled at least one of shared or static libs"
-#endif
-
-				binaryFn, intermedFn, srcLocation,
-				srcLocation, location, location );
+				" -I%s/src/include"
+				" -static"
+				" %s/src/libcolm.la",
+				buildDir, binaryFn, intermedFn,
+				buildDir, buildDir );
 	}
 	else {
 		sprintf( command,
@@ -518,7 +490,7 @@ void compileOutput( const char *argv0, const bool inSource, char *srcLocation )
 		strcat( command, *lp );
 	}
 
-	if ( !inSource )
+	if ( buildDir == 0 )
 		strcat( command, " -lcolm" );
 
 	if( !compileOutputCommand( command ) && run )
@@ -527,46 +499,9 @@ void compileOutput( const char *argv0, const bool inSource, char *srcLocation )
 	delete[] command;
 }
 
-bool inSourceTree( const char *argv0, char *&location )
-{
-	const char *lastSlash = strrchr( argv0, '/' );
-	if ( lastSlash != 0 ) {
-		/* Take off the file name. */
-		int rootLen = lastSlash - argv0;
-
-		/* Create string for dir. */
-		char *mainPath = new char[rootLen + 16];
-		memcpy( mainPath, argv0, rootLen );
-		mainPath[rootLen] = 0;
-
-		/* If built using ldconfig then there will be a .libs dir. */
-		lastSlash = strrchr( mainPath, '/' );
-		if ( lastSlash != 0 ) {
-			if ( strlen( lastSlash ) >= 6 && memcmp( lastSlash, "/.libs", 7 ) == 0 ) {
-				rootLen = lastSlash - mainPath;
-				mainPath[rootLen] = 0;
-			}
-		}
-
-		strcpy( mainPath + rootLen, "/main.cc" );
-
-		struct stat sb;
-		int res = stat( mainPath, &sb );
-		if ( res == 0 && S_ISREG( sb.st_mode ) ) {
-			mainPath[rootLen] = 0;
-			location = mainPath;
-			return true;
-		}
-
-		delete[] mainPath;
-	}
-
-	return false;
-}
-
 void processArgs( int argc, const char **argv )
 {
-	ParamCheck pc( "p:cD:e:x:I:L:vdliro:S:M:vHh?-:sVa:m:b:E:", argc, argv );
+	ParamCheck pc( "p:cD:e:x:I:L:vdliro:S:M:vHh?-:sVa:m:b:E:B:", argc, argv );
 
 	while ( pc.check() ) {
 		switch ( pc.state ) {
@@ -657,6 +592,9 @@ void processArgs( int argc, const char **argv )
 				break;
 			case 'm':
 				commitCodeFn = pc.parameterArg;
+				break;
+			case 'B':
+				buildDir = pc.parameterArg;
 				break;
 
 			case 'E': {
@@ -811,11 +749,8 @@ int main(int argc, const char **argv)
 		if ( outStream != 0 )
 			delete outStream;
 
-		if ( !gblLibrary ) {
-			char *location = 0;
-			bool inSource = inSourceTree( argv[0], location );
-			compileOutput( argv[0], inSource, location );
-		}
+		if ( !gblLibrary )
+			compileOutput();
 
 		if ( exportHeaderFn != 0 ) {
 			openExports();
