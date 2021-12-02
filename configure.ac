@@ -31,6 +31,7 @@ AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_SUBST(PUBDATE)
+AC_DEFINE_UNQUOTED([PUBDATE], ["$PUBDATE"])
 
 AC_CHECK_SIZEOF([int])
 AC_CHECK_SIZEOF([void *])
@@ -418,16 +419,13 @@ AC_CHECK_FUNC(fopencookie,
 mkdir -p src/include
 test -e src/include/colm || ln -s .. src/include/colm
 
-echo "#define VERSION \"$VERSION\"" > src/version.h
-echo "#define PUBDATE \"$PUBDATE\"" >> src/version.h
-
 
 dnl
 dnl Wrap up.
 dnl
 
 AC_SUBST(SED_SUBST)
-AC_CONFIG_HEADERS([src/config.h src/defs.h])
+AC_CONFIG_HEADERS([src/config.h src/defs.h src/version.h])
 AC_OUTPUT([
 	Makefile
 	src/aapl/Makefile
