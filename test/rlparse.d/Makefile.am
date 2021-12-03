@@ -2,7 +2,7 @@ COLM_BIN = ../../src/colm
 COLM_xCPPFLAGS = -I../../src/include
 COLM_xLDADD = ../../src/libcolm.la
 
-noinst_PROGRAMS = rlparse
+check_PROGRAMS = rlparse
 
 rlparse_SOURCES = parse.c if.h if.cc commit.cc \
 	actparams.cc parsetree.cc parsedata.cc \
@@ -31,8 +31,6 @@ EXTRA_DIST = \
 	case/rlparse.h case/rlscan.rl \
 	case/rlscan--colm-frontend.exp case/rlscan--reduce-frontend.exp
 
-BUILT_SOURCES = parse.c if.h if.cc commit.cc
-
 parse.c: rlparse.lm reducer.lm $(RAGEL_LM) $(COLM_BIN)
 	$(COLM_BIN) -c -b rlparse_object -o $@ -e if.h -x if.cc -m commit.cc -I$(srcdir) $<
 
@@ -40,16 +38,17 @@ if.h: parse.c
 if.cc: parse.c
 commit.cc: parse.c
 
+load.cc: if.h
+reducer.cc: if.h
+
 CLEANFILES = gentests
 
 clean-local:
 	rm -Rf working case
 
-all-local:
+check-local:
 	if test '$(builddir)' != '$(srcdir)'; then \
 		$(LN_S) -f '$(srcdir)/gentests' '$(builddir)'; \
 		cp -pR -f '$(srcdir)/case' '$(builddir)'; \
 	fi
-
-check-local:
 	'$(top_srcdir)/test/runtests'

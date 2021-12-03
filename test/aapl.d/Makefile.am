@@ -4,7 +4,7 @@
 
 CPPFLAGS = @SUBJ_AAPL_CPPFLAGS@
 
-noinst_PROGRAMS = \
+check_PROGRAMS = \
 	stress_avltree stress_avliter stress_avlmel \
 	stress_avlmelkey stress_avlitree stress_avlmap \
 	stress_avlset stress_avlimel stress_avlimelkey \
@@ -19,7 +19,7 @@ noinst_PROGRAMS = \
 	test_avlikeyless test_compare test_string \
 	test_rope
 
-noinst_SCRIPTS = gentests
+check_SCRIPTS = gentests
 
 stress_avltree_SOURCES = stress_avltree.cpp util.cpp
 stress_avliter_SOURCES = stress_avliter.cpp util.cpp
@@ -104,10 +104,8 @@ gentests: gentests.sh Makefile
 clean-local:
 	rm -Rf working *.exp
 
-all-local:
+check-local:
 	if test '$(builddir)' != '$(srcdir)'; then \
 		$(LN_S) -f '$(srcdir)/'*.exp '$(builddir)'; \
 	fi
-
-check-local:
 	'$(top_srcdir)/test/runtests'

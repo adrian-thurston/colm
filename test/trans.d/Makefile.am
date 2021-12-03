@@ -3,9 +3,7 @@ COLM_BIN = ../../src/colm
 COLM_xCPPFLAGS = -I../../src/include
 COLM_xLDADD = ../../src/libcolm.la
 
-noinst_PROGRAMS = trans
-
-BUILT_SOURCES = trans.c
+check_PROGRAMS = trans
 
 EXTRA_DIST = \
 	gentests \
@@ -383,10 +381,8 @@ CLEANFILES = gentests
 clean-local:
 	rm -Rf working case
 
-all-local:
+check-local:
 	if test '$(builddir)' != '$(srcdir)'; then \
 		$(LN_S) -f '$(srcdir)/gentests' '$(srcdir)/case' '$(builddir)'; \
 	fi
-
-check-local:
 	'$(top_srcdir)/test/runtests'

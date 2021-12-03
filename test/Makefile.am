@@ -1,6 +1,6 @@
 SUBDIRS = . aapl.d colm.d rlhc.d rlparse.d trans.d
 
-noinst_SCRIPTS = subject.mk subject.sh
+check_SCRIPTS = subject.mk subject.sh
 
 pkgdata_DATA = runtests
 

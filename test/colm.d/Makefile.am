@@ -1,4 +1,4 @@
-noinst_SCRIPTS = gentests
+check_SCRIPTS = gentests
 
 EXTRA_DIST = \
 	gentests.sh \
@@ -188,10 +188,8 @@ gentests: gentests.sh Makefile
 clean-local:
 	rm -Rf working *.lm *.lmi *.in
 
-all-local:
+check-local:
 	if test '$(builddir)' != '$(srcdir)'; then \
 		$(LN_S) -f '$(srcdir)/'*.lm '$(srcdir)/'*.lmi '$(srcdir)/'*.in '$(builddir)'; \
 	fi
-
-check-local:
 	'$(top_srcdir)/test/runtests'
