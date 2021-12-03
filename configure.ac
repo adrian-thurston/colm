@@ -46,6 +46,7 @@ AC_PROG_CXX
 AC_CHECK_TOOL(AR, ar)
 AC_PROG_RANLIB
 AC_PROG_LIBTOOL
+AC_PROG_LN_S
 
 SED_SUBST=["\
 	-e 's|@CXX@|${CXX}|g' \
@@ -186,7 +187,7 @@ AC_ARG_WITH(subject,
 		SUBJ_RAGEL_JULIA_BIN="$withval/bin/ragel-julia"
 	],
 	[
-		SUBJ_AAPL_CPPFLAGS='-I$(abs_top_builddir)/src/aapl'
+		SUBJ_AAPL_CPPFLAGS='-I$(abs_top_srcdir)/src/aapl'
 
 		SUBJ_COLM_BIN='$(abs_top_builddir)/src/colm'
 		SUBJ_COLM_CPPFLAGS='-I$(abs_top_builddir)/src/include'

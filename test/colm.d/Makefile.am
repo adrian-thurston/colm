@@ -186,5 +186,12 @@ gentests: gentests.sh Makefile
 	@$(top_srcdir)/sedsubst $< $@ -w,+x $(SED_SUBST)
 
 clean-local:
-	rm -Rf working
+	rm -Rf working *.lm *.lmi *.in
 
+all-local:
+	if test '$(builddir)' != '$(srcdir)'; then \
+		$(LN_S) -f '$(srcdir)/'*.lm '$(srcdir)/'*.lmi '$(srcdir)/'*.in '$(builddir)'; \
+	fi
+
+check-local:
+	'$(top_srcdir)/test/runtests'

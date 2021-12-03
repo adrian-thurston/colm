@@ -1,7 +1,7 @@
 COLM_BIN = ../../src/colm
 
 COLM_xCPPFLAGS = -I../../src/include
-COLM_xLDFLAGS = -L../../src
+COLM_xLDADD = ../../src/libcolm.la
 
 noinst_PROGRAMS = trans
 
@@ -29,12 +29,12 @@ EXTRA_DIST = \
 	$(CASES)
 
 trans.c: trans.lm $(TRANS_DEPS) $(COLM_BIN)
-	$(COLM_BIN) -b trans_object -c -o $@ $<
+	$(COLM_BIN) -b trans_object -c -o $@ -I$(srcdir) $<
 
 trans_CPPFLAGS = $(COLM_xCPPFLAGS)
 trans_SOURCES = actparams.cc trans.c main.c
-trans_LDADD = -lcolm
-trans_LDFLAGS = $(COLM_xLDFLAGS)
+trans_LDADD = $(COLM_xLDADD)
+trans_LDFLAGS = -static
 
 CASES =  \
 	case/any1_asm.rl \
@@ -378,5 +378,15 @@ CASES =  \
 	case/zlen1_ruby.rl \
 	case/zlen1_rust.rl
 
+CLEANFILES = gentests
+
 clean-local:
-	rm -Rf working
+	rm -Rf working case
+
+all-local:
+	if test '$(builddir)' != '$(srcdir)'; then \
+		$(LN_S) -f '$(srcdir)/gentests' '$(srcdir)/case' '$(builddir)'; \
+	fi
+
+check-local:
+	'$(top_srcdir)/test/runtests'

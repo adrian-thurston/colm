@@ -102,4 +102,12 @@ gentests: gentests.sh Makefile
 #-include $(DEPS)
 
 clean-local:
-	rm -Rf working
+	rm -Rf working *.exp
+
+all-local:
+	if test '$(builddir)' != '$(srcdir)'; then \
+		$(LN_S) -f '$(srcdir)/'*.exp '$(builddir)'; \
+	fi
+
+check-local:
+	'$(top_srcdir)/test/runtests'

@@ -9,7 +9,7 @@ mkdir -p working
 
 echo working/* | xargs rm -f
 
-[ $# = 0 ] && set -- `find case -type f -and -not -name '*_*' | sort`
+[ $# = 0 ] && set -- `find -H case -type f -and -not -name '*_*' | sort`
 
 for fn; do 
 	
