@@ -135,10 +135,10 @@ bootstrap1_LDADD = libprog.a libcolm.la
 # and thus generates the sources used in the colm binary.
 #
 
-gen/bootstrap2.pack: $(builddir)/colm-wrap bootstrap1$(EXEEXT) colm.lm
+gen/bootstrap2.pack: colm.lm $(builddir)/colm-wrap bootstrap1$(EXEEXT)
 	mkdir -p gen
 	$(builddir)/colm-wrap -w bootstrap1 -o $@ \
-		-c -p gen/parse2.c -e gen/if2.h -x gen/if2.cc colm.lm
+		-c -p gen/parse2.c -e gen/if2.h -x gen/if2.cc $<
 
 gen/parse2.c: gen/bootstrap2.pack
 	$(builddir)/colm-wrap -o $@ $<
@@ -157,10 +157,10 @@ bootstrap2_LDADD = libprog.a libcolm.la
 
 endif
 
-gen/bootstrap3.pack: $(WRAP_PARSE_3_WITH) $(BUILD_PARSE_3_WITH) prog.lm colm.lm 
+gen/bootstrap3.pack: prog.lm colm.lm $(WRAP_PARSE_3_WITH) $(BUILD_PARSE_3_WITH) 
 	mkdir -p gen
 	$(WRAP_PARSE_3_WITH) -w $(BUILD_PARSE_3_WITH) -o $@ \
-		-c -p gen/parse3.c -e gen/if3.h -x gen/if3.cc prog.lm
+		-c -p gen/parse3.c -e gen/if3.h -x gen/if3.cc -I$(srcdir) $<
 
 gen/parse3.c: gen/bootstrap3.pack
 	$(WRAP_PARSE_3_WITH) -o $@ $<
