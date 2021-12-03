@@ -416,9 +416,6 @@ AC_CHECK_FUNC(fopencookie,
 	[]
 )
 
-mkdir -p src/include
-test -e src/include/colm || ln -s .. src/include/colm
-
 
 dnl
 dnl Wrap up.
@@ -426,6 +423,26 @@ dnl
 
 AC_SUBST(SED_SUBST)
 AC_CONFIG_HEADERS([src/config.h src/defs.h src/version.h])
+m4_foreach_w([header],
+	[
+		config.h
+		bytecode.h
+		defs.h
+		debug.h
+		pool.h
+		input.h
+		pdarun.h
+		map.h
+		type.h
+		tree.h
+		struct.h
+		program.h
+		colm.h
+		internal.h
+		colmex.h
+	],
+	[AC_CONFIG_LINKS(src/include/colm/header:src/header)]
+)
 AC_OUTPUT([
 	Makefile
 	src/aapl/Makefile

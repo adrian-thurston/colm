@@ -184,7 +184,6 @@ colm_LDADD = libprog.a -lcolm
 # with the following additional dependency.
 
 CLEANFILES = \
-	include/colm \
 	gen/parse1.c \
 	gen/if1.h \
 	gen/if1.cc \
@@ -197,6 +196,9 @@ CLEANFILES = \
 	gen/bootstrap1.pack \
 	gen/bootstrap2.pack \
 	gen/bootstrap3.pack
+
+distclean-local:
+	-rm -rf include
 
 EXTRA_DIST = prog.lm colm.lm loadfinal.cc colm-wrap.sh
 
