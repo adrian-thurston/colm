@@ -382,7 +382,8 @@ static void report_parse_error( program_t *prg, tree_t **sp, struct pda_run *pda
 	/* If there are no error points on record assume the error occurred at the
 	 * beginning of the stream. */
 	if ( deepest == 0 )  {
-		error_head = string_alloc_full( prg, "<input>:1:1: parse error", 32 );
+		const char *parse_error_string = "<input>:1:1: parse error";
+		error_head = string_alloc_full( prg, parse_error_string, strlen( parse_error_string ) );
 		error_head->location = location_allocate( prg );
 		error_head->location->line = 1;
 		error_head->location->column = 1;
