@@ -41,7 +41,7 @@ commit.cc: parse.c
 load.cc: if.h
 reducer.cc: if.h
 
-CLEANFILES = gentests
+CLEANFILES = gentests parse.c if.h if.cc commit.cc
 
 clean-local:
 	rm -Rf working case

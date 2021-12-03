@@ -184,6 +184,7 @@ colm_LDADD = libprog.a -lcolm
 # with the following additional dependency.
 
 CLEANFILES = \
+	colm-wrap \
 	gen/parse1.c \
 	gen/if1.h \
 	gen/if1.cc \

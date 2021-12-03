@@ -376,7 +376,7 @@ CASES =  \
 	case/zlen1_ruby.rl \
 	case/zlen1_rust.rl
 
-CLEANFILES = gentests
+CLEANFILES = gentests trans.c
 
 clean-local:
 	rm -Rf working case

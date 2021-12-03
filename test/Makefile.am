@@ -15,3 +15,4 @@ subject.sh: subject.sh.in Makefile
 dist: dist.sh
 	@$(top_srcdir)/sedsubst $< $@ -w,+x $(SED_SUBST)
 
+CLEANFILES = subject.mk subject.sh

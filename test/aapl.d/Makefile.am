@@ -101,6 +101,8 @@ gentests: gentests.sh Makefile
 #
 #-include $(DEPS)
 
+CLEANFILES = gentests
+
 clean-local:
 	rm -Rf working *.exp
 

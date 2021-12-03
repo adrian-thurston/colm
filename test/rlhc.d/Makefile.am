@@ -1089,7 +1089,7 @@ CASES = \
 	case/union.cpp-C-T1--goto-backend.exp \
 	case/union.cpp-C-T1--goto-backend.in
 
-CLEANFILES = gentests
+CLEANFILES = gentests rlhc.c
 
 clean-local:
 	rm -Rf working case
