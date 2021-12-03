@@ -29,7 +29,7 @@ namespace rust_out
 
 		token string /
 				'"' ( [^"\\] | '\\' any ) * '"' |
-				"'" ( [^'\\] | '\\' any ) "'"
+				"'" ( [^\\] | '\\' any ) "'"
 			/
 
 		ignore
