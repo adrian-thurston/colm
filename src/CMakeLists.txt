@@ -56,7 +56,7 @@ add_library(libprog
 	buffer.h bytecode.h colm.h debug.h dotgen.h fsmcodegen.h fsmgraph.h
 	input.h keyops.h map.h compiler.h
 	parsetree.h pcheck.h pdacodegen.h pdagraph.h pdarun.h pool.h redbuild.h
-	redfsm.h rtvector.h tree.h global.h colm.h parser.h cstring.h
+	redfsm.h tree.h global.h colm.h parser.h cstring.h
 	internal.h
 	resolve.cc lookup.cc synthesis.cc parsetree.cc
 	fsmstate.cc fsmbase.cc fsmattach.cc fsmmin.cc

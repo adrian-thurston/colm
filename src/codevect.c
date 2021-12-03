@@ -23,7 +23,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <colm/rtvector.h>
 #include <colm/pdarun.h>
 
 void init_rt_code_vect( struct rt_code_vect *vect )
