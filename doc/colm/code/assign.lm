@@ -10,7 +10,7 @@ def value
 
 def assignment
 	[id `= value `;]
-	
+
 def assignment_list
 	[assignment assignment_list]
 |	[assignment]
@@ -20,7 +20,7 @@ parse Simple: assignment_list[ stdin ]
 
 if ( ! Simple ) {
 	print( "[error]\n" )
-	exit( 1 ) 
+	exit( 1 )
 }
 else {
 	for I:assignment in Simple {
