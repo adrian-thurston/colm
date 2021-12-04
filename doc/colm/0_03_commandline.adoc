@@ -3,25 +3,28 @@ Commandline
 
 Let's start colm with the '--help' command line argument.
 
-----
-colm --help
-----
-
-NOTE: This reflects the development version 0.13.0.4;
-
-
-```usage: colm [options] file
+```$ ./colm --help
+usage: colm [options] file
 general:
    -h, -H, -?, --help   print this usage and exit
    -v --version         print version information and exit
-   -o <file>            write output to <file>
-   -c                   compile only (don't produce binary)
+   -b <ident>           use <ident> as name of C object encapulaing the program
+   -o <file>            if -c given, write C parse object to <file>,
+                        otherwise write binary to <file>
+   -p <file>            write C parse object to <file>
    -e <file>            write C++ export header to <file>
    -x <file>            write C++ export code to <file>
    -m <file>            write C++ commit code to <file>
    -a <file>            additional code file to include in output program
+   -E N=V               set a string value available in the program
+   -I <path>            additional include path for the compiler
+   -i                   activate branchpoint information
+   -L <path>            additional library path for the linker
+   -l                   activate logging
+   -r                   run output program and replace process
+   -c                   compile only (don't produce binary)
+   -V                   print dot format (graphiz)
+   -d                   print verbose debug information
 ```
 
 This reveals us some more insights: it reads a 'colm' file and creates a object file with eventually cpp/h/x code.
-
-

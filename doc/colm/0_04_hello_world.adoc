@@ -44,7 +44,7 @@ We can strip the file to check if we can reduce the executable.
 [source,bash]
 ----
 strip ./hello_world
-ls -l hello_words
+ls -l hello_world
 ----
 
 ----
