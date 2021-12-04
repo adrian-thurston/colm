@@ -16,10 +16,10 @@ RLHC_DEP = \
 
 EXTRA_DIST = gentests rlhc.lm $(RLHC_DEP) $(CASES)
 
-noinst_PROGRAMS = rlhc
+check_PROGRAMS = rlhc
 
 rlhc$(EXEEXT): rlhc.lm $(RLHC_DEP) $(COLM_BIN)
-	$(COLM_BIN) -b rlhc_object -o $@ $<
+	$(COLM_BIN) -B '$(top_builddir)' -b rlhc_object -o $@ -I$(srcdir) $<
 
 CASES = \
 	case/atoi1_c.c-C-F1--goto-backend.exp \
@@ -1089,5 +1089,13 @@ CASES = \
 	case/union.cpp-C-T1--goto-backend.exp \
 	case/union.cpp-C-T1--goto-backend.in
 
+CLEANFILES = gentests rlhc.c
+
 clean-local:
-	rm -Rf working
+	rm -Rf working case
+
+check-local:
+	if test '$(builddir)' != '$(srcdir)'; then \
+		$(LN_S) -f '$(srcdir)/gentests' '$(srcdir)/case' '$(builddir)'; \
+	fi
+	'$(top_srcdir)/test/runtests'

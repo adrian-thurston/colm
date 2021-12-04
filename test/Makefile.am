@@ -1,6 +1,6 @@
 SUBDIRS = . aapl.d colm.d rlhc.d rlparse.d trans.d
 
-noinst_SCRIPTS = subject.mk subject.sh
+check_SCRIPTS = subject.mk subject.sh
 
 pkgdata_DATA = runtests
 
@@ -15,3 +15,4 @@ subject.sh: subject.sh.in Makefile
 dist: dist.sh
 	@$(top_srcdir)/sedsubst $< $@ -w,+x $(SED_SUBST)
 
+CLEANFILES = subject.mk subject.sh

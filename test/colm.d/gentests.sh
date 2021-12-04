@@ -226,7 +226,7 @@ function runtests()
 			fi
 		else
 			# Compilation.
-			echo $COLM_BIN $COMP $COLM_ADDS $LM '&>' $LOG >> $SH
+			echo $COLM_BIN -B ../.. $COMP $COLM_ADDS $LM '&>' $LOG >> $SH
 			echo "if [ \$? != 0 ]; then echo \"COMPILATION FAILED (see $LOG)\" >> $DIFF; fi" >> $SH
 		fi
 

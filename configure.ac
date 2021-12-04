@@ -31,6 +31,7 @@ AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_SUBST(PUBDATE)
+AC_DEFINE_UNQUOTED([PUBDATE], ["$PUBDATE"])
 
 AC_CHECK_SIZEOF([int])
 AC_CHECK_SIZEOF([void *])
@@ -45,6 +46,7 @@ AC_PROG_CXX
 AC_CHECK_TOOL(AR, ar)
 AC_PROG_RANLIB
 AC_PROG_LIBTOOL
+AC_PROG_LN_S
 
 SED_SUBST=["\
 	-e 's|@CXX@|${CXX}|g' \
@@ -185,7 +187,7 @@ AC_ARG_WITH(subject,
 		SUBJ_RAGEL_JULIA_BIN="$withval/bin/ragel-julia"
 	],
 	[
-		SUBJ_AAPL_CPPFLAGS='-I$(abs_top_builddir)/src/aapl'
+		SUBJ_AAPL_CPPFLAGS='-I$(abs_top_srcdir)/src/aapl'
 
 		SUBJ_COLM_BIN='$(abs_top_builddir)/src/colm'
 		SUBJ_COLM_CPPFLAGS='-I$(abs_top_builddir)/src/include'
@@ -415,26 +417,33 @@ AC_CHECK_FUNC(fopencookie,
 	[]
 )
 
-mkdir -p src/include
-test -e src/include/colm || ln -s .. src/include/colm
-
-echo "#define VERSION \"$VERSION\"" > src/version.h
-echo "#define PUBDATE \"$PUBDATE\"" >> src/version.h
-
-if test "x$enable_static" = "xyes"; then 
-	AC_DEFINE([LINK_STATIC], [1], [Link static lib when invoking C compile and link])
-fi
-
-if test "x$enable_shared" = "xyes"; then
-	AC_DEFINE([LINK_SHARED], [1], [Link shared lib when invoking C compile and link])
-fi
 
 dnl
 dnl Wrap up.
 dnl
 
 AC_SUBST(SED_SUBST)
-AC_CONFIG_HEADERS([src/config.h src/defs.h])
+AC_CONFIG_HEADERS([src/config.h src/defs.h src/version.h])
+m4_foreach_w([header],
+	[
+		config.h
+		bytecode.h
+		defs.h
+		debug.h
+		pool.h
+		input.h
+		pdarun.h
+		map.h
+		type.h
+		tree.h
+		struct.h
+		program.h
+		colm.h
+		internal.h
+		colmex.h
+	],
+	[AC_CONFIG_LINKS(src/include/colm/header:src/header)]
+)
 AC_OUTPUT([
 	Makefile
 	src/aapl/Makefile

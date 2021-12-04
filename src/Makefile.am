@@ -52,13 +52,14 @@ endif
 
 common_CFLAGS = \
 	-Wall \
-	-DPREFIX='"$(prefix)"'
+	-DINCLUDEDIR='"$(includedir)"' \
+	-DLIBDIR='"$(libdir)"'
 
 libprog_a_SOURCES = \
 	buffer.h bytecode.h colm.h debug.h dotgen.h fsmcodegen.h fsmgraph.h \
 	input.h keyops.h map.h compiler.h \
 	parsetree.h pcheck.h pdacodegen.h pdagraph.h pdarun.h pool.h redbuild.h \
-	redfsm.h rtvector.h tree.h version.h global.h colm.h parser.h cstring.h \
+	redfsm.h tree.h version.h global.h colm.h parser.h cstring.h \
 	internal.h \
 	\
 	resolve.cc lookup.cc synthesis.cc parsetree.cc \
@@ -135,10 +136,10 @@ bootstrap1_LDADD = libprog.a libcolm.la
 # and thus generates the sources used in the colm binary.
 #
 
-gen/bootstrap2.pack: $(builddir)/colm-wrap bootstrap1$(EXEEXT) colm.lm
+gen/bootstrap2.pack: colm.lm $(builddir)/colm-wrap bootstrap1$(EXEEXT)
 	mkdir -p gen
 	$(builddir)/colm-wrap -w bootstrap1 -o $@ \
-		-c -p gen/parse2.c -e gen/if2.h -x gen/if2.cc colm.lm
+		-c -p gen/parse2.c -e gen/if2.h -x gen/if2.cc $<
 
 gen/parse2.c: gen/bootstrap2.pack
 	$(builddir)/colm-wrap -o $@ $<
@@ -157,10 +158,10 @@ bootstrap2_LDADD = libprog.a libcolm.la
 
 endif
 
-gen/bootstrap3.pack: $(WRAP_PARSE_3_WITH) $(BUILD_PARSE_3_WITH) prog.lm colm.lm 
+gen/bootstrap3.pack: prog.lm colm.lm $(WRAP_PARSE_3_WITH) $(BUILD_PARSE_3_WITH) 
 	mkdir -p gen
 	$(WRAP_PARSE_3_WITH) -w $(BUILD_PARSE_3_WITH) -o $@ \
-		-c -p gen/parse3.c -e gen/if3.h -x gen/if3.cc prog.lm
+		-c -p gen/parse3.c -e gen/if3.h -x gen/if3.cc -I$(srcdir) $<
 
 gen/parse3.c: gen/bootstrap3.pack
 	$(WRAP_PARSE_3_WITH) -o $@ $<
@@ -184,8 +185,7 @@ colm_LDADD = libprog.a -lcolm
 # with the following additional dependency.
 
 CLEANFILES = \
-	version.h \
-	include/colm \
+	colm-wrap \
 	gen/parse1.c \
 	gen/if1.h \
 	gen/if1.cc \
@@ -198,6 +198,9 @@ CLEANFILES = \
 	gen/bootstrap1.pack \
 	gen/bootstrap2.pack \
 	gen/bootstrap3.pack
+
+distclean-local:
+	-rm -rf include
 
 EXTRA_DIST = prog.lm colm.lm loadfinal.cc colm-wrap.sh
 
