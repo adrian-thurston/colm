@@ -444,7 +444,16 @@ void runOutputProgram()
 
 void compileOutput()
 {
-	int length = 1024 + strlen( intermedFn ) + strlen( binaryFn );
+	const char *compiler = getenv( "CC" );
+	if ( compiler == 0 )
+		compiler = "gcc";
+
+	const char *cflags = getenv( "CFLAGS" );
+	if ( cflags == 0 )
+		cflags = "";
+
+	int length = 1024 + strlen( compiler ) + strlen( cflags ) + 
+			strlen( intermedFn ) + strlen( binaryFn );
 	for ( ArgsVector::Iter af = additionalCodeFiles; af.lte(); af++ )
 		length += strlen( *af ) + 2;
 	for ( ArgsVector::Iter ip = includePaths; ip.lte(); ip++ )
@@ -453,8 +462,8 @@ void compileOutput()
 		length += strlen( *lp ) + 3;
 	if ( buildDir != 0 )
 		length += strlen( buildDir ) * 3;
-#define COMPILE_COMMAND_STRING "gcc -Wall -Wwrite-strings" \
-		" -g" \
+#define COMPILE_COMMAND_STRING "%s -Wall -Wwrite-strings" \
+		" -g %s" \
 		" -o %s" \
 		" %s"
 	char *command = new char[length];
@@ -465,7 +474,8 @@ void compileOutput()
 				" -I%s/src/include"
 				" -static"
 				" %s/src/libcolm.la",
-				buildDir, binaryFn, intermedFn,
+				buildDir, compiler, cflags,
+				binaryFn, intermedFn,
 				buildDir, buildDir );
 	}
 	else {
@@ -474,6 +484,7 @@ void compileOutput()
 				" -I" PREFIX "/include"
 				" -L" PREFIX "/lib"
 				" -Wl,-rpath," PREFIX "/lib",
+				compiler, cflags,
 				binaryFn, intermedFn );
 	}
 #undef COMPILE_COMMAND_STRING
