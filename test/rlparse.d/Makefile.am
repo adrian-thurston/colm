@@ -41,10 +41,10 @@ commit.cc: parse.c
 load.cc: if.h
 reducer.cc: if.h
 
-CLEANFILES = gentests parse.c if.h if.cc commit.cc
+CLEANFILES = parse.c if.h if.cc commit.cc
 
 clean-local:
-	rm -Rf working case
+	rm -Rf working
 
 check-local:
 	if test '$(builddir)' != '$(srcdir)'; then \

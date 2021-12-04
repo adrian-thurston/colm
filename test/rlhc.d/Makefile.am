@@ -1089,10 +1089,10 @@ CASES = \
 	case/union.cpp-C-T1--goto-backend.exp \
 	case/union.cpp-C-T1--goto-backend.in
 
-CLEANFILES = gentests rlhc.c
+CLEANFILES = rlhc.c
 
 clean-local:
-	rm -Rf working case
+	rm -Rf working
 
 check-local:
 	if test '$(builddir)' != '$(srcdir)'; then \

@@ -188,7 +188,7 @@ gentests: gentests.sh Makefile
 CLEANFILES = gentests
 
 clean-local:
-	rm -Rf working *.lm *.lmi *.in
+	rm -Rf working
 
 check-local:
 	if test '$(builddir)' != '$(srcdir)'; then \
