@@ -481,9 +481,9 @@ void compileOutput()
 	else {
 		sprintf( command,
 				COMPILE_COMMAND_STRING
-				" -I" PREFIX "/include"
-				" -L" PREFIX "/lib"
-				" -Wl,-rpath," PREFIX "/lib",
+				" -I" INCLUDEDIR
+				" -L" LIBDIR
+				" -Wl,-rpath," LIBDIR,
 				compiler, cflags,
 				binaryFn, intermedFn );
 	}

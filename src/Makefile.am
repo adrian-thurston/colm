@@ -52,7 +52,8 @@ endif
 
 common_CFLAGS = \
 	-Wall \
-	-DPREFIX='"$(prefix)"'
+	-DINCLUDEDIR='"$(includedir)"' \
+	-DLIBDIR='"$(libdir)"'
 
 libprog_a_SOURCES = \
 	buffer.h bytecode.h colm.h debug.h dotgen.h fsmcodegen.h fsmgraph.h \
