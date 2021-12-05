@@ -45,6 +45,10 @@ CLEANFILES = parse.c if.h if.cc commit.cc
 
 clean-local:
 	rm -Rf working
+	if test '$(builddir)' != '$(srcdir)'; then \
+		rm -Rf case; \
+		rm -f gentests; \
+	fi
 
 check-local:
 	if test '$(builddir)' != '$(srcdir)'; then \

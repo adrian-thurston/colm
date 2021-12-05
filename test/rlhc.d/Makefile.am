@@ -1093,6 +1093,10 @@ CLEANFILES = rlhc.c
 
 clean-local:
 	rm -Rf working
+	if test '$(builddir)' != '$(srcdir)'; then \
+		rm -Rf case; \
+		rm -f gentests; \
+	fi
 
 check-local:
 	if test '$(builddir)' != '$(srcdir)'; then \

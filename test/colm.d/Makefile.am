@@ -189,6 +189,9 @@ CLEANFILES = gentests
 
 clean-local:
 	rm -Rf working
+	if test '$(builddir)' != '$(srcdir)'; then \
+		rm -f *.lm *.lmi *.in; \
+	fi
 
 check-local:
 	if test '$(builddir)' != '$(srcdir)'; then \
