@@ -455,7 +455,7 @@ void Compiler::pdaOrderFollow( LangEl *rootEl, PdaState *tabState,
 		PdaTrans *tabTrans, PdaTrans *srcTrans, Production *parentDef, 
 		Production *definition, long &time )
 {
-	/* We need the follow from tabState/srcState over the defintion we are
+	/* We need the follow from tabState/srcState over the definition we are
 	 * currently processing. */
 	PdaState *overTab = tabTrans->toState;
 	PdaState *overSrc = srcTrans->toState;
