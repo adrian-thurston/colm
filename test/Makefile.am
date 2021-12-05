@@ -2,7 +2,7 @@ SUBDIRS = . aapl.d colm.d rlhc.d rlparse.d trans.d
 
 check_SCRIPTS = subject.mk subject.sh
 
-pkgdata_DATA = runtests
+pkgdata_SCRIPTS = runtests
 
 EXTRA_DIST = subject.mk.in subject.sh.in runtests
 
