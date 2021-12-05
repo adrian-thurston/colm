@@ -9,11 +9,11 @@ print "[alphcount( " hello friend " )]
 #include <stdio.h>
 #include <string.h>
 
-str_t *c_alphcount( program_t *prg, tree_t **sp, str_t *a1 )
+value_t c_alphcount( program_t *prg, tree_t **sp, value_t a1 )
 {
 	int p, count = 0;
-	for ( p = 0; p < a1->value->length; p++ ) {
-		char c = a1->value->data[p];
+	for ( p = 0; p < ( (str_t*)a1 )->value->length; p++ ) {
+		char c = ( (str_t*)a1 )->value->data[p];
 		if ( 'a' <= c && c <= 'z' )
 			count++;
 	}
@@ -24,8 +24,8 @@ str_t *c_alphcount( program_t *prg, tree_t **sp, str_t *a1 )
 	head_t *h = string_alloc_full( prg, strc, strlen( strc ) );
 	tree_t *s = construct_string( prg, h );
 	colm_tree_upref( prg, s );
-	colm_tree_downref( prg, sp, a1 );
-	return (str_t*)s;
+	colm_tree_downref( prg, sp, (tree_t*)a1 );
+	return (value_t)s;
 }
 ##### EXP #####
 11
