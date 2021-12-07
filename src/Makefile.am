@@ -54,7 +54,8 @@ common_CFLAGS = \
 	-Wall \
 	-DINCLUDEDIR='"$(includedir)"' \
 	-DLIBDIR='"$(libdir)"' \
-	-DABS_TOP_BUILDDIR='"$(abs_top_builddir)"'
+	-DABS_TOP_BUILDDIR='"$(abs_top_builddir)"' \
+	-DABS_BUILDDIR='"$(abs_builddir)"'
 
 libprog_a_SOURCES = \
 	buffer.h bytecode.h colm.h debug.h dotgen.h fsmcodegen.h fsmgraph.h \
@@ -214,4 +215,3 @@ colm-wrap: colm-wrap.sh
 loadinit.cc: gen/if1.h
 loadboot2.cc: gen/if2.h
 loadcolm.cc: gen/if3.h
-
