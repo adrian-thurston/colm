@@ -683,10 +683,29 @@ bool readCheck( const char *fn )
 	return result;
 }
 
+void defaultBuildDir()
+{
+	if ( buildDir != 0 )
+		return;
+
+	const char *ldlp = getenv("LD_LIBRARY_PATH");
+	if ( ldlp != 0 ) {
+		size_t len_atbd = strlen(ABS_TOP_BUILDDIR);
+
+		if ( strlen(ldlp) > len_atbd &&
+				memcmp( ldlp, ABS_TOP_BUILDDIR "/", len_atbd+1) == 0 )
+		{
+			buildDir = ABS_TOP_BUILDDIR;
+		}
+	}
+}
+    
 /* Main, process args and call yyparse to start scanning input. */
 int main(int argc, const char **argv)
 {
 	processArgs( argc, argv );
+
+	defaultBuildDir();
 
 	if ( verbose )
 		gblActiveRealm = 0xffffffff;

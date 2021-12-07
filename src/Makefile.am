@@ -53,7 +53,8 @@ endif
 common_CFLAGS = \
 	-Wall \
 	-DINCLUDEDIR='"$(includedir)"' \
-	-DLIBDIR='"$(libdir)"'
+	-DLIBDIR='"$(libdir)"' \
+	-DABS_TOP_BUILDDIR='"$(abs_top_builddir)"'
 
 libprog_a_SOURCES = \
 	buffer.h bytecode.h colm.h debug.h dotgen.h fsmcodegen.h fsmgraph.h \
