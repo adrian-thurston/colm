@@ -688,14 +688,23 @@ void defaultBuildDir()
 	if ( buildDir != 0 )
 		return;
 
-	const char *ldlp = getenv("LD_LIBRARY_PATH");
-	if ( ldlp != 0 ) {
-		size_t len_atbd = strlen(ABS_TOP_BUILDDIR);
+	struct stat self;
+	if ( stat( "/proc/self/exe", &self ) == 0 )
+	{
+		struct stat colm;
 
-		if ( strlen(ldlp) > len_atbd &&
-				memcmp( ldlp, ABS_TOP_BUILDDIR "/", len_atbd+1) == 0 )
+		if ( stat ( ABS_BUILDDIR "/" LT_OBJDIR "colm", &colm ) == 0 &&
+				self.st_dev == colm.st_dev && self.st_ino == colm.st_ino )
 		{
 			buildDir = ABS_TOP_BUILDDIR;
+			return;
+		}
+
+		if ( stat ( ABS_BUILDDIR "/colm", &colm ) == 0 &&
+				self.st_dev == colm.st_dev && self.st_ino == colm.st_ino )
+		{
+			buildDir = ABS_TOP_BUILDDIR;
+			return;
 		}
 	}
 }
