@@ -1160,7 +1160,7 @@ void AsmCodeGen::NFA_PUSH( RedStateAp *st )
 
 void AsmCodeGen::STATE_GOTOS()
 {
-	bool eof = redFsm->anyEofActivity() || redFsm->anyNfaStates();
+	bool eof = redFsm->anyEofActivity() || redFsm->anyNfaStates() || redFsm->anyFromStateActions();
 
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Writing code above state gotos. */

@@ -368,7 +368,7 @@ void Goto::FROM_STATE_ACTION_EMIT( RedStateAp *state )
 
 std::ostream &Goto::STATE_CASES()
 {
-	bool eof = redFsm->anyEofActivity() || redFsm->anyNfaStates();
+	bool eof = redFsm->anyEofActivity() || redFsm->anyNfaStates() || redFsm->anyFromStateActions();
 
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		/* Writing code above state gotos. */
@@ -881,7 +881,7 @@ void Goto::writeExec()
 	out << EMIT_LABEL( _resume );
 
 	/* Do we break out on no more input. */
-	bool eof = redFsm->anyEofActivity() || redFsm->anyNfaStates();
+	bool eof = redFsm->anyEofActivity() || redFsm->anyNfaStates() || redFsm->anyFromStateActions();
 	if ( !noEnd ) {
 		if ( eof ) {
 			out << 

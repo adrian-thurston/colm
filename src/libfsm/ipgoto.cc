@@ -452,7 +452,7 @@ void IpGoto::NFA_PUSH_ST( RedStateAp *state )
 
 std::ostream &IpGoto::STATE_GOTOS()
 {
-	bool eof = redFsm->anyEofActivity() || redFsm->anyNfaStates();
+	bool eof = redFsm->anyEofActivity() || redFsm->anyNfaStates() || redFsm->anyFromStateActions();
 
 	for ( RedStateList::Iter st = redFsm->stateList; st.lte(); st++ ) {
 		IN_TRANS_ACTIONS( st );

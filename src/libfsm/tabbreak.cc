@@ -215,7 +215,7 @@ void TabBreak::writeExec()
 	out << BREAK_LABEL( _resume );
 
 	/* Do we break out on no more input. */
-	bool eof = redFsm->anyEofActivity() || redFsm->anyNfaStates();
+	bool eof = redFsm->anyEofActivity() || redFsm->anyNfaStates() || redFsm->anyFromStateActions();
 	if ( !noEnd ) {
 		if ( eof ) {
 			out << 
