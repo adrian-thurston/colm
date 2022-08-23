@@ -20,7 +20,7 @@ dnl LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM
 dnl OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 dnl SOFTWARE.
   
-AC_INIT(colm, 0.14.7)
+AC_INIT([colm],[0.14.7])
 PUBDATE="February 2021"
 
 AM_INIT_AUTOMAKE([foreign])
@@ -45,7 +45,7 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_CHECK_TOOL(AR, ar)
 AC_PROG_RANLIB
-AC_PROG_LIBTOOL
+LT_INIT
 AC_PROG_LN_S
 
 SED_SUBST=["\
@@ -55,7 +55,7 @@ SED_SUBST=["\
 "]
 
 dnl Set test on c++ compiler.
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 
 dnl
 dnl libfsmincludedir
@@ -75,11 +75,11 @@ dnl Check for definition of MAKE.
 AC_PROG_MAKE_SET
 
 AC_ARG_ENABLE(pool-malloc, 
-		AC_HELP_STRING([--enable-pool-malloc], [allocate pool objects with malloc]), 
+		AS_HELP_STRING([--enable-pool-malloc],[allocate pool objects with malloc]), 
 		AC_DEFINE([POOL_MALLOC], [1], [allocate pool objects with malloc]))
 
 AC_ARG_ENABLE(debug,
-		AC_HELP_STRING([--enable-debug], [enable debug statements]), 
+		AS_HELP_STRING([--enable-debug],[enable debug statements]), 
 		AC_DEFINE([DEBUG], [1], [enable debug statements]))
 
 
@@ -100,7 +100,7 @@ AC_ARG_ENABLE(manual,
 			AC_CHECK_PROG([PYGMENTIZE], [pygmentize], [pygmentize])
 
 			if [test "x$ASCIIDOC" == x || test "x$PYGMENTIZE" == x]; then
-				AC_ERROR([must have both asciidoc and pygmentize to build the manual])
+				AC_MSG_ERROR(must have both asciidoc and pygmentize to build the manual)
 			fi 
 		fi
 	],
@@ -132,7 +132,7 @@ dnl
 dnl Build the program? ( no means just build libfsm )
 dnl
 AC_ARG_ENABLE(program,
-	[AC_HELP_STRING([--enable-program], [build the program? no means libfsm only] )],
+	[AS_HELP_STRING([--enable-program],[build the program? no means libfsm only ])],
 	[
 		if test "x$enableval" = "xyes"; then
 			build_program=yes;
@@ -161,7 +161,7 @@ dnl Which installed target to test. Without this option supplied testing is
 dnl done against what is in the source tree.
 dnl
 AC_ARG_WITH(subject,
-	[AC_HELP_STRING([--with-subject], [location of install tree test (defaults source tree)])],
+	[AS_HELP_STRING([--with-subject],[location of install tree test (defaults source tree)])],
 	[
 		SUBJ_AAPL_CPPFLAGS="-I${withval}/include/aapl"
 
@@ -368,7 +368,7 @@ SED_SUBST="$SED_SUBST -e 's|@GNUSTEP_CONFIG@|${GNUSTEP_CONFIG}|g'"
 SED_SUBST="$SED_SUBST -e 's|@ASM_BIN@|${ASM_BIN}|g'"
 
 AC_ARG_WITH(crack,
-	[AC_HELP_STRING([--with-crack], [location of crack install])],
+	[AS_HELP_STRING([--with-crack],[location of crack install])],
 	[CRACK_BIN="$withval/bin/crack"],
 	[AC_PATH_PROG([CRACK_BIN], [crack])]
 )
@@ -388,17 +388,17 @@ dnl can only be one set of colm functions linked. It's not possible to use the
 dnl external parser for parsing the colm program, then use the internal parser for
 dnl the patterns.
 AC_ARG_WITH(colm,
-	[AC_HELP_STRING([--with-colm], [prefix of colm install to build with, instead of bootstrapping])],
+	[AS_HELP_STRING([--with-colm],[prefix of colm install to build with, instead of bootstrapping])],
 	[
 		EXTERNAL_COLM="$withval"
 		EXTERNAL_INC="-I$withval/include"
 		EXTERNAL_LIBS="-L$withval/lib"
 		if test "$cross_compiling" != "yes"; then
 		AC_CHECK_FILES(["$EXTERNAL_COLM/bin/colm"], [],
-			[AC_ERROR(["could not find $EXTERNAL_COLM/bin/colm"])])
+			[AC_MSG_ERROR("could not find $EXTERNAL_COLM/bin/colm")])
 		else
 		AS_IF([test -a "$EXTERNAL_COLM/bin/colm"], [],
-			AC_ERROR(["could not find $EXTERNAL_COLM/bin/colm"]))
+			AC_MSG_ERROR("could not find $EXTERNAL_COLM/bin/colm"))
 		fi
 	],
 	[]
@@ -444,7 +444,7 @@ m4_foreach_w([header],
 	],
 	[AC_CONFIG_LINKS(src/include/colm/header:src/header)]
 )
-AC_OUTPUT([
+AC_CONFIG_FILES([
 	Makefile
 	src/aapl/Makefile
 	src/libfsm/Makefile
@@ -459,5 +459,6 @@ AC_OUTPUT([
 	doc/Makefile
 	doc/colm/Makefile
 ])
+AC_OUTPUT
 
 echo "configuration of colm complete"
