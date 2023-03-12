@@ -30,6 +30,8 @@
 #include <assert.h>
 #include <iomanip>
 
+// Convenience: for checking for the presence of the libfsm.
+extern "C" void libfsm_present() {}
 
 using std::ostream;
 using std::ostringstream;
