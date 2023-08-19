@@ -1,0 +1,22 @@
+on:
+  push:
+    tags:
+    - '[0-9]+.*'
+
+name: Create release
+
+jobs:
+  release:
+    name: Create release
+    if: github.repository_owner == 'adrian-thurston'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract version tag
+        id: version
+        run: echo ::set-output name=value::$(echo ${{ github.ref }} | cut -f 4 -d /)
+
+      - uses: taiki-e/create-gh-release-action@v1
+        with:
+          branch: master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

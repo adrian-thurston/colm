@@ -1,0 +1,26 @@
+name: Build and test
+
+on:
+  pull_request:
+  schedule:
+    - cron:  '0 5 * * *'
+
+jobs: 
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cc: gcc
+            cxx: g++
+          - cc: clang
+            cxx: clang++
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: build
+      run: |
+          bash ./autogen.sh
+          ./configure CC=${{ matrix.cc }} CXX=${{ matrix.cxx }}
+          make -j2 test

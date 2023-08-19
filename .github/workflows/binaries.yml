@@ -1,0 +1,54 @@
+on:
+  release:
+    types:
+      - created
+
+name: Upload Release Assets
+
+jobs:
+  assets:
+    name: Upload Release Assets
+    strategy:
+      matrix:
+        include:
+         - name: linux
+           os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Extract version tag
+        id: version
+        run: echo ::set-output name=value::$(echo ${{ github.ref }} | cut -f 3 -d / )
+
+      - name: Build colm
+        run: |
+          set -ex
+          ZIPDIR=colm-${{ steps.version.outputs.value }}
+          mkdir $ZIPDIR
+          CFLAGS="-flto --target=x86_64-unknown-linux-musl -static -O3"
+          CXXFLAGS="$CFLAGS"
+          LDFLAGS="$CFLAGS"
+          bash ./autogen.sh
+          ./configure --prefix=$ZIPDIR CC=clang CXX=clang++ CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS"
+          make -j$(nproc)
+          make install
+
+          ls -al $ZIPDIR
+          ls -al $ZIPDIR/bin
+          ls -al $ZIPDIR/lib
+
+          LD_LIBRARY_PATH=$ZIPDIR/lib $ZIPDIR/bin/colm --version
+
+          tar vczf colm-${{matrix.name}}-${{ steps.version.outputs.value }}.tgz $ZIPDIR
+          md5sum colm-${{matrix.name}}-${{ steps.version.outputs.value }}.tgz
+
+      - name: Upload asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: colm-${{matrix.name}}-${{ steps.version.outputs.value }}.tgz
+          name: ${{ steps.version.outputs.value }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
