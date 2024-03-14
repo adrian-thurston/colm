@@ -178,7 +178,7 @@ colm_CXXFLAGS = $(common_CFLAGS) -DLOAD_COLM
 colm_CFLAGS = $(common_CFLAGS)
 colm_SOURCES = main.cc loadcolm.cc loadfinal.h version.h
 nodist_colm_SOURCES = gen/if3.h gen/if3.cc gen/parse3.c
-colm_LDADD = libprog.a -lcolm
+colm_LDADD = libprog.a libcolm.la
 
 # Listing if1.h in BUILT_SOURCES isn't sufficient because it depends on the
 # building of bootstrap0. Automake wants to put all built sources into a list
