@@ -20,6 +20,10 @@
  * SOFTWARE.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <colm/bytecode.h>
 
 #include <sys/types.h>
