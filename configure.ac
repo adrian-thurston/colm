@@ -39,6 +39,7 @@ AC_CHECK_SIZEOF([long])
 AC_CHECK_SIZEOF([unsigned long])
 AC_CHECK_SIZEOF([unsigned long long])
 AC_CHECK_HEADERS([sys/mman.h sys/wait.h unistd.h])
+AC_SYS_LARGEFILE
 
 dnl Checks for programs.
 AC_PROG_CC
