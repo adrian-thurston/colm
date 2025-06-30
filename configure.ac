@@ -450,6 +450,7 @@ AC_CONFIG_FILES([
 	src/aapl/Makefile
 	src/libfsm/Makefile
 	src/cgil/Makefile
+	src/cgil/test/Makefile
 	src/Makefile
 	test/Makefile
 	test/aapl.d/Makefile

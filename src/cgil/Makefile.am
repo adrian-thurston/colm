@@ -1,3 +1,4 @@
+SUBDIRS = test
 
 pkgdata_DATA = $(CGIL_FILES)
 
