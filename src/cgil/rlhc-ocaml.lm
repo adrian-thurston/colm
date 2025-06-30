@@ -108,8 +108,9 @@ namespace ml_gen
 			send Parser
 				"( [ expr(TL) ] )"
 		}
-		case [I: ident `[ TL: expr `]]
-		{
+		case [I: ident `[ TL: expr `]] {
+			# This is a special case, matching just ident. It handles
+			# static/dynamic arrays. Really the CGIL needs to distinuish.
 			if ( StaticVarMap->find( $I ) || $I == 'stack' ) {
 				send Parser
 					"[ ExprFactor.ident ].([ expr( TL ) ])"
@@ -118,6 +119,11 @@ namespace ml_gen
 				send Parser
 					"[ ExprFactor.ident ].\[[ expr( TL ) ]\]"
 			}
+		}
+		case [EF: expr_factor `[ TL: expr `]] {
+			# Fallback to dynamic, since more complicated is likely used for stack.
+			send Parser
+				"[ expr_factor(EF) ].([ expr( TL ) ])"
 		}
 		case [I: ident `[ E: expr `] `. F: ident] {
 			send Parser
@@ -200,10 +206,10 @@ namespace ml_gen
 			send Parser
 				[embedded_host( EH )]
 		}
-		case [ident O: `[ TL: expr C: `]]
+		case [LV: lvalue O: `[ TL: expr C: `]]
 		{
 			send Parser
-				[ExprFactor.ident O expr( TL ) C]
+				[lvalue(LV) O expr( TL ) C]
 		}
 		case [E1: embedded_host `-> E2: lvalue]
 		{

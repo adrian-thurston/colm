@@ -116,10 +116,10 @@ namespace d_gen
 				[O expr( TL ) C]
 		}
 		case
-			[ident O: `[ TL: expr C: `]]
+			[EF: expr_factor O: `[ TL: expr C: `]]
 		{
 			send Parser
-				[ExprFactor.ident O expr(TL) C]
+				[expr_factor(EF) O expr(TL) C]
 		}
 		case
 			[`offset `( Base: expr `, Offset: expr `)]
@@ -183,10 +183,10 @@ namespace d_gen
 				[embedded_host(EH)]
 		}
 		case
-			[ident O: `[ TL: expr C: `]]
+			[LV: lvalue O: `[ TL: expr C: `]]
 		{
 			send Parser
-				[ExprFactor.ident O expr(TL) C]
+				[lvalue(LV) O expr(TL) C]
 		}
 		case [E1: embedded_host `-> E2: lvalue]
 		{

@@ -1,0 +1,5 @@
+{{(stackvar )[(top) as usize]
+		= cs;
+		cs = (stackvar )[(top) as usize];
+	}
+}

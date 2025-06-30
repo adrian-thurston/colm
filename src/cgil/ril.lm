@@ -86,7 +86,7 @@ def type
 def expr_factor
 	[embedded_host] :EmbeddedHost
 |	[ident] :Ident
-|	[ident `[ expr `]] :ArraySub
+|	[EF: expr_factor `[ expr `]] :ArraySub
 |	[ident `[ expr `] `. Field: ident] :ArraySubField
 |	[`offset `( base: expr `, expr `)] :Offset
 |	[`deref `( base: expr `, expr `)]  :Deref
@@ -103,7 +103,7 @@ def expr_factor
 def lvalue
 	[embedded_host]
 |	[ident]
-|	[ident `[ expr `]]
+|	[lvalue `[ expr `]]
 |	[ident `[ expr `] `. ident]
 |	[embedded_host `-> lvalue]
 

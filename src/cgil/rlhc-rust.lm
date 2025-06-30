@@ -104,10 +104,10 @@ namespace rust_gen
 			send Parser
 				[O expr(TL) C]
 		}
-		case [I: ident `[ E: expr `]]
+		case [EF: expr_factor `[ E: expr `]]
 		{
 			send Parser
-				"[I]\[([expr( E )]) as usize\]"
+				"[expr_factor(EF)]\[([expr( E )]) as usize\]"
 		}
 		case ['offset' '(' E1: expr ',' E2: expr ')']
 		{
@@ -167,10 +167,10 @@ namespace rust_gen
 			send Parser
 				[embedded_host( EH )]
 		}
-		case [I: ident O: `[ E: expr C: `]]
+		case [LV: lvalue `[ E: expr `]]
 		{
 			send Parser
-				"[I]\[([expr( E )]) as usize\]
+				"[lvalue( LV )]\[([expr( E )]) as usize\]
 		}
 		case [E1: embedded_host `-> E2: lvalue]
 		{

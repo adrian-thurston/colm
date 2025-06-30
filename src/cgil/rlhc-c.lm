@@ -104,7 +104,7 @@ namespace c_gen
 		}
 		case ArraySub
 		{
-			<<	"[ident]\[[expr( expr )]\]"
+			<<	"[expr_factor(EF)]\[[expr( expr )]\]"
 		}
 		case ArraySubField
 		{
@@ -157,9 +157,9 @@ namespace c_gen
 		{
 			<<	[embedded_host( EH )]
 		}
-		case [ident O: `[ TL: expr C: `]]
+		case [LV: lvalue O: `[ TL: expr C: `]]
 		{
-			<<	[ident O expr( TL ) C]
+			<<	[lvalue(LV) O expr( TL ) C]
 		}
 		case [I: ident `[ E: expr `] `. F: ident]
 		{

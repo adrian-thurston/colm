@@ -112,10 +112,10 @@ namespace crack_gen
 			send Parser
 				"([expr(E)])"
 		}
-		case [I: ident `[ E: expr `]]
+		case [EF: expr_factor `[ E: expr `]]
 		{
 			send Parser
-				"[I]\[[expr( E )]\]"
+				"[expr_factor(EF)]\[[expr( E )]\]"
 		}
 		case [`offset `( Base: expr `, Offset: expr `)]
 		{
@@ -172,10 +172,10 @@ namespace crack_gen
 			send Parser
 				[embedded_host( EH )]
 		}
-		case [ident O: `[ TL: expr C: `]]
+		case [LV: lvalue O: `[ TL: expr C: `]]
 		{
 			send Parser
-				[ExprFactor.ident O expr( TL ) C]
+				[lvalue(LV) O expr( TL ) C]
 		}
 		case [E1: embedded_host `-> E2: lvalue]
 		{

@@ -120,10 +120,10 @@ namespace julia_gen
 			send Parser
 				"([expr(E)])"
 		}
-		case [I: ident `[ E: expr `]]
+		case [EF: expr_factor `[ E: expr `]]
 		{
 			send Parser
-				"[I]\[1+([expr( E )])\]"
+				"[expr_factor(EF)]\[1+([expr( E )])\]"
 		}
 		case [`offset `( Base: ident `, Offset: expr `)]
 		{
@@ -180,10 +180,10 @@ namespace julia_gen
 			send Parser
 				[embedded_host( EH )]
 		}
-		case [I: ident `[ E: expr `]]
+		case [LV: lvalue `[ E: expr `]]
 		{
 			send Parser
-				"[I]\[1+([expr( E )])\]"
+				"[lvalue(LV)]\[1+([expr( E )])\]"
 		}
 		case [E1: embedded_host `-> E2: lvalue]
 		{

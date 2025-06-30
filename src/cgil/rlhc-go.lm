@@ -104,7 +104,7 @@ namespace go_gen
 		}
 		case ArraySub
 		{
-			<<	[ident '[ ' expr( expr ) ' ]']
+			<<	[expr_factor(EF) '[ ' expr( expr ) ' ]']
 		}
 		case Offset
 		{
@@ -148,9 +148,9 @@ namespace go_gen
 		{
 			<<	[embedded_host(EH)]
 		}
-		case [ident `[ TL: expr `]]
+		case [LV: lvalue `[ TL: expr `]]
 		{
-			<<	[ident '[' expr( TL ) ']']
+			<<	[lvalue(LV) '[' expr( TL ) ']']
 		}
 		case [E1: embedded_host `-> E2: lvalue]
 		{

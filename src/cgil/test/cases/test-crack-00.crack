@@ -1,0 +1,9 @@
+if ( 1 ) {
+	if ( 1 ) {
+		(stackvar )[top] = cs;
+		cs = (stackvar )[top];
+		
+	}
+	
+	
+}

@@ -1,0 +1,6 @@
+host( "tmp.rl", 5 ) ${
+	${
+		host( "-", 1 ) ={ stackvar }=[top] = cs;
+		cs = host( "-", 1 ) ={ stackvar }=[top];
+	}$
+}$

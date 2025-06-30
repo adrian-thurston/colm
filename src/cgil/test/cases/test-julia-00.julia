@@ -1,0 +1,6 @@
+begin
+(stackvar )[1+(top)]= cs
+cs = (stackvar )[1+(top)]
+
+end
+

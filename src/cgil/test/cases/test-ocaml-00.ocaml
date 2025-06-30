@@ -1,0 +1,9 @@
+begin
+	begin
+		(stackvar )[top.contents]  := cs.contents;
+		cs  := (stackvar ).(top.contents);
+		
+	end;
+	
+	
+end;
